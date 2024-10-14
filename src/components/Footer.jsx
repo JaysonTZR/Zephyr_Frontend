@@ -2,21 +2,7 @@ import React from 'react';
 
 function Footer() {
   return (
-    <section className="my-0 py-0 bg-gray-100 m-0 p-0">
-      <div className="max-w-3xl mx-auto text-center mb-16">
-        <h2 className="text-3xl font-semibold mb-4">Sign Up for Our Newsletter</h2>
-        <div className="flex justify-center">
-          <input type="email" placeholder="Your Email Address" className="w-1/2 p-3 border border-gray-300" />
-          <button className="bg-black text-white py-3 px-8 ml-2">SIGN UP</button>
-        </div>
-      </div>
-      <div className="flex justify-center space-x-4 mb-16">
-        <div className="w-60 h-64 bg-gray-300 flex items-center justify-center text-xl text-gray-800">Image 12</div>
-        <div className="w-60 h-64 bg-gray-300 flex items-center justify-center text-xl text-gray-800">Image 13</div>
-        <div className="w-60 h-64 bg-gray-300 flex items-center justify-center text-xl text-gray-800">Image 14</div>
-        <div className="w-60 h-64 bg-gray-300 flex items-center justify-center text-xl text-gray-800">Image 15</div>
-        <div className="w-60 h-64 bg-gray-300 flex items-center justify-center text-xl text-gray-800">Image 16</div>
-      </div>
+    <section className="my-0 py-0  m-0 p-0">
       <div className="bg-white py-16">
         <div className="max-w-6xl mx-auto grid grid-cols-4 gap-8">
           <div>
