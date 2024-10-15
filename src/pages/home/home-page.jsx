@@ -1,8 +1,8 @@
 import React from "react";
 import { useInView } from "react-intersection-observer";
-import "../../App.css";
 import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+// import Footer from "../../components/Footer";
+import Footer2 from "../../components/Footer2";
 
 function HomePage() {
   const options = {
@@ -268,7 +268,7 @@ function HomePage() {
           </div>
         </section>
 
-        <Footer />
+        <Footer2 />
       </main>
     </div>
   );
