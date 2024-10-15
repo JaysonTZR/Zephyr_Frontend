@@ -2,8 +2,8 @@ import React from 'react';
 
 function Footer() {
   return (
-    <section className="my-0 py-0  m-0 p-0">
-      <div className="bg-white py-16">
+    <section className="my-0 py-0  m-0 p-0 ">
+      <div className="bg-white py-16 shadow-md">
         <div className="max-w-6xl mx-auto grid grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-semibold mb-4">KAIRA</h3>
