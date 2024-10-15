@@ -2,7 +2,7 @@ import React from 'react';
 
 function Footer2() {
   return (
-    <section className="my-0 py-0 m-0 p-0">
+    <section className="my-0 py-0 m-0 p-0 mt-20">
       <div className="bg-black py-16 shadow-md">
         <div className="max-w-6xl mx-auto grid grid-cols-4 gap-8">
           <div className="text-left">

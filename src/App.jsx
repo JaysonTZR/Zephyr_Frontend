@@ -1,8 +1,8 @@
 import React, { lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
-import Cart from "./pages/cart/cart";
-import Checkout from "./pages/checkout/checkout";
+import Cart from "./pages/shop/cart/cart";
+import Checkout from "./pages/shop/checkout/checkout";
 
 const HomePage = lazy(() => import("./pages/home/home-page"));
 const Shop = lazy(() => import("./pages/shop/shop"));

@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Header from "../../../components/Header";
+import Footer2 from "../../../components/Footer2";
 
 const Checkout = () => {
   return (
@@ -141,7 +141,7 @@ const Checkout = () => {
         </div>
       </div>
 
-      <Footer />
+      <Footer2 />
     </div>
   );
 };

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import "../../App.css";
+import Header from "../../components/Header";
+import Footer2 from "../../components/Footer2";
 import Banner from "../../components/Banner";
 import AccordionItem from "../../components/shop/shop-sidebar/accordion/AccordionItem";
 import ProductList from "../../components/shop/ProductList";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
 
 const Shop = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -132,7 +131,7 @@ const Shop = () => {
         </div>
       </div>
 
-      <Footer />
+      <Footer2 />
     </div>
   );
 };
