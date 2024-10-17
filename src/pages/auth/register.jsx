@@ -1,7 +1,7 @@
 import React, { useState, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
-import Footer2 from "../../components/Footer2";
+import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
 
 function Register() {
@@ -205,7 +205,7 @@ function Register() {
         </div>
       </div>
 
-      <Footer2 />
+      <Footer />
     </div>
   );
 }

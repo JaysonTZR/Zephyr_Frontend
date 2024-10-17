@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
-import Footer2 from "../../components/Footer2";
+import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
 import AccordionItem from "../../components/shop/shop-sidebar/accordion/AccordionItem";
 import ProductList from "../../components/shop/ProductList";
@@ -131,7 +131,7 @@ const Shop = () => {
         </div>
       </div>
 
-      <Footer2 />
+      <Footer />
     </div>
   );
 };

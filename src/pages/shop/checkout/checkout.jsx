@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../../../components/Header";
-import Footer2 from "../../../components/Footer2";
+import Footer from "../../../components/Footer";
 import Banner from "../../../components/Banner";
 import CheckoutList from "../../../components/checkout/CheckoutList";
 
@@ -177,7 +177,7 @@ const Checkout = () => {
         </div>
       </div>
 
-      <Footer2 />
+      <Footer />
     </div>
   );
 };
