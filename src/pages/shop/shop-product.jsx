@@ -1,9 +1,18 @@
 import React, { useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import DetailsPayment from "../../assets/images/details-payment.png";
+import ProductList from "../../components/shop/ProductList";
 
 const ShopProduct = () => {
   const [menuSection, setMenuSection] = useState("description");
+
+  const items = [
+    { name: "Faux Biker Jacket", price: "$67.24", rating: 5 },
+    { name: "Multi-pocket Chest Bag", price: "$43.48", rating: 5, sale: true },
+    { name: "Diagonal Textured Cap", price: "$60.39", rating: 3 },
+    { name: "Ankle Boots", price: "$38.49", rating: 2, sale: true },
+  ];
 
   const products = [
     { name: "Piqué Biker Jacket", price: "$67.24", isNew: true },
@@ -20,60 +29,61 @@ const ShopProduct = () => {
   return (
     <div>
       <Header />
-      <section className="flex justify-center p-4">
-        <div className="flex md:w-3/4 bg-white shadow-md rounded-lg">
+      <section className="flex justify-center p-4" style={{ backgroundColor: '#f3f2ee' }}>
+        <div className="flex md:w-3/4">
           {/* Thumbnail Images Section */}
-          <div className="flex flex-col w-1/4 p-4">
-            <div className="bg-gray-300 h-32 w-32 mb-4 rounded-lg"></div>
-            <div className="bg-gray-300 h-32 w-32 mb-4 rounded-lg"></div>
-            <div className="bg-gray-300 h-32 w-32 mb-4 rounded-lg"></div>
-            <div className="bg-gray-300 h-32 w-32 mb-4 rounded-lg"></div>
+          <div className="flex flex-col w-1/4 p-4 pl-24">
+            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
+            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
+            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
+            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
           </div>
 
           {/* Main Image Section */}
-          <div className="flex-shrink-0 w-3/4 p-4">
-            <div className="bg-gray-300 h-full w-full rounded-lg"></div>
+          <div className="flex-shrink-0 w-2/4 p-4">
+            <div className="bg-gray-200 h-full w-full"></div>
             {/* This grey box represents the main product image with the same height as the left images */}
           </div>
         </div>
       </section>
 
-      <div className="max-w-md mx-auto p-4">
+      <div className="mx-auto p-4 mt-16 mb-5 w-[800px]">
         {/* Removed border and shadow */}
-        <h2 className="text-2xl font-bold mb-2 text-center">
+        <h2 className="text-2xl font-semibold mb-2 text-center">
           Hooded thermal anorak
         </h2>
-        <div className="flex items-center justify-center mb-2">
-          <span className="text-yellow-500">★★★★☆</span>
-          <span className="text-gray-500 ml-2">(5 Reviews)</span>
+        <div className="flex items-center justify-center mb-3">
+          <span className="text-orange-400 text-xl">★★★★☆</span>
+          <span className="text-gray-600 ml-1">- 5 Reviews</span>
         </div>
-        <div className="text-lg font-semibold mb-2 text-center">
-          <span className="line-through text-gray-500">$70.00</span>
-          <span className="text-red-500 ml-2 text-2xl">$270.00</span>
+        <div className="text-lg font-semibold mb-5 text-center">
+          <span className="text-3xl">$270.00</span>
+          <span className="line-through ml-3 text-gray-400">$70.00</span>
         </div>
-        <p className="mb-4 text-center">
-          Coat with quilted lining and an adjustable hood. Featuring long
-          sleeves with adjustable cuff tabs, adjustable asymmetric hem with
+        <p className="mb-12 text-center text-sm">
+          Coat with quilted lining and an adjustable hood. Featuring long sleeves with adjustable cuff tabs, adjustable asymmetric hem with
           elastic side tabs and a front zip fastening with placket.
         </p>
-        <div className="flex justify-center space-x-8 mb-4">
+        <div className="flex justify-center space-x-16 mb-7">
           {/* Size Selection */}
           <div className="flex items-center">
-            <label className="mr-2">Size:</label>
+            <label className="mr-3">Size:</label>
             <div className="flex space-x-2">
               {["XXL", "XL", "L", "S"].map((size) => (
-                <div
+                <button
                   key={size}
-                  className="w-12 h-8 flex items-center justify-center border rounded-md cursor-pointer hover:bg-gray-300"
+                  className={
+                    size === "XL" ? "px-4 py-2 flex items-center justify-center border cursor-pointer bg-black" : "px-4 py-2 flex items-center justify-center border cursor-pointer"
+                  }
                 >
                   <span
                     className={
-                      size === "XL" ? "font-bold text-black" : "text-gray-700"
+                      size === "XL" ? "font-semibold text-white" : "font-semibold text-black"
                     }
                   >
                     {size}
                   </span>
-                </div>
+                </button>
               ))}
             </div>
           </div>
@@ -82,76 +92,104 @@ const ShopProduct = () => {
           <div className="flex items-center">
             <label className="mr-2">Color:</label>
             <div className="flex justify-center space-x-2">
-              <div className="w-6 h-6 bg-black rounded-full cursor-pointer"></div>
-              <div className="w-6 h-6 bg-blue-500 rounded-full cursor-pointer"></div>
-              <div className="w-6 h-6 bg-yellow-500 rounded-full cursor-pointer"></div>
-              <div className="w-6 h-6 bg-red-500 rounded-full cursor-pointer"></div>
-              <div className="w-6 h-6 bg-white rounded-full border border-gray-300 cursor-pointer"></div>
+              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
+                <button className="bg-black w-7 h-7 border rounded-full" />
+              </div>
+              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
+                <button className="bg-blue-900 w-7 h-7 border rounded-full" />
+              </div>
+              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
+                <button className="bg-yellow-500 w-7 h-7 border rounded-full" />
+              </div>
+              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
+                <button className="bg-red-500 w-7 h-7 border rounded-full" />
+              </div>
+              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
+                <button className="bg-white w-7 h-7 border rounded-full" />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-center mb-4">
+        <div className="flex items-center justify-center mb-6">
           <input
             type="number"
             defaultValue="1"
-            className="w-16 p-2 border rounded-md mr-2"
+            className="w-20 py-2 border mr-4 text-center"
           />
-          <button className="bg-orange-500 text-white py-2 px-4 rounded-md">
+          <button className="bg-black text-white w-48 px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700">
             Add to Cart
           </button>
         </div>
-        <div className="text-gray-500 text-sm mb-4 text-center">
-          <span>Guaranteed Safe Checkout</span>
+
+
+        <div className="flex items-center justify-center mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 mr-2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+          </svg>
+          <button>
+            <span className="uppercase tracking-widest text-sm font-semibold">
+              Add To Wishlist
+            </span>
+          </button>
         </div>
-        <div className="flex items-center justify-center space-x-2 mb-4">
-          <span>Powered by:</span>
-          <img
-            src="https://via.placeholder.com/50"
-            alt="Payment methods"
-            className="h-8"
-          />
+        <div className="flex items-center justify-center space-x-2 mb-6">
+          <hr className="border-gray-300 w-1/6" />
+          <span className="font-semibold text-xl px-5">Guaranteed Safe Checkout</span>
+          <hr className="border-gray-300 w-1/6" />
         </div>
-        <div className="text-gray-500 text-sm text-center">
-          <span>SKU: 3812912</span>
-          <div>Categories: Clothes</div>
-          <div>Tag: Clothes, Skin, Body</div>
+        <div className="flex items-center justify-center space-x-2 mb-10">
+          <img src={DetailsPayment} alt="Payment Methods" className="object-cover w-auto h-full"/>
+        </div>
+        <div className="font-semibold text-center">
+          <div className="mb-1">
+            <span className="text-gray-400">SKU: </span>
+            <span className="text-black">3812912</span>
+          </div>
+          <div className="mb-1">
+            <span className="text-gray-400">Categories: </span>
+            <span className="text-black">Clothes</span>
+          </div>
+          <div className="mb-1">
+            <span className="text-gray-400">Tag: </span>
+            <span className="text-black">Clothes, Skin, Bod</span>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-4 px-40">
         {/* Menu Section */}
-        <div className="bg-white-100 shadow-md rounded-lg p-5 mb-4">
+        <div className="p-5">
           <div className="flex">
             {/* Left Blank Area */}
             <div className="w-1/5"></div>
 
             {/* Center Menu Items */}
             <div className="flex justify-center items-center w-3/5">
-              <a
+              <button
                 onClick={(e) => {
                   setMenuSection("description");
                 }}
-                className="text-gray-800 font-bold hover:underline mx-4"
+                className="text-gray-800 text-xl font-bold mx-6 cursor-pointer"
               >
                 Description
-              </a>
-              <a
+              </button>
+              <button
                 onClick={(e) => {
                   setMenuSection("review");
                 }}
-                className="text-gray-800 font-bold hover:underline mx-4"
+                className="text-gray-800 text-xl font-bold mx-6 cursor-pointer"
               >
-                Customer Reviews
-              </a>
-              <a
+                Customer Reviews (5)
+              </button>
+              <button
                 onClick={(e) => {
                   setMenuSection("additional");
                 }}
-                className="text-gray-800 font-bold hover:underline mx-4"
+                className="text-gray-800 text-xl font-bold mx-6 cursor-pointer"
               >
                 Additional Information
-              </a>
+              </button>
             </div>
 
             {/* Right Blank Area */}
@@ -159,8 +197,10 @@ const ShopProduct = () => {
           </div>
         </div>
 
+        <div className="border-t border-gray-300 mx-4" />{" "}
+
         {/* Content Section */}
-        <div className="bg-white shadow-md rounded-lg p-5">
+        <div className="p-5">
           {/* Description Content */}
           {menuSection == "description" && (
             <div>
@@ -228,45 +268,9 @@ const ShopProduct = () => {
         </div>
 
         <div className="container mx-auto py-10">
-          <h2 className="text-xl font-bold mb-4 item text-center">Related Product</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {products.map((product, index) => (
-              <div key={index} className="border rounded-lg p-4">
-                {product.isNew && (
-                  <span className="bg-green-500 text-white px-2 py-1 text-xs absolute">
-                    NEW
-                  </span>
-                )}
-                {product.isOnSale && (
-                  <span className="bg-red-500 text-white px-2 py-1 text-xs absolute">
-                    SALE
-                  </span>
-                )}
-                <img
-                  src={`https://via.placeholder.com/150?text=No+Image`}
-                  alt={product.name}
-                  className="w-full h-32 object-cover mb-2"
-                />
-                <h3 className="font-semibold">{product.name}</h3>
-                <p className="text-lg">{product.price}</p>
-                {product.rating && (
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <span
-                        key={i}
-                        className={
-                          i < product.rating
-                            ? "text-yellow-400"
-                            : "text-gray-400"
-                        }
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+          <h2 className="text-3xl font-semibold mb-10 item text-center">Related Product</h2>
+          <div className="px-11">
+            <ProductList currentItems={items} itemPerRow={4} />
           </div>
         </div>
       </div>

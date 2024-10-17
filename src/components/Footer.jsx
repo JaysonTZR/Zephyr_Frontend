@@ -6,7 +6,7 @@ function Footer() {
       <div className="bg-black py-16 shadow-md">
         <div className="max-w-6xl mx-auto grid grid-cols-4 gap-8">
           <div className="text-left">
-            <h3 className="text-xl font-semibold mb-4 text-white">KAIRA</h3>
+            <h3 className="text-xl font-semibold mb-4 text-white">ZEPHYR</h3>
             <p className="text-gray-400 mb-4">
               Gravida massa volutpat aenean odio. Amet, turpis erat nullam fringilla elementum diam in. Nisi, purus vitae, ultrices nunc. Sit ac sit suscipit hendrerit.
             </p>

@@ -33,15 +33,15 @@ function Login() {
             {/* Combined sections in one box */}
             {/* Login Form */}
             <div className="w-1/2 pr-4">
-              <h1 className="text-2xl font-bold mb-4">LOGIN</h1>
+              <h1 className="text-3xl font-bold mb-4 uppercase">Login</h1>
               <p className="mb-4">
                 Log in with your email address and password.
               </p>
 
               <form onSubmit={handleLogin}>
                 <div className="mb-4">
-                  <label className="block text-gray-700 mb-2" htmlFor="email">
-                    EMAIL ADDRESS *
+                  <label className="block text-gray-700 mb-2 font-semibold uppercase" htmlFor="email">
+                    Email Address <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="email"
@@ -56,10 +56,10 @@ function Login() {
 
                 <div className="mb-4">
                   <label
-                    className="block text-gray-700 mb-2"
+                    className="block text-gray-700 mb-2 font-semibold uppercase"
                     htmlFor="password"
                   >
-                    PASSWORD *
+                    Password <span className="text-red-600">*</span>
                   </label>
                   <input
                     type={showPassword ? "text" : "password"}
@@ -70,33 +70,39 @@ function Login() {
                     className="border border-gray-300 py-3 px-4 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-black"
                     placeholder="Enter your password"
                   />
-                  <div className="flex items-center mt-2">
+                  <div className="mt-2">
+                    <label className="text-sm text-zinc-500">Password must be at least 8 characters, and contain both letters and numbers. Only these symbols can be used -_.@</label>
+                  </div>
+                  <div className="flex items-center mt-4">
                     <input
                       type="checkbox"
                       id="show-password"
                       checked={showPassword}
                       onChange={() => setShowPassword(!showPassword)}
-                      className="mr-2"
+                      className="peer cursor-pointer hidden after:opacity-100"
                     />
                     <label
                       htmlFor="show-password"
-                      className="text-sm text-gray-600"
+                      class="inline-block w-5 h-5 border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#333] after:rounded-[2px] after:opacity-0 peer-checked:after:opacity-100"
+                    ></label>
+                    <label
+                      className="text-sm text-gray-600 ml-2"
                     >
                       Show my password
                     </label>
                   </div>
                 </div>
 
-                <div className="flex justify-between mb-4">
+                <div className="flex justify-between mt-6 mb-4">
                   <a
                     href="/terms"
-                    className="text-sm text-gray-600 hover:underline"
+                    className="text-sm text-black font-semibold underline hover:text-zinc-500"
                   >
                     Terms of Use
                   </a>
                   <a
                     href="/privacy"
-                    className="text-sm text-gray-600 hover:underline"
+                    className="text-sm text-black font-semibold underline hover:text-zinc-500"
                   >
                     Privacy Policy
                   </a>
@@ -104,9 +110,9 @@ function Login() {
 
                 <button
                   type="submit"
-                  className="bg-black text-white w-full px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700 transition duration-300"
+                  className="bg-black text-white w-full px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700"
                 >
-                  LOG IN
+                  Log In
                 </button>
               </form>
 
@@ -126,16 +132,16 @@ function Login() {
             {/* Vertical separator */}
             {/* Create Account Section */}
             <div className="w-1/2 pl-4">
-              <h1 className="text-2xl font-bold mb-4">CREATE AN ACCOUNT</h1>
+              <h1 className="text-3xl font-bold mb-4 uppercase">Create An Account</h1>
               <p className="mb-4">
                 If you create an account, it takes less time to go through
                 checkout and complete your orders. Register today for free!
               </p>
               <button
                 onClick={handleCreateAccount}
-                className="bg-black text-white w-full px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700 transition duration-300"
+                className="bg-black text-white w-full px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700"
               >
-                CREATE AN ACCOUNT
+                Create An Account
               </button>
             </div>
           </div>

@@ -111,7 +111,7 @@ const Shop = () => {
                 </div>
               </div>
             </div>
-            <ProductList currentItems={currentItems}/>
+            <ProductList currentItems={currentItems} itemPerRow={3} />
             
             <div className="mt-16 flex justify-center space-x-2">
               {renderPagination().map((page, index) => (
