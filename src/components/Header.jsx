@@ -33,6 +33,14 @@ function Header() {
                 ABOUT US
               </a>
             </li>
+            <li className="cursor-pointer">
+              <a 
+                href="/contact" 
+                className="font-bold text-gray-600 hover:text-blue-600 hover:scale-105 transition-all duration-300"
+              >
+                CONTACTS
+              </a>
+            </li>
           </ul>
           <div className="flex space-x-4 text-xl cursor-pointer">
             <a href="/" className="hover:text-gray-800 transition duration-300">
