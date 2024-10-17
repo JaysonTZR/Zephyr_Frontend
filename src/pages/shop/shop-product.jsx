@@ -14,18 +14,6 @@ const ShopProduct = () => {
     { name: "Ankle Boots", price: "$38.49", rating: 2, sale: true },
   ];
 
-  const products = [
-    { name: "Piqué Biker Jacket", price: "$67.24", isNew: true },
-    { name: "Piqué Biker Jacket", price: "$67.24" },
-    {
-      name: "Multi-pocket Chest Bag",
-      price: "$43.48",
-      isOnSale: true,
-      rating: 4,
-    },
-    { name: "Diagonal Textured Cap", price: "$60.90" },
-  ];
-
   return (
     <div>
       <Header />
