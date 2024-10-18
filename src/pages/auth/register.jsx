@@ -15,14 +15,6 @@ function Register() {
   const [agreeTNC, setAgreeTNC] = useState(false);
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
-    e.preventDefault();
-
-    startTransition(() => {
-      // Registration logic here
-      navigate("/welcome");
-    });
-  };
 
   return (
     <div>
@@ -42,7 +34,7 @@ function Register() {
                 incoming email from us.
               </p>
 
-              <form onSubmit={() => handleRegister()}>
+              <form>
                 <div className="mb-4 flex items-center">
                   <label
                     className="block text-gray-700 mb-2 w-1/3 font-semibold uppercase"
