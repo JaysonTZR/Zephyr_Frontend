@@ -197,7 +197,7 @@ function Register() {
                   Membership Agreement <span className="text-red-600">*</span>
                 </label>
                 <div className="mt-2">
-                    <label className="text-sm text-zinc-500">By creating an account, you agree to ZEPHYR’s privacy policy and terms of use</label>
+                    <label className="text-sm text-zinc-500">By creating an account, you agree to ZEPHYR.’s privacy policy and terms of use</label>
                 </div>
                 <div className="w-full mb-6 mt-4">
                   <div className="ml-auto flex items-center">
@@ -215,7 +215,7 @@ function Register() {
                     <label
                       className="text-sm text-gray-600 ml-2"
                     >
-                      I agree to the ZEPHYR’s 
+                      I agree to the ZEPHYR.’s 
                       <a
                         href="/terms"
                         className="ml-1 text-sm text-black font-semibold underline hover:text-zinc-500"

@@ -10,7 +10,7 @@ const ShopProduct = lazy(() => import("./pages/shop/shop-product"));
 const Cart = lazy(() => import("./pages/shop/cart/cart"));
 const Checkout = lazy(() => import("./pages/shop/checkout/checkout"));
 const Contact = lazy(() => import("./pages/contact/contact"));
-const Wishlist = lazy(() => import("./pages/shop/wishlist"));
+const Wishlist = lazy(() => import("./pages/shop/wishlist/wishlist"));
 
 function App() {
   return (

@@ -6,7 +6,7 @@ function Header() {
       <div className='flex justify-center shadow-md'>
         <nav className="flex justify-between items-center p-4 w-8/12">
           <div className="text-2xl font-bold">
-            <a href="/">ZEPHYR</a>
+            <a href="/">ZEPHYR.</a>
           </div>
           <ul className="flex space-x-6">
             <li className="cursor-pointer">
