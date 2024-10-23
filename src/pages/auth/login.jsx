@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, startTransition  } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -17,7 +17,9 @@ function Login() {
   };
 
   const handleCreateAccount = () => {
-    navigate("/register");
+    startTransition(() => {
+      navigate("/register");
+    });
   };
 
   return (
