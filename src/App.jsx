@@ -11,6 +11,8 @@ const Cart = lazy(() => import("./pages/shop/cart/cart"));
 const Checkout = lazy(() => import("./pages/shop/checkout/checkout"));
 const Contact = lazy(() => import("./pages/contact/contact"));
 const Wishlist = lazy(() => import("./pages/shop/wishlist/wishlist"));
+const CMSLogin = lazy(() => import("./pages/cms/login"));
+const Dashboard = lazy(() => import("./pages/cms/dashboard/dashboard"));
 
 function App() {
   return (
@@ -41,6 +43,14 @@ function App() {
       </Routes>
       <Routes>
         <Route path="/wishlist" element={<Wishlist />} />
+      </Routes>
+
+      {/* CMS Start Here */}
+      <Routes>
+        <Route path="/cms" element={<CMSLogin />} />
+      </Routes>
+      <Routes>
+        <Route path="/cms/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
