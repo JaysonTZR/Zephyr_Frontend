@@ -15,7 +15,6 @@ const Wishlist = lazy(() => import("./pages/shop/wishlist/wishlist"));
 //CMS
 const CMSLogin = lazy(() => import("./pages/cms/login"));
 const Dashboard = lazy(() => import("./pages/cms/dashboard/dashboard"));
-const CMSProductList = lazy(() => import("./pages/cms/product/product-list"));
 const CMSUserList = lazy(() => import("./pages/cms/user/user-list"));
 const CMSUserEdit = lazy(() => import("./pages/cms/user/user-edit"));
 
@@ -56,9 +55,6 @@ function App() {
       </Routes>
       <Routes>
         <Route path="/cms/dashboard" element={<Dashboard />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/product/list" element={<CMSProductList />} />
       </Routes>
       <Routes>
         <Route path="/cms/user/list" element={<CMSUserList />} />

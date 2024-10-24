@@ -2,7 +2,7 @@ import React from "react";
 
 const Breadcrumb = () => {
   return (
-    <div className="px-6 py-4 ">
+    <div className="px-6 py-5">
       <nav className="text-sm text-gray-600 flex items-center">
         {/* Replacing "Home" with SVG */}
         <svg
@@ -11,7 +11,7 @@ const Breadcrumb = () => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="size-4"
+          className="size-5 mr-3"
         >
           <path
             strokeLinecap="round"
@@ -20,7 +20,9 @@ const Breadcrumb = () => {
           />
         </svg>
 
-        <span className="mr-2 pl-2"> &gt;</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-3">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
         <span>Dashboard</span>
       </nav>
     </div>

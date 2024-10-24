@@ -6,16 +6,16 @@ const Sidebar = ({ page }) => {
       <div className="p-6">
         {/* Placeholder for the logo */}
         {/* <img src="/path-to-logo.png" alt="Logo" className="h-10 mb-4" /> can you make this show no image > */}
-        <div className="h-10 mb-4 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
+        <div className="h-10 mb-8 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
           No Image
         </div>
         <ul>
           <li className="mb-2">
             <a
               href="/cms/dashboard"
-              className={`block py-2 px-4 rounded-lg flex items-center ${
-                page == "dashboard"
-                  ? "bg-orange-500 text-white"
+              className={`py-3 px-3 text-sm rounded-md flex items-center ${
+                page === "dashboard"
+                  ? "bg-black text-white"
                   : "hover:bg-gray-200"
               }`}
             >
@@ -25,7 +25,7 @@ const Sidebar = ({ page }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 mr-2"
+                className="size-4 mr-3"
               >
                 <path
                   strokeLinecap="round"
@@ -39,9 +39,9 @@ const Sidebar = ({ page }) => {
           <li className="mb-2">
             <a
               href="/cms/user/list"
-              className={`block py-2 px-4 rounded-lg flex items-center ${
-                page == "user-list"
-                  ? "bg-orange-500 text-white"
+              className={`py-3 px-3 text-sm rounded-md flex items-center ${
+                page === "user-list"
+                  ? "bg-black text-white"
                   : "hover:bg-gray-200"
               }`}
             >
@@ -51,7 +51,7 @@ const Sidebar = ({ page }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 mr-2"
+                className="size-4 mr-3"
               >
                 <path
                   strokeLinecap="round"
@@ -64,10 +64,10 @@ const Sidebar = ({ page }) => {
           </li>
           <li className="mb-2">
             <a
-              href="#"
-              className={`block py-2 px-4 rounded-lg flex items-center ${
-                page == "category-list"
-                  ? "bg-orange-500 text-white"
+              href="/cms/user/list"
+              className={`py-3 px-3 text-sm rounded-md flex items-center ${
+                page === "category-list"
+                  ? "bg-black text-white"
                   : "hover:bg-gray-200"
               }`}
             >
@@ -77,7 +77,7 @@ const Sidebar = ({ page }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 mr-2"
+                className="size-4 mr-3"
               >
                 <path
                   strokeLinecap="round"
@@ -95,10 +95,10 @@ const Sidebar = ({ page }) => {
           </li>
           <li className="mb-2">
             <a
-              href="/cms/product/list"
-              className={`block py-2 px-4 rounded-lg flex items-center ${
-                page == "product-list"
-                  ? "bg-orange-500 text-white"
+              href="/cms/user/list"
+              className={`py-3 px-3 text-sm rounded-md flex items-center ${
+                page === "product-list"
+                  ? "bg-black text-white"
                   : "hover:bg-gray-200"
               }`}
             >
@@ -108,7 +108,7 @@ const Sidebar = ({ page }) => {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="size-5 mr-2"
+                className="size-4 mr-3"
               >
                 <path
                   strokeLinecap="round"
@@ -117,32 +117,6 @@ const Sidebar = ({ page }) => {
                 />
               </svg>
               Manage Product
-            </a>
-          </li>
-          <li className="mb-2">
-            <a
-              href="#"
-              className={`block py-2 px-4 rounded-lg flex items-center ${
-                page == "feedback-list"
-                  ? "bg-orange-500 text-white"
-                  : "hover:bg-gray-200"
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-5 mr-2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z"
-                />
-              </svg>
-              Feedback List
             </a>
           </li>
         </ul>
