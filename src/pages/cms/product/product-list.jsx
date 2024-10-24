@@ -4,10 +4,10 @@ import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 
-const Dashboard = () => {
+const CMSProductList = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar page={'dashboard'}/>
+      <Sidebar page='product-list' />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -35,4 +35,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default CMSProductList;
