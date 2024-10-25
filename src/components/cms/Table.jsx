@@ -112,17 +112,17 @@ const Table = ({ tableData, editPath, deletePath}) => {
                         {user.creationDate}
                         </td>
                         <td className="py-5 text-center flex justify-center">
-                        <div
-                            className={`py-1 w-24 rounded-full ${
-                            user.status === "Active"
-                                ? "text-green-400 bg-green-100 font-semibold"
-                                : "text-red-400 bg-red-100 font-semibold"
-                            }`}
-                        >
-                            <span>
-                            {user.status}
-                            </span>
-                        </div>
+                            <div
+                                className={`py-1 w-24 rounded-full ${
+                                user.status === "Active"
+                                    ? "text-green-400 bg-green-100 font-semibold"
+                                    : "text-red-400 bg-red-100 font-semibold"
+                                }`}
+                            >
+                                <span>
+                                {user.status}
+                                </span>
+                            </div>
                         </td>
                         <td className="py-3 px-6 text-center align-middle">
                         <button
