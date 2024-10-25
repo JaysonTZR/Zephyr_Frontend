@@ -17,6 +17,10 @@ const CMSLogin = lazy(() => import("./pages/cms/login"));
 const Dashboard = lazy(() => import("./pages/cms/dashboard/dashboard"));
 const CMSUserList = lazy(() => import("./pages/cms/user/user-list"));
 const CMSUserEdit = lazy(() => import("./pages/cms/user/user-edit"));
+const CMSProductList = lazy(() => import("./pages/cms/product/product-list"));
+const CMSOrderList = lazy(() => import("./pages/cms/order/order-list"));
+const CMSCustomerList = lazy(() => import("./pages/cms/customer/customer-list"));
+const CMSCategoryList = lazy(() => import("./pages/cms/category/category-list"));
 
 function App() {
   return (
@@ -61,6 +65,18 @@ function App() {
       </Routes>
       <Routes>
         <Route path="/cms/user/edit" element={<CMSUserEdit />} />
+      </Routes>
+      <Routes>
+        <Route path="/cms/product/list" element={<CMSProductList />} />
+      </Routes>
+      <Routes>
+        <Route path="/cms/order/list" element={<CMSOrderList />} />
+      </Routes>
+      <Routes>
+        <Route path="/cms/customer/list" element={<CMSCustomerList />} />
+      </Routes>
+      <Routes>
+        <Route path="/cms/category/list" element={<CMSCategoryList />} />
       </Routes>
     </Router>
   );
