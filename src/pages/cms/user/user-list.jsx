@@ -4,6 +4,7 @@ import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
+import Table from "../../../components/cms/Table";
 
 const CMSUserList = () => {
   const navigate = useNavigate();
@@ -39,13 +40,6 @@ const CMSUserList = () => {
     },
   ];
 
-  const _handleSubmit = (e) => {
-    e.preventDefault();
-    startTransition(() => {
-      navigate("/cms/user/edit");
-    });
-  };
-
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar page="user-list" />
@@ -79,100 +73,7 @@ const CMSUserList = () => {
             </div>
 
             {/* Table Section */}
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white">
-                <thead>
-                  <tr className="w-full border-t uppercase text-xs">
-                    <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
-                      <div className="flex items-center justify-center">
-                        <input
-                          type="checkbox"
-                          id="tableHeaderCheckbox"
-                          className="peer cursor-pointer hidden after:opacity-100"
-                        />
-                        <label
-                          htmlFor="tableHeaderCheckbox"
-                          class="inline-block w-4 h-4 border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#333] after:rounded-[2px] after:opacity-0 peer-checked:after:opacity-100"
-                        ></label>
-                      </div>
-                    </th>
-                    <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
-                      Username
-                    </th>
-                    <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
-                      Role
-                    </th>
-                    <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
-                      Creator
-                    </th>
-                    <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
-                      Creation Date
-                    </th>
-                    <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
-                      Status
-                    </th>
-                    <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Map through dummy data */}
-                  {dummyData.map((user, index) => (
-                    <tr className="border-t text-sm" key={index}>
-                      <td className="py-5 px-6 text-center align-middle">
-                        <div className="flex items-center justify-center">
-                          <input
-                            type="checkbox"
-                            id={"tableContentCheckbox-" + index}
-                            className="peer cursor-pointer hidden after:opacity-100"
-                          />
-                          <label
-                            htmlFor={"tableContentCheckbox-" + index}
-                            class="inline-block w-4 h-4 border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#333] after:rounded-[2px] after:opacity-0 peer-checked:after:opacity-100"
-                          ></label>
-                        </div>
-                      </td>
-                      <td className="py-5 px-6 text-center align-middle">
-                        {user.username}
-                      </td>
-                      <td className="py-5 px-6 text-center align-middle">
-                        {user.role}
-                      </td>
-                      <td className="py-5 px-6 text-center align-middle">
-                        {user.creator}
-                      </td>
-                      <td className="py-5 px-6 text-center align-middle">
-                        {user.creationDate}
-                      </td>
-                      <td className="py-5 text-center flex justify-center">
-                        <div
-                          className={`py-1 w-24 rounded-full ${
-                            user.status === "Active"
-                              ? "text-green-400 bg-green-100 font-semibold"
-                              : "text-red-400 bg-red-100 font-semibold"
-                          }`}
-                        >
-                          <span>
-                            {user.status}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="py-3 px-6 text-center align-middle">
-                        <button
-                          onClick={_handleSubmit}
-                          className="text-gray-500 hover:text-gray-700"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                          </svg>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Table tableData={dummyData} editPath={"/cms/user/edit"} deletePath={true}/>
 
             {/* Pagination Section */}
             <div className="flex justify-start items-center p-6">
