@@ -9,8 +9,8 @@ const CMSLogin = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     startTransition(() => {
-        navigate("/cms/dashboard");
-      });
+      navigate("/cms/dashboard");
+    });
   };
 
   const currentYear = new Date().getFullYear();

@@ -6,33 +6,34 @@ import Header from "../../../components/cms/Header";
 
 const Dashboard = () => {
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: '#f1f5f9' }}>
+    <div className="flex min-h-screen bg-slate-100">
       <Sidebar page={'dashboard'}/>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <Header />
+        <div className="ml-64 flex-1 flex flex-col">
+          <Breadcrumb />
 
-        <Breadcrumb />
-
-        {/* Main Section */}
-        <div className="text-2xl font-semibold ml-6">
-          Dashboard
-        </div>
-        <main className="flex-1 p-6">
-          <div className="bg-white py-12 px-16 border rounded-lg">
-            <h2 className="font-medium text-center text-2xl">
-              Welcome to Zephyr E-commerce Management System!
-            </h2>
-            <p className="text text-gray-500 pt-4">
-              For assistance, feel free to reach out to us at +60 12-345 6789 or
-              email us at twice@gmail.com.my. We are here to provide guidance on
-              maximizing your experience with your current screen.
-            </p>
+          {/* Main Section */}
+          <div className="text-2xl font-semibold ml-6">
+            Dashboard
           </div>
-        </main>
+          <main className="flex-1 p-6">
+            <div className="bg-white py-12 px-16 border rounded-lg">
+              <h2 className="font-medium text-center text-2xl">
+                Welcome to Zephyr E-commerce Management System!
+              </h2>
+              <p className="text text-gray-500 pt-4">
+                For assistance, feel free to reach out to us at +60 12-345 6789 or
+                email us at twice@gmail.com.my. We are here to provide guidance on
+                maximizing your experience with your current screen.
+              </p>
+            </div>
+          </main>
 
-        <Footer />
+          <Footer />
+        </div>
       </div>
     </div>
   );

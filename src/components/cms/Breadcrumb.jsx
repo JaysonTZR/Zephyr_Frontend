@@ -7,15 +7,29 @@ const Breadcrumb = () => {
   // Create a mapping of routes to breadcrumb names
   const breadcrumbNameMap = {
     '/dashboard': 'Dashboard',
+    '/profile': 'Profile',
     '/user/list': 'Manage User',
     '/user/edit': 'Edit User',
+    '/user/add': 'Add User',
+    '/customer/list': 'Manage Customer',
+    '/customer/edit': 'Edit Customer',
+    '/customer/add': 'Add Customer',
+    '/category/list': 'Manage Category',
+    '/category/edit': 'Edit Category',
+    '/category/add': 'Add Category',
+    '/product/list': 'Manage Product',
+    '/product/edit': 'Edit Product',
+    '/product/add': 'Add Product',
+    '/order/list': 'Manage Order',
+    '/order/edit': 'Edit Order',
+    '/order/add': 'Add Order',
   };
 
   // Get the current path and split it into segments
   const pathnames = location.pathname.split("/").filter((x) => x).slice(1);
 
   return (
-    <div className="px-6 py-5">
+    <div className="px-6 py-5 mt-[73px]">
       <nav className="text-sm text-gray-600 flex items-center">
         {/* Home Icon */}
         <svg

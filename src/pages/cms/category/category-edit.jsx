@@ -4,10 +4,10 @@ import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 
-const CMSUserEdit = () => {
+const CMSCategoryEdit = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar page="user-list" />
+      <Sidebar page="category-list" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -19,7 +19,7 @@ const CMSUserEdit = () => {
           <main className="flex-1 px-6 pt-0 pb-10">
             <div className="bg-white shadow-md rounded-lg">
               <div className="p-6 border-b">
-                <h2 className="text-2xl font-semibold">Edit User Details</h2>
+                <h2 className="text-2xl font-semibold">Edit Category Details</h2>
               </div>
 
               <div className="p-6">
@@ -95,4 +95,4 @@ const CMSUserEdit = () => {
   );
 };
 
-export default CMSUserEdit;
+export default CMSCategoryEdit;

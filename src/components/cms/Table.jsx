@@ -9,7 +9,7 @@ const Table = ({ tableData, editPath, deletePath}) => {
     );
     const [showDropdown, setShowDropdown] = useState(null);
 
-    const _handleActionClick = (index) => {
+    const handleActionClick = (index) => {
         setShowDropdown(showDropdown === index ? null : index);
     };
 
@@ -38,6 +38,22 @@ const Table = ({ tableData, editPath, deletePath}) => {
 
         const allChecked = updatedCheckedState.every(Boolean);
         setIsHeaderChecked(allChecked);
+    };
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const rowsPerPage = 10;
+
+    const indexOfLastRow = currentPage * rowsPerPage;
+    const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+    const currentRows = tableData.slice(indexOfFirstRow, indexOfLastRow);
+    const totalPages = Math.ceil(tableData.length / rowsPerPage);
+
+    const goToNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    };
+
+    const goToPreviousPage = () => {
+        if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
     return (
@@ -82,19 +98,19 @@ const Table = ({ tableData, editPath, deletePath}) => {
                 </thead>
                 <tbody>
                     {/* Map through dummy data */}
-                    {tableData.map((user, index) => (
-                    <tr className="border-t text-sm" key={index}>
+                    {currentRows.map((user, index) => (
+                    <tr className="border-t text-sm" key={indexOfFirstRow + index}>
                         <td className="py-5 px-6 text-center align-middle">
                         <div className="flex items-center justify-center">
                             <input
                                 type="checkbox"
-                                id={"tableContentCheckbox-" + index}
+                                id={"tableContentCheckbox-" + (indexOfFirstRow + index)}
                                 className="peer cursor-pointer hidden after:opacity-100"
-                                checked={checkedState[index]}
-                                onChange={() => handleRowCheckboxChange(index)}
+                                checked={checkedState[indexOfFirstRow + index]}
+                                onChange={() => handleRowCheckboxChange(indexOfFirstRow + index)}
                             />
                             <label
-                                htmlFor={"tableContentCheckbox-" + index}
+                                htmlFor={"tableContentCheckbox-" + (indexOfFirstRow + index)}
                                 class="inline-block w-4 h-4 border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#333] after:rounded-[2px] after:opacity-0 peer-checked:after:opacity-100"
                             ></label>
                         </div>
@@ -126,7 +142,7 @@ const Table = ({ tableData, editPath, deletePath}) => {
                         </td>
                         <td className="py-3 px-6 text-center align-middle">
                         <button
-                            onClick={() => _handleActionClick(index)}
+                            onClick={() => handleActionClick(index)}
                             className="text-gray-500 hover:text-gray-700"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -167,6 +183,45 @@ const Table = ({ tableData, editPath, deletePath}) => {
                     ))}
                 </tbody>
             </table>
+            {/* Pagination controls */}
+            <div className="flex justify-center py-4 pr-5">
+                <button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 mx-2 ${currentPage === 1 ? 'text-gray-400' : 'text-black'}`}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                </button>
+
+                {Array.from({ length: totalPages }).map((_, index) => {
+                    const pageNumber = index + 1;
+                    const isPageInRange = pageNumber >= Math.max(1, currentPage - 2) && pageNumber <= Math.min(totalPages, currentPage + 2);
+
+                    if (!isPageInRange) return null;
+
+                    return (
+                    <button
+                        key={pageNumber}
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className={`text-sm font-semibold px-3 mx-1 rounded-md ${currentPage === pageNumber ? 'bg-black text-white' : 'bg-gray-100 text-black'}`}
+                    >
+                        {pageNumber}
+                    </button>
+                    );
+                })}
+
+                <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 mx-2 ${currentPage === totalPages ? 'text-gray-400' : 'text-black'}`}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                </button>
+            </div>
         </div>
     );
 };
