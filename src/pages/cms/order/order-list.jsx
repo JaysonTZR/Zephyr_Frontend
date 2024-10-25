@@ -6,8 +6,8 @@ import Header from "../../../components/cms/Header";
 
 const CMSOrderList = () => {
   return (
-    <div className="flex min-h-screen" style={{ backgroundColor: '#f1f5f9' }}>
-      <Sidebar page={'order-list'}/>
+    <div className="flex min-h-screen" style={{ backgroundColor: "#f1f5f9" }}>
+      <Sidebar page={"order-list"} />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -16,9 +16,7 @@ const CMSOrderList = () => {
         <Breadcrumb />
 
         {/* Main Section */}
-        <div className="text-2xl font-semibold ml-6">
-          Dashboard
-        </div>
+        <div className="text-2xl font-semibold ml-6">Dashboard</div>
         <main className="flex-1 p-6">
           <div className="bg-white py-12 px-16 border rounded-lg">
             <h2 className="font-medium text-center text-2xl">
