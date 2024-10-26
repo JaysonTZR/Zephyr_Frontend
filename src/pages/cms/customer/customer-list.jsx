@@ -14,30 +14,38 @@ const CMSCustomerList = () => {
       username: "Demo",
       role: "Admin",
       creator: "Ips",
-      creationDate: "2024-01-30 15:32:37",
+      creation_date: "2024-01-30 15:32:37",
       status: "Active",
     },
     {
       username: "Ayama1",
       role: "Super Admin",
       creator: "Ips",
-      creationDate: "2024-03-27 16:55:09",
+      creation_date: "2024-03-27 16:55:09",
       status: "Active",
     },
     {
       username: "JohnDoe",
       role: "Editor",
       creator: "JaneDoe",
-      creationDate: "2024-05-14 10:23:45",
+      creation_date: "2024-05-14 10:23:45",
       status: "Inactive",
     },
     {
       username: "JaneDoe",
       role: "Admin",
       creator: "Ips",
-      creationDate: "2024-06-18 14:12:22",
+      creation_date: "2024-06-18 14:12:22",
       status: "Active",
     },
+  ];
+
+  const tableHeader = [
+    "Username",
+    "Role",
+    "Creator",
+    "Creation_Date",
+    "Status",
   ];
 
   const addCustomer = () => {
@@ -80,7 +88,7 @@ const CMSCustomerList = () => {
               </div>
 
               {/* Table Section */}
-              <Table tableData={dummyData} editPath={"/cms/customer/edit"} deletePath={true}/>
+              <Table tableHeader={tableHeader} tableData={dummyData} editPath={"/cms/customer/edit"} deletePath={true}/>
             </div>
           </main>
           <Footer />
