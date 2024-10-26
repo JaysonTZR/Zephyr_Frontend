@@ -2,7 +2,7 @@ import React from "react";
 
 const Sidebar = ({ page }) => {
   return (
-    <div className="w-64 bg-white shadow-md">
+    <div className="w-64 bg-white border-r fixed h-full z-20">
       <div className="p-6">
         {/* Placeholder for the logo */}
         {/* <img src="/path-to-logo.png" alt="Logo" className="h-10 mb-4" /> can you make this show no image > */}
