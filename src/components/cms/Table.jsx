@@ -76,33 +76,33 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
                 ></label>
               </div>
             </th>
-            {tableHeader.map((header, idx) => (
+            {tableHeader.map((header, index) => (
               <th
                 className="py-5 px-6 text-center font-semibold text-gray-700 align-middle"
-                key={idx}
+                key={index}
               >
                 {header.replace(/_/g, " ")}
               </th>
             ))}
-            <th className="py-5 px-6 text-center font-extrabold text-gray-700 align-middle">
+            <th className="py-5 px-6 text-center font-semibold text-gray-700 align-middle">
               Action
             </th>
           </tr>
         </thead>
         <tbody>
-          {tableData.map((user, index) => (
-            <tr className="border-t text-sm" key={index}>
+          {currentRows.map((user, index) => (
+            <tr className="border-t text-sm" key={indexOfFirstRow + index}>
               <td className="py-5 px-6 text-center align-middle">
                 <div className="flex items-center justify-center">
                   <input
                     type="checkbox"
-                    id={"tableContentCheckbox-" + index}
+                    id={"tableContentCheckbox-" + (indexOfFirstRow + index)}
                     className="peer cursor-pointer hidden after:opacity-100"
-                    checked={checkedState[index]}
-                    onChange={() => handleRowCheckboxChange(index)}
+                    checked={checkedState[indexOfFirstRow + index]}
+                    onChange={() => handleRowCheckboxChange(indexOfFirstRow + index)}
                   />
                   <label
-                    htmlFor={"tableContentCheckbox-" + index}
+                    htmlFor={"tableContentCheckbox-" + indexOfFirstRow + index}
                     className="inline-block w-4 h-4 border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#333] after:rounded-[2px] after:opacity-0 peer-checked:after:opacity-100"
                   ></label>
                 </div>

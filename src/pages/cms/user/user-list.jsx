@@ -8,6 +8,9 @@ import Table from "../../../components/cms/Table";
 
 const CMSUserList = () => {
   const navigate = useNavigate();
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedField, setSelectedField] = useState("");
+  const [filterValue, setFilterValue] = useState("");
 
   const dummyData = [
     {
@@ -54,6 +57,27 @@ const CMSUserList = () => {
     });
   };
 
+  const filteredData = dummyData.filter(item => {
+    if (selectedField && filterValue) {
+      return item[selectedField].toString().toLowerCase().includes(filterValue.toLowerCase());
+    }
+    return true;
+  });
+
+  const handleFieldChange = (e) => {
+    setSelectedField(e.target.value);
+    setFilterValue("");
+  };
+
+  const handleFilterValueChange = (e) => {
+    setFilterValue(e.target.value);
+  };
+
+  const clearFilter = () => {
+    setSelectedField("");
+    setFilterValue("");
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-100">
       <Sidebar page="user-list" />
@@ -72,7 +96,9 @@ const CMSUserList = () => {
                 </div>
 
                 <div className="flex space-x-4">
-                  <button className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center">
+                  <button 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -112,10 +138,60 @@ const CMSUserList = () => {
                 </div>
               </div>
 
+              {showFilters && (
+                <div className="p-6 bg-gray-50">
+                  <div className="grid grid-cols-11 gap-4 items-center">
+                    {/* Left column: Choose field to filter */}
+                    <select
+                      name="selectedField"
+                      value={selectedField}
+                      onChange={handleFieldChange}
+                      className="border rounded-md p-2 col-span-5"
+                    >
+                      <option value="">Select Field</option>
+                      <option value="username">Username</option>
+                      <option value="role">Role</option>
+                      <option value="status">Status</option>
+                    </select>
+
+                    {/* Right column: Enter value for selected filter field */}
+                    {selectedField === "status" ? (
+                      <select
+                        name="filterValue"
+                        value={filterValue}
+                        onChange={handleFilterValueChange}
+                        className="border rounded-md p-2 col-span-5"
+                      >
+                        <option value="">All Status</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        name="filterValue"
+                        placeholder={`Enter ${selectedField}`}
+                        value={filterValue}
+                        onChange={handleFilterValueChange}
+                        className="border rounded-md p-2 col-span-5"
+                      />
+                    )}
+
+                    {/* Clear Button */}
+                    <button 
+                      onClick={clearFilter}
+                      className="text-white h-9 rounded-md text-sm focus:outline-none hover:bg-zinc-700 bg-black flex justify-center items-center"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Table Section */}
               <Table
                 tableHeader={tableHeader}
-                tableData={dummyData}
+                tableData={filteredData}
                 editPath={"/cms/user/edit"}
                 deletePath={true}
               />
