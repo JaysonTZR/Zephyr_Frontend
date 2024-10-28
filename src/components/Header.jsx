@@ -27,7 +27,7 @@ function Header() {
             </li>
             <li className="cursor-pointer">
               <a 
-                href="/" 
+                href="/about-us" 
                 className="font-semibold text-gray-600 hover:text-orange-600 hover:scale-105 transition-all duration-300"
               >
                 ABOUT US

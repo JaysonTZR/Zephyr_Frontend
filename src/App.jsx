@@ -2,7 +2,8 @@ import React, { lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
 
-const HomePage = lazy(() => import("./pages/home/home-page"));
+const HomePage = lazy(() => import("./pages/home/home"));
+const AboutUs = lazy(() => import("./pages/home/about-us"));
 const Shop = lazy(() => import("./pages/shop/shop"));
 const Login = lazy(() => import("./pages/auth/login"));
 const Register = lazy(() => import("./pages/auth/register"));
@@ -38,6 +39,9 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+      </Routes>
+      <Routes>
+        <Route path="/about-us" element={<AboutUs />} />
       </Routes>
       <Routes>
         <Route path="/login" element={<Login />} />
