@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
-import AboutUsImage from "../../assets/images/chaeyoung-model.jpg"
+import AboutUsImage from "../../assets/images/tzuyu-model-2.jpg"
 import CampingImage from "../../assets/images/camping.jpg"
 import ClientImage from "../../assets/images/client.png"
 

@@ -1,13 +1,17 @@
 import React from 'react';
+import Logo from '../assets/logo/logo.png';
 
 function Header() {
   return (
     <header>
       <div className='flex justify-center shadow-md'>
         <nav className="flex justify-between items-center p-4 w-8/12">
-          <div className="text-2xl font-bold">
+          {/* <div className="text-2xl font-bold">
             <a href="/">ZEPHYR.</a>
-          </div>
+          </div> */}
+          <a href="/" className="h-6 flex justify-center items-center">
+            <img src={Logo} alt="Logo" className="object-cover w-auto h-full"/>
+          </a>
           <ul className="flex space-x-6">
             <li className="cursor-pointer">
               <a 
@@ -19,18 +23,18 @@ function Header() {
             </li>
             <li className="cursor-pointer">
               <a 
-                href="/shop" 
-                className="font-semibold text-gray-600 hover:text-orange-600 hover:scale-105 transition-all duration-300"
-              >
-                SHOP
-              </a>
-            </li>
-            <li className="cursor-pointer">
-              <a 
                 href="/about-us" 
                 className="font-semibold text-gray-600 hover:text-orange-600 hover:scale-105 transition-all duration-300"
               >
                 ABOUT US
+              </a>
+            </li>
+            <li className="cursor-pointer">
+              <a 
+                href="/shop" 
+                className="font-semibold text-gray-600 hover:text-orange-600 hover:scale-105 transition-all duration-300"
+              >
+                SHOP
               </a>
             </li>
             <li className="cursor-pointer">

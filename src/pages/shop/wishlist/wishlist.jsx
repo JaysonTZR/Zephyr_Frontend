@@ -58,7 +58,7 @@ const Wishlist = () => {
           <div className="grid grid-cols-10 gap-6 border-b pb-4">
             <div className="col-span-6 font-semibold uppercase">Product</div>
             {/* <div className="col-span-2 font-semibold text-center uppercase">Quantity</div> */}
-            <div className="col-span-3 font-semibold text-center uppercase">Total</div>
+            <div className="col-span-3 font-semibold text-center uppercase">Price</div>
           </div>
           {items.map((item) => (
             <div
