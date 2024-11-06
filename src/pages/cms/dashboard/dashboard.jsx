@@ -3,8 +3,24 @@ import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
+import AnnualSalesChart from "../../../components/cms/AnnualSalesChart";
 
 const Dashboard = () => {
+  const salesData = [
+    { month: "Jan", sales: 3000 },
+    { month: "Feb", sales: 2500 },
+    { month: "Mar", sales: 4000 },
+    { month: "Apr", sales: 3500 },
+    { month: "May", sales: 4500 },
+    { month: "Jun", sales: 5000 },
+    { month: "Jul", sales: 5500 },
+    { month: "Aug", sales: 6000 },
+    { month: "Sep", sales: 5200 },
+    { month: "Oct", sales: 4800 },
+    { month: "Nov", sales: 5300 },
+    { month: "Dec", sales: 6200 },
+  ];
+
   return (
     <div className="flex min-h-screen bg-slate-100">
       <Sidebar page={"dashboard"} />
@@ -27,7 +43,7 @@ const Dashboard = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-12 text-green-600 mr-3 p-2 bg-green-100 rounded-full"
+                  className="w-8 h-8 text-green-600 mr-3 p-1 bg-green-100 rounded-full"
                 >
                   <path
                     strokeLinecap="round"
@@ -48,7 +64,7 @@ const Dashboard = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-12 text-blue-600 mr-3 p-2 bg-blue-100 rounded-full"
+                  className="w-8 h-8 text-blue-600 mr-3 p-1 bg-blue-100 rounded-full"
                 >
                   <path
                     strokeLinecap="round"
@@ -69,7 +85,7 @@ const Dashboard = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-12 text-purple-600 mr-3 p-2 bg-purple-100 rounded-full"
+                  className="w-8 h-8 text-purple-600 mr-3 p-1 bg-purple-100 rounded-full"
                 >
                   <path
                     strokeLinecap="round"
@@ -84,14 +100,13 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="bg-white flex items-center py-4 px-4 border rounded-lg">
-
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="size-12 text-yellow-600 mr-3 p-2 bg-yellow-100 rounded-full"
+                  className="w-8 h-8 text-yellow-600 mr-3 p-1 bg-yellow-100 rounded-full"
                 >
                   <path
                     strokeLinecap="round"
@@ -117,6 +132,9 @@ const Dashboard = () => {
                 guidance on maximizing your experience with your current screen.
               </p>
             </div>
+
+            {/* Annual Sales Charts Section */}
+            <AnnualSalesChart data={salesData} />
           </main>
 
           <Footer />
