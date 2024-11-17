@@ -16,6 +16,7 @@ function HomePage() {
   const [section4Ref, section4InView] = useInView(options);
   const [section5Ref, section5InView] = useInView(options);
   const [section6Ref, section6InView] = useInView(options);
+  const [section7Ref, section7InView] = useInView(options);
 
   return (
     <div className="font-sans text-center" style={{ backgroundColor: '#f1f1f0' }}>
@@ -203,7 +204,7 @@ function HomePage() {
 
         <section
           ref={section5Ref}
-          className={`bg-white px-[300px] pb-12 pt-5 ${
+          className={`bg-white px-[300px] pb-16 pt-5 ${
             section5InView ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -224,48 +225,88 @@ function HomePage() {
               </svg>
             </button>
             <div className="flex space-x-[51px]">
-              <div className="w-72 transition-transform duration-500 hover:scale-95">
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
                 <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
                   Image 7
                 </div>
                 <div className="mt-3 text-xl tracking-wide text-left uppercase">
                   Dark Florish Onepiece
                 </div>
                 <div className="mt-2 text-lg text-left">
-                  $95.00
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$95.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
                 </div>
               </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95">
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
                 <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
                   Image 8
                 </div>
                 <div className="mt-3 text-xl tracking-wide text-left uppercase">
                   Baggy Shirt
                 </div>
                 <div className="mt-2 text-lg text-left">
-                  $55.00
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$55.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
                 </div>
               </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95">
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
                 <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
                   Image 9
                 </div>
                 <div className="mt-3 text-xl tracking-wide text-left uppercase">
                   Cotton Off-White Shirt
                 </div>
                 <div className="mt-2 text-lg text-left">
-                  $65.00
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$65.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
                 </div>
               </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95">
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
                 <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
                   Image 10
                 </div>
                 <div className="mt-3 text-xl tracking-wide text-left uppercase">
                   Crop Sweater
                 </div>
                 <div className="mt-2 text-lg text-left">
-                  $50.00
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$50.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
                 </div>
               </div>
             </div>
@@ -307,7 +348,123 @@ function HomePage() {
           </div>
         </section>
 
-        <section className="py-24 bg-white">
+        <section
+          ref={section7Ref}
+          className={`bg-white px-[300px] pb-16 pt-24 ${
+            section7InView ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <div className="flex justify-between">
+            <div>
+              <h2 className="text-3xl mb-6 uppercase">Best Selling Items</h2>
+            </div>
+            <div>
+              <a href="/shop" className="underline underline-offset-8 uppercase text-sm tracking-widest">
+                View All Products
+              </a>
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <button className="p-6 mr-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+              </svg>
+            </button>
+            <div className="flex space-x-[51px]">
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
+                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
+                  Image 7
+                </div>
+                <div className="mt-3 text-xl tracking-wide text-left uppercase">
+                  Dark Florish Onepiece
+                </div>
+                <div className="mt-2 text-lg text-left">
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$95.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
+                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
+                  Image 8
+                </div>
+                <div className="mt-3 text-xl tracking-wide text-left uppercase">
+                  Baggy Shirt
+                </div>
+                <div className="mt-2 text-lg text-left">
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$55.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
+                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
+                  Image 9
+                </div>
+                <div className="mt-3 text-xl tracking-wide text-left uppercase">
+                  Cotton Off-White Shirt
+                </div>
+                <div className="mt-2 text-lg text-left">
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$65.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
+                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
+                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                          </svg>
+                      </button>
+                  </div>
+                  Image 10
+                </div>
+                <div className="mt-3 text-xl tracking-wide text-left uppercase">
+                  Crop Sweater
+                </div>
+                <div className="mt-2 text-lg text-left">
+                  <span className="opacity-100 group-hover:opacity-0 duration-300">$50.00</span>
+                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      + Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+            <button className="p-6 ml-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-8">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+              </svg>
+            </button>
+          </div>
+        </section>
+
+        <section className="py-24">
           <div className="max-w-3xl mx-auto text-center mb-20">
             <h2 className="text-4xl mb-8 uppercase tracking-wider">
               Sign Up for Our Newsletter
