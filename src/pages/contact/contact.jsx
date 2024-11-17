@@ -17,7 +17,7 @@ const Contact = () => {
                     referrerpolicy="no-referrer-when-downgrade">
                 </iframe>
             </div>
-            <div className="container mx-auto my-12 px-48 md:flex justify-between items-start pt-10">
+            <div className="container mx-auto my-12 px-48 md:flex justify-between items-start pt-10 mb-20">
                 <div className='md:w-1/2'>
                     <h5 className='text-sm font-semibold text-red-600 tracking-wider uppercase mb-3'> Information</h5>
                     <h1 className='text-5xl font-semibold mb-5'> Contact Us</h1>

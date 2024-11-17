@@ -89,7 +89,7 @@ const Shop = () => {
       <Header />
 
       <Banner bannerText="Shop" />
-      <div className="flex justify-center">
+      <div className="flex justify-center mb-20">
         <div className="py-8 flex w-7/12">
           {/* Left Panel */}
           <AccordionItem />

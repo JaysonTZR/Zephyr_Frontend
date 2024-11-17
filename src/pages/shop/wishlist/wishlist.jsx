@@ -54,7 +54,7 @@ const Wishlist = () => {
       )}
 
       {items.length > 0 && (
-        <div className="container mx-auto py-8 w-7/12">
+        <div className="container mx-auto py-8 w-7/12 mb-20">
           <div className="grid grid-cols-10 gap-6 border-b pb-4">
             <div className="col-span-6 font-semibold uppercase">Product</div>
             {/* <div className="col-span-2 font-semibold text-center uppercase">Quantity</div> */}

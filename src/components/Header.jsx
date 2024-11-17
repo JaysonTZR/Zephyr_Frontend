@@ -3,7 +3,7 @@ import Logo from '../assets/logo/logo.png';
 
 function Header() {
   return (
-    <header>
+    <header className='bg-white'>
       <div className='flex justify-center shadow-md'>
         <nav className="flex justify-between items-center p-4 w-8/12">
           {/* <div className="text-2xl font-bold">

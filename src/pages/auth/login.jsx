@@ -28,7 +28,7 @@ function Login() {
 
       <Banner bannerText="Login" />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center mb-20">
         <div className="py-8 w-7/12">
           <div className="bg-white rounded-md shadow-lg flex p-8">
             {" "}

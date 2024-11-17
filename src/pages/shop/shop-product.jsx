@@ -145,7 +145,7 @@ const ShopProduct = () => {
         </div>
       </div>
 
-      <div className="container mx-auto p-4 px-40">
+      <div className="container mx-auto p-4 px-40 mb-20">
         {/* Menu Section */}
         <div className="p-5">
           <div className="flex">

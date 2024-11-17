@@ -21,7 +21,7 @@ function Register() {
       <Header />
       <Banner bannerText="CREATE AN ACCOUNT" />
 
-      <div className="flex justify-center">
+      <div className="flex justify-center mb-20">
         <div className="py-8 w-7/12">
           <div className="bg-white rounded-md shadow-lg flex p-8">
             <div className="w-1/2 pr-4">

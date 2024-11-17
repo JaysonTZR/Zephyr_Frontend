@@ -26,7 +26,7 @@ function Cart() {
       <Header />
 
       <Banner bannerText="Shopping Cart" />
-      <div className="flex justify-center">
+      <div className="flex justify-center mb-20">
         <div className="py-8 w-7/12">
           <div className="container mx-auto flex flex-col lg:flex-row lg:space-x-2">
             <div className="bg-white rounded-md flex-grow">

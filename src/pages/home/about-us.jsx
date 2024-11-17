@@ -43,7 +43,7 @@ const AboutUs = () => {
         </div>
 
         <div className="grid grid-cols-2">
-            <div className="flex flex-col py-36" style={{ backgroundColor: '#f4f3f0'}}>
+            <div className="flex flex-col py-36" style={{ backgroundColor: '#f1f1f0'}}>
                 <div className="text-9xl font-serif flex justify-center text-red-500">
                     "
                 </div>
@@ -150,7 +150,7 @@ const AboutUs = () => {
             </div>
         </div>
 
-        <div className="flex flex-col items-center py-8">
+        <div className="flex flex-col items-center py-8 mb-20">
             <div className="uppercase font-semibold text-red-500 tracking-widest">
                 Partner
             </div>
