@@ -1,6 +1,7 @@
 import React, { lazy } from "react";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import "./App.css";
+import AuthRoute from "./AuthRoute";
 
 const HomePage = lazy(() => import("./pages/home/home"));
 const AboutUs = lazy(() => import("./pages/home/about-us"));
@@ -39,89 +40,154 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-      </Routes>
-      <Routes>
         <Route path="/about-us" element={<AboutUs />} />
-      </Routes>
-      <Routes>
         <Route path="/login" element={<Login />} />
-      </Routes>
-      <Routes>
         <Route path="/register" element={<Register />} />
-      </Routes>
-      <Routes>
         <Route path="/shop" element={<Shop />} />
-      </Routes>
-      <Routes>
         <Route path="/cart" element={<Cart />} />
-      </Routes>
-      <Routes>
         <Route path="/checkout" element={<Checkout />} />
-      </Routes>
-      <Routes>
         <Route path="/product" element={<ShopProduct />} />
-      </Routes>
-      <Routes>
         <Route path="/contact" element={<Contact />} />
-      </Routes>
-      <Routes>
         <Route path="/wishlist" element={<Wishlist />} />
-      </Routes>
 
-      {/* CMS Start Here */}
-      <Routes>
+        {/* CMS Start Here */}
         <Route path="/cms" element={<CMSLogin />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/dashboard" element={<Dashboard />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/profile" element={<CMSProfile />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/user/list" element={<CMSUserList />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/user/edit" element={<CMSUserEdit />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/user/add" element={<CMSUserAdd />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/product/list" element={<CMSProductList />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/product/edit" element={<CMSProductEdit />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/product/add" element={<CMSProductAdd />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/order/list" element={<CMSOrderList />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/order/edit" element={<CMSOrderEdit />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/order/add" element={<CMSOrderAdd />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/customer/list" element={<CMSCustomerList />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/customer/edit" element={<CMSCustomerEdit />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/customer/add" element={<CMSCustomerAdd />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/category/list" element={<CMSCategoryList />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/category/edit" element={<CMSCategoryEdit />} />
-      </Routes>
-      <Routes>
-        <Route path="/cms/category/add" element={<CMSCategoryAdd />} />
+        <Route
+          path="/cms/dashboard"
+          element={
+            <AuthRoute>
+              <Dashboard />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/profile"
+          element={
+            <AuthRoute>
+              <CMSProfile />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/user/list"
+          element={
+            <AuthRoute>
+              <CMSUserList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/user/edit"
+          element={
+            <AuthRoute>
+              <CMSUserEdit />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/user/add"
+          element={
+            <AuthRoute>
+              <CMSUserAdd />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/product/list"
+          element={
+            <AuthRoute>
+              <CMSProductList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/product/edit"
+          element={
+            <AuthRoute>
+              <CMSProductEdit />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/product/add"
+          element={
+            <AuthRoute>
+              <CMSProductAdd />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/order/list"
+          element={
+            <AuthRoute>
+              <CMSOrderList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/order/edit"
+          element={
+            <AuthRoute>
+              <CMSOrderEdit />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/order/add"
+          element={
+            <AuthRoute>
+              <CMSOrderAdd />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/customer/list"
+          element={
+            <AuthRoute>
+              <CMSCustomerList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/customer/edit"
+          element={
+            <AuthRoute>
+              <CMSCustomerEdit />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/customer/add"
+          element={
+            <AuthRoute>
+              <CMSCustomerAdd />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/category/list"
+          element={
+            <AuthRoute>
+              <CMSCategoryList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/category/edit"
+          element={
+            <AuthRoute>
+              <CMSCategoryEdit />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/category/add"
+          element={
+            <AuthRoute>
+              <CMSCategoryAdd />
+            </AuthRoute>
+          }
+        />
       </Routes>
     </Router>
   );
