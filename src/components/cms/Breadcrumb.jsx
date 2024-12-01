@@ -8,21 +8,31 @@ const Breadcrumb = () => {
   const breadcrumbNameMap = {
     '/dashboard': 'Dashboard',
     '/profile': 'Profile',
-    '/user/list': 'Manage User',
-    '/user/edit': 'Edit User',
-    '/user/add': 'Add User',
-    '/customer/list': 'Manage Customer',
-    '/customer/edit': 'Edit Customer',
-    '/customer/add': 'Add Customer',
+
     '/category/list': 'Manage Category',
     '/category/edit': 'Edit Category',
     '/category/add': 'Add Category',
+
     '/product/list': 'Manage Product',
     '/product/edit': 'Edit Product',
     '/product/add': 'Add Product',
+
+    '/discount/list': 'Manage Discount',
+    '/discount/edit': 'Edit Discount',
+    '/discount/add': 'Add Discount',
+
+    '/customer/list': 'Manage Customer',
+    '/customer/edit': 'Edit Customer',
+    '/customer/add': 'Add Customer',
+
     '/order/list': 'Manage Order',
     '/order/edit': 'Edit Order',
     '/order/add': 'Add Order',
+
+    '/user/list': 'Manage User',
+    '/user/edit': 'Edit User',
+    '/user/add': 'Add User',
+    
   };
 
   // Get the current path and split it into segments
