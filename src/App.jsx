@@ -214,7 +214,7 @@ function App() {
           }
         />
         <Route
-          path="/cms/user/edit"
+          path="/cms/user/edit/:id"
           element={
             <AuthRoute>
               <CMSUserEdit />
