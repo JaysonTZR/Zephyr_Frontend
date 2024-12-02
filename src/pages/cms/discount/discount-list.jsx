@@ -12,46 +12,15 @@ import axios from "axios";
 
 const CMSDiscountList = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([]);
+  const [formData, setFormData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const dummyData = [
-    {
-      username: "Demo",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-01-30 15:32:37",
-      status: "Active",
-    },
-    {
-      username: "Ayama1",
-      role: "Super Admin",
-      creator: "Ips",
-      creation_date: "2024-03-27 16:55:09",
-      status: "Active",
-    },
-    {
-      username: "JohnDoe",
-      role: "Editor",
-      creator: "JaneDoe",
-      creation_date: "2024-05-14 10:23:45",
-      status: "Inactive",
-    },
-    {
-      username: "JaneDoe",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-06-18 14:12:22",
-      status: "Active",
-    },
-  ];
-
   const tableHeader = ["code", "amount", "created_at", "status"];
 
   const fetchData = async () => {
-    // Fetch data from API
+    // Fetch formData from API
     try {
       const response = await axios.get(apiUrl + "discount/",{});
       // console.log(response.status);
@@ -69,7 +38,9 @@ const CMSDiscountList = () => {
           created_at: item.created_at,
         }));
 
-        setData(transformedData);
+        setFormData(transformedData);
+
+        console.log(transformedData);
       }
 
     } catch (error) {
@@ -83,6 +54,7 @@ const CMSDiscountList = () => {
         progress: undefined,
         theme: "light",
       });
+      // console.log(error)
     }
     // console.log(apiUrl);
   };
@@ -93,7 +65,7 @@ const CMSDiscountList = () => {
     });
   };
 
-  const filteredData = data.filter((item) => {
+  const filteredData = formData.filter((item) => {
     if (selectedField && filterValue) {
       return item[selectedField]
         .toString()
@@ -124,7 +96,7 @@ const CMSDiscountList = () => {
   return (
     <div className="flex min-h-screen bg-slate-100">
       <ToastContainer />
-      <Sidebar page="category-list" />
+      <Sidebar page="discount-list" />
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <Header />

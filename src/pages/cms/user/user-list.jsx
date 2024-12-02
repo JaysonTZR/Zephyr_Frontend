@@ -1,4 +1,4 @@
-import React, { useState, startTransition } from "react";
+import React, { useState, startTransition, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
@@ -6,8 +6,13 @@ import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import Table from "../../../components/cms/Table";
 
+import { ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../../../constant/constants";
+import axios from "axios";
+
 const CMSUserList = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
@@ -44,12 +49,57 @@ const CMSUserList = () => {
   ];
 
   const tableHeader = [
-    "Username",
-    "Role",
-    "Creator",
-    "Creation_Date",
+    "username",
+    "email",
+    "role",
+    "created_at",
     "Status",
   ];
+
+  const fetchData = async () => {
+    // Fetch formData from API
+    try {
+      const response = await axios.get(apiUrl + "user",{});
+      // console.log(response.status);
+
+      if (response.status === 200){
+
+        const transformedData = response.data.map((item) => ({
+          id: item.user_id,
+          username: item.user_name,
+          email: item.user_email,
+          role: item.user_role,
+          status: item.user_status,
+          trash: item.trash,
+          updatedAt: item.updated_at,
+          created_at: item.created_at,
+        }));
+
+        setFormData(transformedData);
+
+        console.log(transformedData);
+      }
+
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      // console.log(error)
+    }
+    // console.log(apiUrl);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
 
   const addUser = () => {
     startTransition(() => {
@@ -80,6 +130,7 @@ const CMSUserList = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-100">
+      <ToastContainer />
       <Sidebar page="user-list" />
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -191,7 +242,7 @@ const CMSUserList = () => {
               {/* Table Section */}
               <Table
                 tableHeader={tableHeader}
-                tableData={filteredData}
+                tableData={formData}
                 editPath={"/cms/user/edit"}
                 deletePath={true}
               />

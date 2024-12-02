@@ -89,7 +89,7 @@ function App() {
           }
         />
         <Route
-          path="/cms/category/edit"
+          path="/cms/category/edit/:id"
           element={
             <AuthRoute>
               <CMSCategoryEdit />
@@ -139,7 +139,7 @@ function App() {
           }
         />
         <Route
-          path="/cms/discount/edit"
+          path="/cms/discount/edit/:id"
           element={
             <AuthRoute>
               <CMSDiscountEdit />

@@ -14,9 +14,9 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
     setShowDropdown(showDropdown === index ? null : index);
   };
 
-  const handleEdit = (index) => {
+  const handleEdit = (id) => {
     startTransition(() => {
-      navigate(editPath);
+      navigate(editPath+`/${id}`);
     });
     setShowDropdown(null);
   };
@@ -165,7 +165,7 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
                       <div className="">
                         {editPath && (
                           <button
-                            onClick={() => handleEdit(index)}
+                            onClick={() => handleEdit(item.id)}
                             className="flex items-center px-4 py-2 text-sm w-full border text-gray-700 hover:bg-black hover:text-white"
                           >
                             Edit

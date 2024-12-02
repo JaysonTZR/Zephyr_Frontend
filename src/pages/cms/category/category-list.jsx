@@ -1,4 +1,4 @@
-import React, { useState, startTransition } from "react";
+import React, { useState, startTransition, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
@@ -6,8 +6,13 @@ import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import Table from "../../../components/cms/Table";
 
+import { ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../../../constant/constants";
+import axios from "axios";
+
 const CMSCategoryList = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
@@ -44,12 +49,53 @@ const CMSCategoryList = () => {
   ];
 
   const tableHeader = [
-    "Username",
-    "Role",
-    "Creator",
-    "Creation_Date",
+    "title",
+    "type",
+    "created_by",
+    "created_at",
     "Status",
   ];
+
+  const fetchData = async () => {
+    // Fetch formData from API
+    try {
+      const response = await axios.get(apiUrl + "category",{});
+      // console.log(response.status);
+
+      if (response.status === 200){
+
+        const transformedData = response.data.map((item) => ({
+          id: item.category_id,
+          title: item.category_name,
+          type: item.category_type,
+          created_by: item.created_by,
+          status: item.category_status,
+          trash: item.trash,
+          updated_at: item.updated_at,
+          created_at: item.created_at,
+        }));
+
+        setFormData(transformedData);
+
+        // console.log(transformedData);
+      }
+
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      // console.log(error)
+    }
+    // console.log(apiUrl);
+  };
+
 
   const addCategory = () => {
     startTransition(() => {
@@ -77,6 +123,10 @@ const CMSCategoryList = () => {
     setSelectedField("");
     setFilterValue("");
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-slate-100">
@@ -162,7 +212,7 @@ const CMSCategoryList = () => {
               )}
 
               {/* Table Section */}
-              <Table tableHeader={tableHeader} tableData={filteredData} editPath={"/cms/category/edit"} deletePath={true}/>
+              <Table tableHeader={tableHeader} tableData={formData} editPath={"/cms/category/edit"} deletePath={true}/>
             </div>
           </main>
           <Footer />
