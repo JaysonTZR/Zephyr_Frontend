@@ -5,8 +5,7 @@ import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import Table from "../../../components/cms/Table";
-
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
@@ -16,37 +15,6 @@ const CMSCategoryList = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
-
-  const dummyData = [
-    {
-      username: "Demo",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-01-30 15:32:37",
-      status: "Active",
-    },
-    {
-      username: "Ayama1",
-      role: "Super Admin",
-      creator: "Ips",
-      creation_date: "2024-03-27 16:55:09",
-      status: "Active",
-    },
-    {
-      username: "JohnDoe",
-      role: "Editor",
-      creator: "JaneDoe",
-      creation_date: "2024-05-14 10:23:45",
-      status: "Inactive",
-    },
-    {
-      username: "JaneDoe",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-06-18 14:12:22",
-      status: "Active",
-    },
-  ];
 
   const tableHeader = [
     "title",
@@ -102,13 +70,6 @@ const CMSCategoryList = () => {
       navigate("/cms/category/add");
     });
   }
-
-  const filteredData = dummyData.filter(item => {
-    if (selectedField && filterValue) {
-      return item[selectedField].toString().toLowerCase().includes(filterValue.toLowerCase());
-    }
-    return true;
-  });
 
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);

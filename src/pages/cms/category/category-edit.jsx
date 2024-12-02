@@ -1,38 +1,39 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, startTransition } from "react";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
-
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
-
 const CMSCategoryEdit = () => {
-
+  const navigate = useNavigate();
   const { id } = useParams();
-
   const [formData, setFormData] = useState({
     category_type: "",
     category_name: "",
     category_status: "active",
+    created_by: "",
     trash: false,
   });
 
-  const handleInputChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const fetchData = async () => {
-    // Fetch data from API
+  const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(apiUrl + `category/${id}`, {});
-      // console.log(response.data);
+      const response = await axios.get(
+        apiUrl + `category/${id}`
+      );
 
       if (response.status === 200) {
-        setFormData(response.data);
+        const responseData = response.data;
+        setFormData({
+          category_type: responseData.category_type,
+          category_name: responseData.category_name,
+          category_status: responseData.category_status,
+          created_by: responseData.created_by,
+        });
       }
     } catch (error) {
       toast.error("Error Fetching Data", {
@@ -46,18 +47,39 @@ const CMSCategoryEdit = () => {
         theme: "light",
       });
     }
-    // console.log(apiUrl);
+  }, [id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleInputChange = (name, value) => {
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [name]: value,
+      };
+
+      return updatedData;
+    });
   };
 
   const handleSubmit = async () => {
-    // Submit form data to API
-
     try {
-      const response = await axios.put(apiUrl + `category/${id}`, formData, {});
-      // console.log(response.data.message);
+      const response = await axios.put(
+        apiUrl + `category/${id}`, 
+        {
+          'category_id': id,
+          'category_type': formData.category_type,
+          'category_name': formData.category_name,
+          'category_status': formData.category_status,
+          'created_by': formData.created_by,
+        }, 
+        {}
+      );
 
       if (response.status === 200) {
-        toast.success(response.data.message, {
+        toast.success("Data Updated Successfully", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,
@@ -66,6 +88,11 @@ const CMSCategoryEdit = () => {
           draggable: true,
           progress: undefined,
           theme: "light",
+          onClose: () => {
+            startTransition(() => {
+              navigate("/cms/category/list");
+            });
+          },
         });
       }
     } catch (error) {
@@ -82,10 +109,18 @@ const CMSCategoryEdit = () => {
     }
   };
 
-  useEffect(() => {
-    // console.log(id);
-    fetchData();
-  }, []);
+  const handleClear = () => {
+    setFormData({
+      category_type: "",
+      category_name: "",
+      category_status: "active",
+    });
+  };
+
+  const statusOptions = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+  ];
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -105,7 +140,8 @@ const CMSCategoryEdit = () => {
               </div>
 
               <div className="p-6">
-                <form className="space-y-6">
+                <div className="space-y-6">
+                  {/* Category Name */}
                   <div className="flex flex-row">
                     <label htmlFor="category_name" className="mb-2 mt-2 w-72">
                       Category Name<span className="text-red-500"> *</span>
@@ -123,6 +159,7 @@ const CMSCategoryEdit = () => {
                     />
                   </div>
 
+                  {/* Category Type */}
                   <div className="flex flex-row">
                     <label htmlFor="category_type" className="mb-2 mt-2 w-72">
                       Category Type<span className="text-red-500"> *</span>
@@ -140,10 +177,10 @@ const CMSCategoryEdit = () => {
                     />
                   </div>
 
-                  {/* Status Field */}
+                  {/* Status */}
                   <div className="flex flex-row">
                     <label htmlFor="category_status" className="mb-2 mt-2 w-72">
-                      Status
+                      Status<span className="text-red-500"> *</span>
                     </label>
                     <select
                       id="category_status"
@@ -154,8 +191,12 @@ const CMSCategoryEdit = () => {
                         handleInputChange("category_status", e.target.value)
                       }
                     >
-                      <option value="active" label="Active">Active</option>
-                      <option value="inactive" label="Inactive">Inactive</option>
+                      <option value="" disabled hidden>Select a status</option>
+                      {statusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -164,6 +205,7 @@ const CMSCategoryEdit = () => {
                     <button
                       type="button"
                       className="bg-white text-gray-700 px-5 py-3 rounded-md hover:bg-gray-300 border border-black tracking-widest text-sm flex"
+                      onClick={handleClear}
                     >
                       Clear
                     </button>
@@ -175,7 +217,7 @@ const CMSCategoryEdit = () => {
                       Update
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </main>

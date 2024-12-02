@@ -1,38 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, startTransition } from "react";
+import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
-
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
 const CMSUserEdit = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
-
-  const userData = localStorage.getItem("authUserData");
-
+  const animatedComponents = makeAnimated();
+  const [changePasswordClicked, setChangePasswordClicked] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState(true);
   const [formData, setFormData] = useState({
     user_name: "",
     user_email: "",
+    user_role: "",
+    user_permission: "",
+    user_access: "",
+    user_status: "",
     user_password: "",
-    user_role: "staff",
-    user_permission: "yes",
-    user_access: "all",
-    user_status: "active",
-    trash: false,
+    confirm_user_password: "",
+    created_by: "",
   });
 
-  const fetchData = async () => {
-    // Fetch data from API
+  const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(apiUrl + `user/${id}`, {});
-      // console.log(response.data);
+      const response = await axios.get(
+        apiUrl + `user/${id}`
+      );
 
       if (response.status === 200) {
-        setFormData(response.data);
+        const responseData = response.data;
+        setFormData({
+          user_name: responseData.user_name,
+          user_email: responseData.user_email,
+          user_role: responseData.user_role,
+          user_permission: responseData.user_permission,
+          user_access: responseData.user_access,
+          user_status: responseData.user_status,
+          created_by: responseData.created_by,
+      });
       }
     } catch (error) {
       toast.error("Error Fetching Data", {
@@ -46,30 +59,42 @@ const CMSUserEdit = () => {
         theme: "light",
       });
     }
-    // console.log(apiUrl);
+  }, [id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Validations
+  //Pasword length
+  const isPasswordLengthValid = (password) => {
+    return password && password.length >= 8;
   };
 
   const handleInputChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [name]: value,
+      };
+
+      if (name === 'user_password' || name === 'confirm_user_password') {
+        const match = updatedData.user_password === updatedData.confirm_user_password;
+        setPasswordMatch(match);
+      }
+
+      if (Array.isArray(value)) {
+        updatedData[name] = value.map(option => option.value).join(", ");
+      }
+      
+      return updatedData;
+    });
   };
 
   const handleSubmit = async () => {
-    // Submit form data to API
-
     try {
-      const response = await axios.put(apiUrl + `user/${id}`, {
-        'user_id': id,
-        'user_name': formData.user_name,
-        'user_email': formData.user_email,
-        'user_role': formData.user_role,
-        'user_status': formData.user_status,
-        'user_permission': formData.user_permission,
-        'user_access': formData.user_access,
-      }, {});
-      // console.log(response.data.message);
-
-      if (response.status === 200) {
-        toast.success(response.data.message, {
+      if (changePasswordClicked && !isPasswordLengthValid(formData.user_password)) {
+        toast.error("Password must be at least 8 characters in length", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,
@@ -78,6 +103,55 @@ const CMSUserEdit = () => {
           draggable: true,
           progress: undefined,
           theme: "light",
+        });
+        return;
+      }
+
+      if (changePasswordClicked && !passwordMatch) {
+        toast.error("Password and Confirm Password do not match", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
+      const response = await axios.put(
+        apiUrl + `user/${id}`, 
+        {
+          'user_id': id,
+          'user_name': formData.user_name,
+          'user_email': formData.user_email,
+          'user_role': formData.user_role,
+          'user_status': formData.user_status,
+          'user_permission': formData.user_permission,
+          'user_access': formData.user_access,
+          'user_password': formData.user_password,
+          'created_by': formData.created_by,
+        }, 
+        {}
+      );
+
+      if (response.status === 200) {
+        toast.success("Data Updated Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          onClose: () => {
+            startTransition(() => {
+              navigate("/cms/user/list");
+            });
+          },
         });
       }
     } catch (error) {
@@ -94,10 +168,44 @@ const CMSUserEdit = () => {
     }
   };
 
-  useEffect(() => {
-    // console.log(userData);
-    fetchData();
-  }, []);
+  const handleClear = () => {
+    setFormData({
+      user_name: "",
+      user_email: "",
+      user_role: "",
+      user_permission: "",
+      user_access: "",
+      user_status: "",
+      user_password: "",
+      confirm_user_password: "",
+    });
+  };
+
+  const roleOptions = [
+    { value: "admin", label: "Admin" },
+    { value: "staff", label: "Staff" },
+    { value: "customer", label: "Customer" },
+  ];
+
+  const statusOptions = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+  ];
+
+  const permissionOptions = [
+    { value: "yes", label: "Yes" },
+    { value: "no", label: "No" },
+  ];
+
+  const accessOptions = [
+    { value: "Dashboard", label: "Dashboard" },
+    { value: "Manage Category", label: "Manage Category" },
+    { value: "Manage Product", label: "Manage Product" },
+    { value: "Manage Discount", label: "Manage Discount" },
+    { value: "Manage Customer", label: "Manage Customer" },
+    { value: "Manage Order", label: "Manage Order" },
+    { value: "Manage User", label: "Manage User" },
+  ];
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -117,8 +225,8 @@ const CMSUserEdit = () => {
               </div>
 
               <div className="p-6">
-              <form className="space-y-6">
-                  {/* Username Field */}
+              <div className="space-y-6">
+                  {/* Username */}
                   <div className="flex flex-row">
                     <label htmlFor="user_name" className="mb-2 mt-2 w-72">
                       Username<span className="text-red-500"> *</span>
@@ -128,7 +236,7 @@ const CMSUserEdit = () => {
                       id="user_name"
                       name="user_name"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="name"
+                      placeholder="Username"
                       value={formData && formData.user_name}
                       onChange={(e) =>
                         handleInputChange("user_name", e.target.value)
@@ -136,6 +244,7 @@ const CMSUserEdit = () => {
                     />
                   </div>
 
+                  {/* Email */}
                   <div className="flex flex-row">
                     <label htmlFor="user_email" className="mb-2 mt-2 w-72">
                       Email<span className="text-red-500"> *</span>
@@ -145,7 +254,7 @@ const CMSUserEdit = () => {
                       id="user_email"
                       name="user_email"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="email"
+                      placeholder="Email"
                       value={formData && formData.user_email}
                       onChange={(e) =>
                         handleInputChange("user_email", e.target.value)
@@ -153,24 +262,7 @@ const CMSUserEdit = () => {
                     />
                   </div>
 
-                  {/* <div className="flex flex-row">
-                    <label htmlFor="user_password" className="mb-2 mt-2 w-72">
-                      Password<span className="text-red-500"> *</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="user_password"
-                      name="user_password"
-                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="password"
-                      value={formData && formData.user_password}
-                      onChange={(e) =>
-                        handleInputChange("user_password", e.target.value)
-                      }
-                    />
-                  </div> */}
-
-                  {/* Role Field */}
+                  {/* Role */}
                   <div className="flex flex-row">
                     <label htmlFor="user_role" className="mb-2 mt-2 w-72">
                       Role<span className="text-red-500"> *</span>
@@ -184,15 +276,61 @@ const CMSUserEdit = () => {
                         handleInputChange("user_role", e.target.value)
                       }
                     >
-                      <option value="staff" label="Staff">Staff</option>
-                      <option value="admin" label="Admin">Admin</option>
+                      {roleOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
-                  {/* Status Field */}
+                  {/* CMS Permission */}
+                  <div className="flex flex-row">
+                    <label htmlFor="user_permission" className="mb-2 mt-2 w-72">
+                      CMS Permission<span className="text-red-500"> *</span>
+                    </label>
+                    <select
+                      id="user_permission"
+                      name="user_permission"
+                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      value={formData && formData.user_permission}
+                      onChange={(e) =>
+                        handleInputChange("user_permission", e.target.value)
+                      }
+                    >
+                      {permissionOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* CMS Access */}
+                  <div className="flex flex-row">
+                    <label htmlFor="user_access" className="mt-2 w-72">
+                      CMS Access
+                    </label>
+                    <Select
+                      id="user_access"
+                      name="user_access"
+                      className="w-full"
+                      value={formData.user_access ? formData.user_access.split(', ').map(value => accessOptions.find(option => option.value === value)) : []}
+                      onChange={(e) =>
+                        handleInputChange("user_access", e)
+                      }
+                      options={accessOptions}
+                      isMulti
+                      isClearable={false}
+                      closeMenuOnSelect={false}
+                      components={animatedComponents}
+                    />
+                  </div>
+
+                  {/* Status */}
                   <div className="flex flex-row">
                     <label htmlFor="user_status" className="mb-2 mt-2 w-72">
-                      Status
+                      Status<span className="text-red-500"> *</span>
                     </label>
                     <select
                       id="user_status"
@@ -203,32 +341,74 @@ const CMSUserEdit = () => {
                         handleInputChange("user_status", e.target.value)
                       }
                     >
-                      <option value="active" label="Active">
-                        Active
-                      </option>
-                      <option value="inactive" label="Inactive">
-                        Inactive
-                      </option>
+                      {statusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
+                  {changePasswordClicked && (
+                    <>
+                      <div className="flex flex-row">
+                        <label htmlFor="user_password" className="mb-2 mt-2 w-72">
+                          Password<span className="text-red-500"> *</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="user_password"
+                          name="user_password"
+                          className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                          placeholder="Password"
+                          value={formData && formData.user_password}
+                          onChange={(e) =>
+                            handleInputChange("user_password", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div className="flex flex-row">
+                        <label htmlFor="confirm_user_password" className="mb-2 mt-2 w-72">
+                          Confirm Password<span className="text-red-500"> *</span>
+                        </label>
+                        <input
+                          type="text"
+                          id="confirm_user_password"
+                          name="confirm_user_password"
+                          className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                          placeholder="Confirm Password"
+                          value={formData && formData.confirm_user_password}
+                          onChange={(e) =>
+                            handleInputChange("confirm_user_password", e.target.value)
+                          }
+                        />
+                      </div>
+                    </>
+                  )}
+
                   {/* Buttons */}
-                  <div className="flex justify-end space-x-4 mt-6">
-                    <button
-                      type="button"
-                      className="bg-white text-gray-700 px-5 py-3 rounded-md hover:bg-gray-300 border border-black tracking-widest text-sm flex"
-                    >
-                      Clear
+                  <div className="flex justify-between mt-6">
+                    <button className="bg-black text-white px-5 py-3 rounded-md hover:bg-zinc-700 tracking-widest text-sm flex" onClick={() => setChangePasswordClicked(!changePasswordClicked)}>
+                      {changePasswordClicked ? "Cancel" : "Change Password"}
                     </button>
-                    <button
-                      type="button"
-                      className="bg-black text-white px-5 py-3 rounded-md hover:bg-zinc-700 tracking-widest text-sm flex"
-                      onClick={handleSubmit}
-                    >
-                      Add
-                    </button>
+                    <div className="flex space-x-4">
+                      <button
+                        type="button"
+                        className="bg-white text-gray-700 px-5 py-3 rounded-md hover:bg-gray-300 border border-black tracking-widest text-sm flex"
+                        onClick={handleClear}
+                      >
+                        Clear
+                      </button>
+                      <button
+                        type="button"
+                        className="bg-black text-white px-5 py-3 rounded-md hover:bg-zinc-700 tracking-widest text-sm flex"
+                        onClick={handleSubmit}
+                      >
+                        Update
+                      </button>
+                    </div>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </main>

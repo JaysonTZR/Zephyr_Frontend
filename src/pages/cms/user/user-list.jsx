@@ -5,7 +5,6 @@ import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import Table from "../../../components/cms/Table";
-
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
@@ -17,37 +16,6 @@ const CMSUserList = () => {
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const dummyData = [
-    {
-      username: "Demo",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-01-30 15:32:37",
-      status: "Active",
-    },
-    {
-      username: "Ayama1",
-      role: "Super Admin",
-      creator: "Ips",
-      creation_date: "2024-03-27 16:55:09",
-      status: "Active",
-    },
-    {
-      username: "JohnDoe",
-      role: "Editor",
-      creator: "JaneDoe",
-      creation_date: "2024-05-14 10:23:45",
-      status: "Inactive",
-    },
-    {
-      username: "JaneDoe",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-06-18 14:12:22",
-      status: "Active",
-    },
-  ];
-
   const tableHeader = [
     "username",
     "email",
@@ -57,13 +25,15 @@ const CMSUserList = () => {
   ];
 
   const fetchData = async () => {
-    // Fetch formData from API
     try {
-      const response = await axios.get(apiUrl + "user",{});
-      // console.log(response.status);
+      const response = await axios.get(
+        apiUrl + "user",
+        {
+
+        }
+      );
 
       if (response.status === 200){
-
         const transformedData = response.data.map((item) => ({
           id: item.user_id,
           username: item.user_name,
@@ -71,15 +41,12 @@ const CMSUserList = () => {
           role: item.user_role,
           status: item.user_status,
           trash: item.trash,
-          updatedAt: item.updated_at,
+          updated_at: item.updated_at,
           created_at: item.created_at,
         }));
 
         setFormData(transformedData);
-
-        console.log(transformedData);
       }
-
     } catch (error) {
       toast.error("Error Fetching Data", {
         position: "top-right",
@@ -91,28 +58,18 @@ const CMSUserList = () => {
         progress: undefined,
         theme: "light",
       });
-      // console.log(error)
     }
-    // console.log(apiUrl);
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-
   const addUser = () => {
     startTransition(() => {
       navigate("/cms/user/add");
     });
   };
-
-  const filteredData = dummyData.filter(item => {
-    if (selectedField && filterValue) {
-      return item[selectedField].toString().toLowerCase().includes(filterValue.toLowerCase());
-    }
-    return true;
-  });
 
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);

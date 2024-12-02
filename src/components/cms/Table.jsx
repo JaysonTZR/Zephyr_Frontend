@@ -93,21 +93,21 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
         <tbody>
           {currentRows.length > 0 ? (
             currentRows.map((item, index) => (
-              <tr className="border-t text-sm" key={indexOfFirstRow + index}>
+              <tr className="border-t text-sm" key={index}>
                 <td className="py-5 px-6 text-center align-middle">
                   <div className="flex items-center justify-center">
                     <input
                       type="checkbox"
-                      id={"tableContentCheckbox-" + (indexOfFirstRow + index)}
+                      id={"tableContentCheckbox-" + (index)}
                       className="peer cursor-pointer hidden after:opacity-100"
-                      checked={checkedState[indexOfFirstRow + index]}
+                      checked={checkedState[index]}
                       onChange={() =>
-                        handleRowCheckboxChange(indexOfFirstRow + index)
+                        handleRowCheckboxChange(index)
                       }
                     />
                     <label
                       htmlFor={
-                        "tableContentCheckbox-" + indexOfFirstRow + index
+                        "tableContentCheckbox-" + index
                       }
                       className="inline-block w-4 h-4 border-2 relative cursor-pointer after:content-[''] after:absolute after:top-2/4 after:left-2/4 after:-translate-x-1/2 after:-translate-y-1/2 after:w-[10px] after:h-[10px] after:bg-[#333] after:rounded-[2px] after:opacity-0 peer-checked:after:opacity-100"
                     ></label>

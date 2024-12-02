@@ -1,17 +1,15 @@
-import React, { useState, startTransition  } from "react";
+import React, { useState, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
-
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
 const CMSDiscountAdd = () => {
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     discount_description: "",
     discount_code: "",
@@ -23,15 +21,26 @@ const CMSDiscountAdd = () => {
   const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const handleInputChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [name]: value,
+      };
+  
+      return updatedData;
+    });
   };
 
   const handleSubmit = async () => {
-    // Submit form data to API
     setButtonDisabled(true);
     try {
-      const response = await axios.post(apiUrl + `discount`, formData, {});
-      // console.log(response.data.message);
+      const response = await axios.post(
+        apiUrl + `discount`, 
+        {
+          ...formData,
+        }, 
+        {}
+      );
 
       if (response.status === 201) {
         toast.success("Data Added Successfully", {
@@ -64,6 +73,20 @@ const CMSDiscountAdd = () => {
     }
   };
 
+  const handleClear = () => {
+    setFormData({
+      discount_description: "",
+      discount_code: "",
+      discount_amount: 0.0,
+      discount_status: "active",
+    });
+  };
+
+  const statusOptions = [
+    { value: "active", label: "Active" },
+    { value: "inactive", label: "Inactive" },
+  ];
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar page="discount-list" />
@@ -82,7 +105,8 @@ const CMSDiscountAdd = () => {
               </div>
 
               <div className="p-6">
-                <form className="space-y-6">
+                <div className="space-y-6">
+                  {/* Discount Code */}
                   <div className="flex flex-row">
                     <label htmlFor="discount_code" className="mb-2 mt-2 w-72">
                       Discount Code<span className="text-red-500"> *</span>
@@ -92,7 +116,7 @@ const CMSDiscountAdd = () => {
                       id="discount_code"
                       name="discount_code"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="code"
+                      placeholder="Discount Code"
                       value={formData && formData.discount_code}
                       onChange={(e) =>
                         handleInputChange("discount_code", e.target.value)
@@ -100,6 +124,7 @@ const CMSDiscountAdd = () => {
                     />
                   </div>
 
+                  {/* Discount Amount */}
                   <div className="flex flex-row">
                     <label htmlFor="discount_amount" className="mb-2 mt-2 w-72">
                       Discount Amount<span className="text-red-500"> *</span>
@@ -109,7 +134,7 @@ const CMSDiscountAdd = () => {
                       id="discount_amount"
                       name="discount_amount"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="amount"
+                      placeholder="Discount Amount"
                       value={formData && formData.discount_amount}
                       onChange={(e) =>
                         handleInputChange("discount_amount", e.target.value)
@@ -117,6 +142,7 @@ const CMSDiscountAdd = () => {
                     />
                   </div>
 
+                  {/* Discount Description */}
                   <div className="flex flex-row">
                     <label
                       htmlFor="discount_description"
@@ -124,42 +150,40 @@ const CMSDiscountAdd = () => {
                     >
                       Description<span className="text-red-500"> *</span>
                     </label>
-                    <input
+                    <textarea
                       type="text"
                       id="discount_description"
                       name="discount_description"
-                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="description"
+                      className="resize-none border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      placeholder="Discount Description"
                       value={formData && formData.discount_description}
                       onChange={(e) =>
-                        handleInputChange(
-                          "discount_description",
-                          e.target.value
-                        )
+                        handleInputChange("discount_description", e.target.value)
                       }
+                      rows="4"
                     />
                   </div>
 
-                  {/* Status Field */}
+                  {/* Status */}
                   <div className="flex flex-row">
-                    <label htmlFor="status" className="mb-2 mt-2 w-72">
-                      Status
+                    <label htmlFor="discount_status" className="mb-2 mt-2 w-72">
+                      Status<span className="text-red-500"> *</span>
                     </label>
                     <select
-                      id="status"
-                      name="status"
+                      id="discount_status"
+                      name="discount_status"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
                       value={formData && formData.discount_status}
                       onChange={(e) =>
                         handleInputChange("discount_status", e.target.value)
                       }
                     >
-                      <option value="active" label="Active">
-                        Active
-                      </option>
-                      <option value="inactive" label="Inactive">
-                        Inactive
-                      </option>
+                      <option value="" disabled hidden>Select a status</option>
+                      {statusOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -168,6 +192,7 @@ const CMSDiscountAdd = () => {
                     <button
                       type="button"
                       className="bg-white text-gray-700 px-5 py-3 rounded-md hover:bg-gray-300 border border-black tracking-widest text-sm flex"
+                      onClick={handleClear}
                     >
                       Clear
                     </button>
@@ -180,7 +205,7 @@ const CMSDiscountAdd = () => {
                       Add
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </main>

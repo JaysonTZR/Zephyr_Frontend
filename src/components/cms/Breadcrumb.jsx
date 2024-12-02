@@ -30,13 +30,16 @@ const Breadcrumb = () => {
     '/order/add': 'Add Order',
 
     '/user/list': 'Manage User',
-    '/user/edit': 'Edit User',
+    '/user/edit/:user_id': 'Edit User',
     '/user/add': 'Add User',
     
   };
 
   // Get the current path and split it into segments
   const pathnames = location.pathname.split("/").filter((x) => x).slice(1);
+  if (!isNaN(pathnames[pathnames.length - 1])) {
+    pathnames.pop();
+  }
 
   return (
     <div className="px-6 py-5 mt-[73px]">
@@ -60,7 +63,7 @@ const Breadcrumb = () => {
         {pathnames.map((value, index) => {
           const fullPath = `/${pathnames.slice(0, index + 1).join("/")}`;
           
-          return index < pathnames.length - 1 ? (
+          return (
             <React.Fragment key={fullPath}>
               {/* Arrow separator */}
               <svg
@@ -79,29 +82,6 @@ const Breadcrumb = () => {
               </svg>
               
               {/* Breadcrumb link */} 
-              <Link to={`/cms${fullPath}`} className="mr-3 text-gray-600">
-                {breadcrumbNameMap[fullPath] || value.charAt(0).toUpperCase() + value.slice(1)}
-              </Link>
-            </React.Fragment>
-          ) : (
-            <React.Fragment key={fullPath}>
-              {/* Arrow separator */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-4 mr-3"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
-                />
-              </svg>
-              
-              {/* Current breadcrumb */}
               <span>{breadcrumbNameMap[fullPath] || value.charAt(0).toUpperCase() + value.slice(1)}</span>
             </React.Fragment>
           );
