@@ -17,7 +17,7 @@ const CMSUserAdd = () => {
     user_email: "",
     user_password: "",
     user_role: "staff",
-    user_permission: "Yes",
+    user_permission: "yes",
     user_access: "all",
     user_status: "active",
     created_by: "admin",

@@ -1,10 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 
+import { ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../../../constant/constants";
+import axios from "axios";
+
 const CMSUserEdit = () => {
+  const { id } = useParams();
+  const [formData, setFormData] = useState({
+    user_name: "",
+    user_email: "",
+    user_password: "",
+    user_role: "staff",
+    user_permission: "yes",
+    user_access: "all",
+    user_status: "active",
+    created_by: "admin",
+    trash: false,
+  });
+
+  const fetchData = async () => {
+    // Fetch data from API
+    try {
+      const response = await axios.get(apiUrl + `user/${id}`, {});
+      // console.log(response.data);
+
+      if (response.status === 200) {
+        setFormData(response.data);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+    // console.log(apiUrl);
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar page="user-list" />
