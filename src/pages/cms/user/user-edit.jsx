@@ -11,6 +11,9 @@ import axios from "axios";
 
 const CMSUserEdit = () => {
   const { id } = useParams();
+
+  const userData = localStorage.getItem("authUserData");
+
   const [formData, setFormData] = useState({
     user_name: "",
     user_email: "",
@@ -19,7 +22,6 @@ const CMSUserEdit = () => {
     user_permission: "yes",
     user_access: "all",
     user_status: "active",
-    created_by: "admin",
     trash: false,
   });
 
@@ -47,6 +49,56 @@ const CMSUserEdit = () => {
     // console.log(apiUrl);
   };
 
+  const handleInputChange = (name, value) => {
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async () => {
+    // Submit form data to API
+
+    try {
+      const response = await axios.put(apiUrl + `user/${id}`, {
+        'user_id': id,
+        'user_name': formData.user_name,
+        'user_email': formData.user_email,
+        'user_role': formData.user_role,
+        'user_status': formData.user_status,
+        'user_permission': formData.user_permission,
+        'user_access': formData.user_access,
+      }, {});
+      // console.log(response.data.message);
+
+      if (response.status === 200) {
+        toast.success(response.data.message, {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Updating Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  useEffect(() => {
+    // console.log(userData);
+    fetchData();
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar page="user-list" />
@@ -65,48 +117,98 @@ const CMSUserEdit = () => {
               </div>
 
               <div className="p-6">
-                <form className="space-y-6">
+              <form className="space-y-6">
                   {/* Username Field */}
                   <div className="flex flex-row">
-                    <label htmlFor="username" className="mb-2 mt-2 w-72">
+                    <label htmlFor="user_name" className="mb-2 mt-2 w-72">
                       Username<span className="text-red-500"> *</span>
                     </label>
                     <input
                       type="text"
-                      id="username"
-                      name="username"
+                      id="user_name"
+                      name="user_name"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="demo"
+                      placeholder="name"
+                      value={formData && formData.user_name}
+                      onChange={(e) =>
+                        handleInputChange("user_name", e.target.value)
+                      }
                     />
                   </div>
 
+                  <div className="flex flex-row">
+                    <label htmlFor="user_email" className="mb-2 mt-2 w-72">
+                      Email<span className="text-red-500"> *</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="user_email"
+                      name="user_email"
+                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      placeholder="email"
+                      value={formData && formData.user_email}
+                      onChange={(e) =>
+                        handleInputChange("user_email", e.target.value)
+                      }
+                    />
+                  </div>
+
+                  {/* <div className="flex flex-row">
+                    <label htmlFor="user_password" className="mb-2 mt-2 w-72">
+                      Password<span className="text-red-500"> *</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="user_password"
+                      name="user_password"
+                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      placeholder="password"
+                      value={formData && formData.user_password}
+                      onChange={(e) =>
+                        handleInputChange("user_password", e.target.value)
+                      }
+                    />
+                  </div> */}
+
                   {/* Role Field */}
                   <div className="flex flex-row">
-                    <label htmlFor="role" className="mb-2 mt-2 w-72">
+                    <label htmlFor="user_role" className="mb-2 mt-2 w-72">
                       Role<span className="text-red-500"> *</span>
                     </label>
                     <select
-                      id="role"
-                      name="role"
+                      id="user_role"
+                      name="user_role"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      value={formData && formData.user_role}
+                      onChange={(e) =>
+                        handleInputChange("user_role", e.target.value)
+                      }
                     >
-                      <option value="Admin">Admin</option>
-                      <option value="User">User</option>
+                      <option value="staff" label="Staff">Staff</option>
+                      <option value="admin" label="Admin">Admin</option>
                     </select>
                   </div>
 
                   {/* Status Field */}
                   <div className="flex flex-row">
-                    <label htmlFor="status" className="mb-2 mt-2 w-72">
+                    <label htmlFor="user_status" className="mb-2 mt-2 w-72">
                       Status
                     </label>
                     <select
-                      id="status"
-                      name="status"
+                      id="user_status"
+                      name="user_status"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      value={formData && formData.user_status}
+                      onChange={(e) =>
+                        handleInputChange("user_status", e.target.value)
+                      }
                     >
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
+                      <option value="active" label="Active">
+                        Active
+                      </option>
+                      <option value="inactive" label="Inactive">
+                        Inactive
+                      </option>
                     </select>
                   </div>
 
@@ -121,8 +223,9 @@ const CMSUserEdit = () => {
                     <button
                       type="button"
                       className="bg-black text-white px-5 py-3 rounded-md hover:bg-zinc-700 tracking-widest text-sm flex"
+                      onClick={handleSubmit}
                     >
-                      Update
+                      Add
                     </button>
                   </div>
                 </form>
