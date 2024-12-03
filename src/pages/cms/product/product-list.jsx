@@ -1,68 +1,72 @@
-import React, { useState, startTransition } from "react";
+import React, { useState, startTransition, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import Table from "../../../components/cms/Table";
+import { toast } from "react-toastify";
+import { apiUrl } from "../../../constant/constants";
+import axios from "axios";
 
 const CMSProductList = () => {
   const navigate = useNavigate();
+  const [formData, setFormData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const dummyData = [
-    {
-      username: "Demo",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-01-30 15:32:37",
-      status: "Active",
-    },
-    {
-      username: "Ayama1",
-      role: "Super Admin",
-      creator: "Ips",
-      creation_date: "2024-03-27 16:55:09",
-      status: "Active",
-    },
-    {
-      username: "JohnDoe",
-      role: "Editor",
-      creator: "JaneDoe",
-      creation_date: "2024-05-14 10:23:45",
-      status: "Inactive",
-    },
-    {
-      username: "JaneDoe",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-06-18 14:12:22",
-      status: "Active",
-    },
-  ];
+  const tableHeader = ["product_image", "name", "code", "price", "new", "sale", "status", "created_at"];
 
-  const tableHeader = [
-    "Username",
-    "Role",
-    "Creator",
-    "Creation_Date",
-    "Status",
-  ];
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "product",
+        {
+
+        }
+      );
+
+      if (response.status === 200){
+        const transformedData = response.data.map((item) => ({
+          id: item.product_id,
+          name: item.product_name,
+          code: item.product_code,
+          product_image: item.product_photo,
+          price: item.product_price,
+          new: item.product_new,
+          sale: item.product_sale,
+          status: item.product_status,
+          trash: item.trash,
+          updated_at: item.updated_at,
+          created_at: item.created_at,
+        }));
+
+        setFormData(transformedData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const addProduct = () => {
     startTransition(() => {
       navigate("/cms/product/add");
     });
-  }
-
-  const filteredData = dummyData.filter(item => {
-    if (selectedField && filterValue) {
-      return item[selectedField].toString().toLowerCase().includes(filterValue.toLowerCase());
-    }
-    return true;
-  });
+  };
 
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);
@@ -162,7 +166,13 @@ const CMSProductList = () => {
               )}
 
               {/* Table Section */}
-              <Table tableHeader={tableHeader} tableData={filteredData} editPath={"/cms/product/edit"} deletePath={true}/>
+              <Table
+                tableHeader={tableHeader}
+                tableData={formData}
+                editPath={"/cms/product/edit"}
+                deletePath={true}
+              />
+
             </div>
           </main>
           <Footer />

@@ -23,7 +23,6 @@ const Breadcrumb = () => {
 
     '/customer/list': 'Manage Customer',
     '/customer/edit': 'Edit Customer',
-    '/customer/add': 'Add Customer',
 
     '/order/list': 'Manage Order',
     '/order/edit': 'Edit Order',

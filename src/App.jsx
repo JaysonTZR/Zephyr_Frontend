@@ -35,7 +35,6 @@ const CMSDiscountAdd = lazy(() => import("./pages/cms/discount/discount-add"));
 
 const CMSCustomerList = lazy(() => import("./pages/cms/customer/customer-list"));
 const CMSCustomerEdit = lazy(() => import("./pages/cms/customer/customer-edit"));
-const CMSCustomerAdd = lazy(() => import("./pages/cms/customer/customer-add"));
 
 const CMSOrderList = lazy(() => import("./pages/cms/order/order-list"));
 const CMSOrderEdit = lazy(() => import("./pages/cms/order/order-edit"));
@@ -164,18 +163,10 @@ function App() {
           }
         />
         <Route
-          path="/cms/customer/edit"
+          path="/cms/customer/edit/:id"
           element={
             <AuthRoute>
               <CMSCustomerEdit />
-            </AuthRoute>
-          }
-        />
-        <Route
-          path="/cms/customer/add"
-          element={
-            <AuthRoute>
-              <CMSCustomerAdd />
             </AuthRoute>
           }
         />
@@ -189,7 +180,7 @@ function App() {
           }
         />
         <Route
-          path="/cms/order/edit"
+          path="/cms/order/edit/:id"
           element={
             <AuthRoute>
               <CMSOrderEdit />

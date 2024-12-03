@@ -16,19 +16,14 @@ const CMSCategoryList = () => {
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const tableHeader = [
-    "title",
-    "type",
-    "created_by",
-    "created_at",
-    "Status",
-  ];
+  const tableHeader = ["title", "type", "created_by", "status", "created_at"];
 
   const fetchData = async () => {
-    // Fetch formData from API
     try {
-      const response = await axios.get(apiUrl + "category",{});
-      // console.log(response.status);
+      const response = await axios.get(
+        apiUrl + "category",
+        {}
+      );
 
       if (response.status === 200){
 

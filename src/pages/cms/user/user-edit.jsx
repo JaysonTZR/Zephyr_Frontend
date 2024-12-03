@@ -175,7 +175,7 @@ const CMSUserEdit = () => {
       user_role: "",
       user_permission: "",
       user_access: "",
-      user_status: "",
+      user_status: "active",
       user_password: "",
       confirm_user_password: "",
     });
@@ -276,6 +276,7 @@ const CMSUserEdit = () => {
                         handleInputChange("user_role", e.target.value)
                       }
                     >
+                      <option value="" disabled hidden>Select a role</option>
                       {roleOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
@@ -298,6 +299,7 @@ const CMSUserEdit = () => {
                         handleInputChange("user_permission", e.target.value)
                       }
                     >
+                      <option value="" disabled hidden>Select a permission</option>
                       {permissionOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}
@@ -341,6 +343,7 @@ const CMSUserEdit = () => {
                         handleInputChange("user_status", e.target.value)
                       }
                     >
+                      <option value="" disabled hidden>Select a status</option>
                       {statusOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                           {option.label}

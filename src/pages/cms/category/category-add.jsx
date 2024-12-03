@@ -118,7 +118,7 @@ const CMSCategoryAdd = () => {
                       id="category_name"
                       name="category_name"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="name"
+                      placeholder="Category Name"
                       value={formData && formData.category_name}
                       onChange={(e) =>
                         handleInputChange("category_name", e.target.value)
@@ -136,7 +136,7 @@ const CMSCategoryAdd = () => {
                       id="category_type"
                       name="category_type"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="type"
+                      placeholder="Category Type"
                       value={formData && formData.category_type}
                       onChange={(e) =>
                         handleInputChange("category_type", e.target.value)

@@ -16,13 +16,7 @@ const CMSUserList = () => {
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const tableHeader = [
-    "username",
-    "email",
-    "role",
-    "created_at",
-    "Status",
-  ];
+  const tableHeader = ["username", "email", "role", "status", "created_at"];
 
   const fetchData = async () => {
     try {

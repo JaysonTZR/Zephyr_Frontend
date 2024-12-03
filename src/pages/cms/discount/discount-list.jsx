@@ -5,7 +5,6 @@ import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import Table from "../../../components/cms/Table";
-
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
@@ -17,16 +16,16 @@ const CMSDiscountList = () => {
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const tableHeader = ["code", "amount", "created_at", "status"];
+  const tableHeader = ["code", "amount", "status", "created_at"];
 
   const fetchData = async () => {
-    // Fetch formData from API
     try {
-      const response = await axios.get(apiUrl + "discount/",{});
-      // console.log(response.status);
+      const response = await axios.get(
+        apiUrl + "discount/",
+        {}
+      );
 
       if (response.status === 200){
-
         const transformedData = response.data.map((item) => ({
           id: item.discount_id,
           code: item.discount_code,
@@ -39,10 +38,7 @@ const CMSDiscountList = () => {
         }));
 
         setFormData(transformedData);
-
-        console.log(transformedData);
       }
-
     } catch (error) {
       toast.error("Error Fetching Data", {
         position: "top-right",
@@ -54,9 +50,7 @@ const CMSDiscountList = () => {
         progress: undefined,
         theme: "light",
       });
-      // console.log(error)
     }
-    // console.log(apiUrl);
   };
 
   const addDiscount = () => {

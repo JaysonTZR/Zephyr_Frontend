@@ -115,16 +115,12 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
                 </td>
                 {tableHeader.map((header) => (
                   <td
-                    className={`py-5 text-center ${
-                      header.toLowerCase() !== "status"
-                        ? "px-6 align-middle"
-                        : " flex justify-center"
-                    }`}
+                    className="py-5 text-center px-6 align-middle"
                     key={header}
                   >
                     {header.toLowerCase() === "status" ? (
                       <div
-                        className={`py-1 w-24 rounded-full ${
+                        className={`py-1 w-24 rounded-full mx-auto ${
                           item.status === "active"
                             ? "text-green-400 bg-green-100 font-semibold"
                             : "text-red-400 bg-red-100 font-semibold"
@@ -132,7 +128,39 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
                       >
                         <span>{item.status.toUpperCase()}</span>
                       </div>
-                    ): header.toLowerCase() === "created_at" ? (
+                    ) : header.toLowerCase() === "sale" ? (
+                      <div
+                        className={`py-1 w-24 rounded-full mx-auto ${
+                          item.sale === true
+                            ? "text-red-400 bg-red-100 font-semibold"
+                            : "text-gray-300 bg-gray-500 font-semibold"
+                        }`}
+                      >
+                        <span>{item.sale === true ? "ON SALE" : "NO SALE"}</span>
+                      </div>
+                    ) : header.toLowerCase() === "new" ? (
+                      <div
+                        className={`py-1 w-24 rounded-full mx-auto ${
+                          item.new === true
+                            ? "text-black bg-gray-100 font-semibold"
+                            : "text-gray-100 bg-black font-semibold"
+                        }`}
+                      >
+                        <span>{item.new === true ? "NEW" : "-"}</span>
+                      </div>
+                    ) : header.toLowerCase() === "product_image" ? (
+                      <div className="flex flex-col items-center justify-center">
+                        {item.product_image ? (
+                          <img
+                            src={`/assets/products/${item.product_image}`}
+                            alt="Product"
+                            style={{ maxWidth: "100px", maxHeight: "100px" }}
+                          />
+                        ) : (
+                          "No Image"
+                        )}
+                      </div>
+                    ) : header.toLowerCase() === "created_at" ? (
                       format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss')
                     ) : (
                       item[header.toLowerCase()] 
