@@ -113,7 +113,7 @@ function App() {
           }
         />
         <Route
-          path="/cms/product/edit"
+          path="/cms/product/edit/:id"
           element={
             <AuthRoute>
               <CMSProductEdit />
