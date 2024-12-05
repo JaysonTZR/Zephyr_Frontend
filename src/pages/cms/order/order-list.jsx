@@ -1,68 +1,96 @@
-import React, { useState, startTransition } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import Table from "../../../components/cms/Table";
+import { toast } from "react-toastify";
+import { apiUrl } from "../../../constant/constants";
+import axios from "axios";
 
 const CMSOrderList = () => {
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState([]);
+  const [customerMap, setCustomerMap] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const dummyData = [
-    {
-      username: "Demo",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-01-30 15:32:37",
-      status: "Active",
-    },
-    {
-      username: "Ayama1",
-      role: "Super Admin",
-      creator: "Ips",
-      creation_date: "2024-03-27 16:55:09",
-      status: "Active",
-    },
-    {
-      username: "JohnDoe",
-      role: "Editor",
-      creator: "JaneDoe",
-      creation_date: "2024-05-14 10:23:45",
-      status: "Inactive",
-    },
-    {
-      username: "JaneDoe",
-      role: "Admin",
-      creator: "Ips",
-      creation_date: "2024-06-18 14:12:22",
-      status: "Active",
-    },
-  ];
+  const tableHeader = ["id", "customer", "status", "created_at"];
 
-  const tableHeader = [
-    "Username",
-    "Role",
-    "Creator",
-    "Creation_Date",
-    "Status",
-  ];
+  const fetchCustomerData = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "customer",
+        {
 
-  const addOrder = () => {
-    startTransition(() => {
-      navigate("/cms/order/add");
-    });
-  }
+        }
+      );
 
-  const filteredData = dummyData.filter(item => {
-    if (selectedField && filterValue) {
-      return item[selectedField].toString().toLowerCase().includes(filterValue.toLowerCase());
+      if (response.status === 200){
+        const customerData = response.data.reduce((acc, customer) => {
+          acc[customer.customer_id] = customer.customer_name;
+          return acc;
+        }, {});
+        setCustomerMap(customerData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
-    return true;
-  });
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "salesorder",
+        {
+
+        }
+      );
+
+      if (response.status === 200){
+        const transformedData = response.data.map((item) => ({
+          id: item.order_id,
+          customer: customerMap[item.customer_id] || item.customer_id,
+          status: item.order_status,
+          trash: item.trash,
+          updated_at: item.updated_at,
+          created_at: item.created_at,
+        }));
+
+        setFormData(transformedData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomerData();
+  }, []);
+
+  useEffect(() => {
+    if (Object.keys(customerMap).length > 0) {
+      fetchData();
+    }
+  }, [customerMap]);
 
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);
@@ -156,7 +184,7 @@ const CMSOrderList = () => {
               )}
 
               {/* Table Section */}
-              <Table tableHeader={tableHeader} tableData={filteredData} detailPath={"/cms/order/detail"} deletePath={true}/>
+              <Table tableHeader={tableHeader} tableData={formData} detailPath={"/cms/order/detail"} deletePath={true}/>
             </div>
           </main>
           <Footer />

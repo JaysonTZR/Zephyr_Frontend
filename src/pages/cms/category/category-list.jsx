@@ -39,8 +39,6 @@ const CMSCategoryList = () => {
         }));
 
         setFormData(transformedData);
-
-        // console.log(transformedData);
       }
 
     } catch (error) {
@@ -54,9 +52,7 @@ const CMSCategoryList = () => {
         progress: undefined,
         theme: "light",
       });
-      // console.log(error)
     }
-    // console.log(apiUrl);
   };
 
 
