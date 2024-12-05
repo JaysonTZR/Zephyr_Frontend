@@ -2,7 +2,7 @@ import React, { useState, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
 
-const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
+const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editPhotoPath }) => {
   const navigate = useNavigate();
   const [isHeaderChecked, setIsHeaderChecked] = useState(false);
   const [checkedState, setCheckedState] = useState(
@@ -17,6 +17,20 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
   const handleEdit = (id) => {
     startTransition(() => {
       navigate(editPath+`/${id}`);
+    });
+    setShowDropdown(null);
+  };
+
+  const handleEditPhoto = (id) => {
+    startTransition(() => {
+      navigate(editPhotoPath+`/${id}`);
+    });
+    setShowDropdown(null);
+  };
+
+  const handleViewDetail = (id) => {
+    startTransition(() => {
+      navigate(detailPath+`/${id}`);
     });
     setShowDropdown(null);
   };
@@ -85,9 +99,11 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
                 {header.replace(/_/g, " ")}
               </th>
             ))}
-            <th className="py-5 px-6 text-center font-bold text-gray-700 align-middle">
-              Action
-            </th>
+            {(detailPath || editPath || deletePath || editPhotoPath) && (
+              <th className="py-5 px-6 text-center font-bold text-gray-700 align-middle">
+                Action
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -168,49 +184,80 @@ const Table = ({ tableHeader, tableData, editPath, deletePath }) => {
                     }
                   </td>
                 ))}
-                <td className="py-3 px-6 text-center align-middle">
-                  <button
-                    onClick={() => handleActionClick(index)}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="size-6"
+                {(detailPath || editPath || deletePath || editPhotoPath) && (
+                  <td className="py-3 px-6 text-center align-middle">
+                    <button
+                      onClick={() => handleActionClick(index)}
+                      className="text-gray-500 hover:text-gray-700"
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                      />
-                    </svg>
-                  </button>
-                  {showDropdown === index && (
-                    <div className="absolute right-32 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="">
-                        {editPath && (
-                          <button
-                            onClick={() => handleEdit(item.id)}
-                            className="flex items-center px-4 py-2 text-sm w-full border text-gray-700 hover:bg-black hover:text-white"
-                          >
-                            Edit
-                          </button>
-                        )}
-                        {deletePath && (
-                          <button
-                            onClick={() => handleDelete(index)}
-                            className="flex items-center px-4 py-2 text-sm w-full border text-red-500 bg-red-200 hover:bg-red-500 hover:text-white"
-                          >
-                            Delete
-                          </button>
-                        )}
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                        />
+                      </svg>
+                    </button>
+                    {showDropdown === index && (
+                      <div className="absolute right-32 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                        <div className="">
+                          {editPath && (
+                            <button
+                              onClick={() => handleEdit(item.id)}
+                              className="flex items-center px-4 py-2 text-sm w-full border text-gray-700 hover:bg-black hover:text-white"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                              </svg>
+                              Edit
+                            </button>
+                          )}
+                          {editPhotoPath && (
+                            <button
+                              onClick={() => handleEditPhoto(item.id)}
+                              className="flex items-center px-4 py-2 text-sm w-full border text-gray-700 hover:bg-black hover:text-white"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                              </svg>
+                              Edit Photo
+                            </button>
+                          )}
+                          {detailPath && (
+                            <button
+                              onClick={() => handleViewDetail(item.id)}
+                              className="flex items-center px-4 py-2 text-sm w-full border text-gray-700 hover:bg-black hover:text-white"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                              </svg>
+                              View
+                            </button>
+                          )}
+                          {deletePath && (
+                            <button
+                              onClick={() => handleDelete(item.id)}
+                              className="flex items-center px-4 py-2 text-sm w-full border text-red-500 bg-red-200 hover:bg-red-500 hover:text-white"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                              </svg>
+                              Delete
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </td>
+                    )}
+                  </td>
+                )}
               </tr>
             ))
           ) : (

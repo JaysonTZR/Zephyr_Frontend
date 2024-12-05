@@ -102,12 +102,6 @@ const CMSOrderList = () => {
                     </svg>
                     Filter
                   </button>
-                  <button onClick={addOrder} className=" text-white w-32 h-9 rounded-md text-sm focus:outline-none hover:bg-zinc-700 bg-black flex justify-center items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Add Order
-                  </button>
                 </div>
               </div>
 
@@ -162,7 +156,7 @@ const CMSOrderList = () => {
               )}
 
               {/* Table Section */}
-              <Table tableHeader={tableHeader} tableData={filteredData} editPath={"/cms/order/edit"} deletePath={true}/>
+              <Table tableHeader={tableHeader} tableData={filteredData} detailPath={"/cms/order/detail"} deletePath={true}/>
             </div>
           </main>
           <Footer />

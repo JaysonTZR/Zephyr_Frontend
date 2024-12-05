@@ -27,6 +27,7 @@ const CMSCategoryAdd = lazy(() => import("./pages/cms/category/category-add"));
 
 const CMSProductList = lazy(() => import("./pages/cms/product/product-list"));
 const CMSProductEdit = lazy(() => import("./pages/cms/product/product-edit"));
+const CMSProductEditImage = lazy(() => import("./pages/cms/product/product-edit-image"));
 const CMSProductAdd = lazy(() => import("./pages/cms/product/product-add"));
 
 const CMSDiscountList = lazy(() => import("./pages/cms/discount/discount-list"));
@@ -37,8 +38,7 @@ const CMSCustomerList = lazy(() => import("./pages/cms/customer/customer-list"))
 const CMSCustomerEdit = lazy(() => import("./pages/cms/customer/customer-edit"));
 
 const CMSOrderList = lazy(() => import("./pages/cms/order/order-list"));
-const CMSOrderEdit = lazy(() => import("./pages/cms/order/order-edit"));
-const CMSOrderAdd = lazy(() => import("./pages/cms/order/order-add"));
+const CMSOrderDetail = lazy(() => import("./pages/cms/order/order-detail"));
 
 const CMSUserList = lazy(() => import("./pages/cms/user/user-list"));
 const CMSUserEdit = lazy(() => import("./pages/cms/user/user-edit"));
@@ -121,6 +121,14 @@ function App() {
           }
         />
         <Route
+          path="/cms/product/edit-image/:id"
+          element={
+            <AuthRoute>
+              <CMSProductEditImage />
+            </AuthRoute>
+          }
+        />
+        <Route
           path="/cms/product/add"
           element={
             <AuthRoute>
@@ -180,18 +188,10 @@ function App() {
           }
         />
         <Route
-          path="/cms/order/edit/:id"
+          path="/cms/order/detail/:id"
           element={
             <AuthRoute>
-              <CMSOrderEdit />
-            </AuthRoute>
-          }
-        />
-        <Route
-          path="/cms/order/add"
-          element={
-            <AuthRoute>
-              <CMSOrderAdd />
+              <CMSOrderDetail />
             </AuthRoute>
           }
         />

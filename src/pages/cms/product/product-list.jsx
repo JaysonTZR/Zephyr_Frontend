@@ -171,6 +171,7 @@ const CMSProductList = () => {
                 tableData={formData}
                 editPath={"/cms/product/edit"}
                 deletePath={true}
+                editPhotoPath={"/cms/product/edit-image"}
               />
 
             </div>

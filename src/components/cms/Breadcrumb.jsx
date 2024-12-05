@@ -15,6 +15,7 @@ const Breadcrumb = () => {
 
     '/product/list': 'Manage Product',
     '/product/edit': 'Edit Product',
+    '/product/edit-image': 'Edit Product Image',
     '/product/add': 'Add Product',
 
     '/discount/list': 'Manage Discount',
