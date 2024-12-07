@@ -86,17 +86,18 @@ const CMSProductEditImage = () => {
           product_status: responseData.product_status,
           created_by: responseData.created_by,
         });
+        console.log(responseData);
 
         setFile(responseData.product_photo);
         setImageUrl(`/assets/products/${responseData.product_photo}`);
         setPhotoReference(responseData.product_photo);
 
-        const subPhotosArray = responseData.product_sub_photo.split(',').map(photo => photo.trim());
-          setSubPhotos(subPhotosArray);
-          setSubPhotosReference(subPhotosArray);
-          setImageUrls(subPhotosArray.map(photo => `/assets/products/sub_photos/${photo}`));
-          setSubPhotosBase64(subPhotosArray.map(() => ''));
-        }
+        const subPhotosArray = responseData.product_sub_photo !== "" ? responseData.product_sub_photo.split(',').map(photo => photo.trim()) : [''];
+        setSubPhotos(subPhotosArray);
+        setSubPhotosReference(subPhotosArray);
+        setImageUrls(subPhotosArray.map(photo => `/assets/products/sub_photos/${photo}`));
+        setSubPhotosBase64(subPhotosArray.map(() => ''));
+      }
     } catch (error) {
       toast.error("Error Fetching Data", {
         position: "top-right",
