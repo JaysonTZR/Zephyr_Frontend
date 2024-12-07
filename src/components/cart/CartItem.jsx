@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from 'react';
 import QuantityInput from "./QuantityInput";
 
-const CartItem = ({ item, index }) => {
+const CartItem = ({ item, index, onQuantityChange, onRemove }) => {
+    const [updatedCart, setUpdatedCart] = useState([]);
+
     return (
         <div
             key={index}
@@ -10,17 +12,17 @@ const CartItem = ({ item, index }) => {
             <div className="col-span-5 flex items-center">
                 <div className="w-20 h-20 bg-gray-100 mr-6"></div>
                 <div>
-                    <p>{item.name}</p>
-                    <p className="text-lg font-semibold">{item.price}</p>
+                    <p>{item.product.product_name}</p>
+                    <p className="text-lg font-semibold">RM {(item.product.product_price).toFixed(2)}</p>
                 </div>
             </div>
             <div className="col-span-2 text-center">
-                <QuantityInput item={item}/>
+                <QuantityInput item={item} onQuantityChange={onQuantityChange} />
             </div>
-            <div className="col-span-2 text-center font-semibold text-lg">$ 30.00</div>
-            <div className="col-span-1 text-center border rounded-full w-9 h-9 flex items-center justify-center" style={{ backgroundColor: '#f3f2ee' }}>
-                <button className="text-black font-extrabold">&#10006;</button>
-            </div>
+            <div className="col-span-2 text-center font-semibold text-lg">RM {(item.totalPrice).toFixed(2)}</div>
+            <button className="col-span-1 text-center border rounded-full w-9 h-9 flex items-center justify-center" style={{ backgroundColor: '#f3f2ee' }} onClick={()=>onRemove(item.cart_id)}>
+                <div className="text-black font-extrabold">&#10006;</div>
+            </button>
       </div>
     );
 };
