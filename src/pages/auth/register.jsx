@@ -334,7 +334,7 @@ function Register() {
                         type="radio"
                         id="male"
                         name="gender"
-                        value="male"
+                        value="Male"
                         checked={formData && formData.customer_gender === "male"}
                         onChange={(e) =>
                           handleInputChange("customer_gender", e.target.value)
@@ -350,7 +350,7 @@ function Register() {
                         type="radio"
                         id="female"
                         name="gender"
-                        value="female"
+                        value="Female"
                         checked={formData && formData.customer_gender === "female"}
                         onChange={(e) =>
                           handleInputChange("customer_gender", e.target.value)

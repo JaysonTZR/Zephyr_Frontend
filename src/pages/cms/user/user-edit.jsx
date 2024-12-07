@@ -67,8 +67,9 @@ const CMSUserEdit = () => {
 
   // Validations
   //Pasword length
-  const isPasswordLengthValid = (password) => {
-    return password && password.length >= 8;
+  const isPasswordValid = (password) => {
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d\-_.@]{8,}$/;
+    return passwordRegex.test(password);
   };
 
   const handleInputChange = (name, value) => {
@@ -93,8 +94,8 @@ const CMSUserEdit = () => {
 
   const handleSubmit = async () => {
     try {
-      if (changePasswordClicked && !isPasswordLengthValid(formData.user_password)) {
-        toast.error("Password must be at least 8 characters in length", {
+      if (changePasswordClicked && !isPasswordValid(formData.user_password)) {
+        toast.error("Password must be at least 8 characters, and contain both letters and numbers. Only these symbols can be used -_.@", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,
