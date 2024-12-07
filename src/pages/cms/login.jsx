@@ -51,7 +51,7 @@ const CMSLogin = () => {
         : new Date().getTime() + 24 * 60 * 60 * 1000; // 1 day
 
         if (authUserData.user_permission !== "yes") {
-          toast.error("User unauthorized.", {
+          toast.error("User unauthorized", {
             position: "top-right",
             autoClose: 1500,
             hideProgressBar: false,

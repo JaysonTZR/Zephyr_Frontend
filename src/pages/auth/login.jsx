@@ -3,17 +3,100 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
+import { ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../../constant/constants";
+import axios from "axios";
 
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Implement login logic here
-    navigate("/dashboard"); // Navigate to the dashboard after successful login
+  const handleLogin = async () => {
+    let hasError = false;
+
+    if (!email) {
+      setEmailError(true);
+      hasError = true;
+    } else {
+      setEmailError(false);
+    }
+
+    if (!password) {
+      setPasswordError(true);
+      hasError = true;
+    } else {
+      setPasswordError(false);
+    }
+
+    if (hasError) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        apiUrl + "login/authenticate",
+        {
+          user_email: email,
+          user_password: password,
+        }
+      );
+
+      if (response.status === 200) {
+        const authToken = response.data.token;
+        const authUserData = response.data.user;
+
+        if (authUserData.user_role !== "customer") {
+          toast.error("User unauthorized", {
+            position: "top-right",
+            autoClose: 1500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+          return;
+        }
+
+        const authCustomerData = response.data.customer;
+
+        localStorage.setItem("authToken", authToken);
+        localStorage.setItem("authUserData", JSON.stringify(authUserData));
+        localStorage.setItem('authCustomerData', JSON.stringify(authCustomerData));
+
+        toast.success("Login successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          onClose: () => {
+            startTransition(() => {
+              navigate("/");
+            });
+          },
+        });
+      }
+    } catch (error) {
+      toast.error("Invalid credentials", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   const handleCreateAccount = () => {
@@ -27,7 +110,7 @@ function Login() {
       <Header />
 
       <Banner bannerText="Login" />
-
+      <ToastContainer />
       <div className="flex justify-center mb-20">
         <div className="py-8 w-7/12">
           <div className="bg-white rounded-md shadow-lg flex p-8">
@@ -40,7 +123,7 @@ function Login() {
                 Log in with your email address and password.
               </p>
 
-              <form onSubmit={handleLogin}>
+              <div onSubmit={handleLogin}>
                 <div className="mb-4">
                   <label className="block text-gray-700 mb-2 font-semibold uppercase" htmlFor="email">
                     Email Address <span className="text-red-600">*</span>
@@ -50,10 +133,15 @@ function Login() {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="border border-gray-300 py-3 px-4 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                    onFocus={() => setEmailError(false)}
+                    className={`border border-gray-300 py-3 px-4 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
+                      emailError ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     placeholder="Enter a valid email"
                   />
+                  {emailError && (
+                    <p className="text-red-500 text-sm mt-1">Email is required</p>
+                  )}
                 </div>
 
                 <div className="mb-4">
@@ -68,10 +156,15 @@ function Login() {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="border border-gray-300 py-3 px-4 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-black"
+                    onFocus={() => setPasswordError(false)}
+                    className={`border border-gray-300 py-3 px-4 w-full rounded-md focus:outline-none focus:ring-2 focus:ring-black ${
+                      passwordError ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     placeholder="Enter your password"
                   />
+                  {passwordError && (
+                    <p className="text-red-500 text-sm mt-1">Password is required</p>
+                  )}
                   <div className="mt-2">
                     <label className="text-sm text-zinc-500">Password must be at least 8 characters, and contain both letters and numbers. Only these symbols can be used -_.@</label>
                   </div>
@@ -111,12 +204,13 @@ function Login() {
                 </div>
 
                 <button
-                  type="submit"
+                  type="button"
                   className="bg-black text-white w-full px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700"
+                  onClick={handleLogin}
                 >
                   Log In
                 </button>
-              </form>
+              </div>
 
               <div className="mt-4 text-center">
                 <p className="text-sm text-gray-500">

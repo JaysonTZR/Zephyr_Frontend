@@ -6,6 +6,7 @@ import AuthRoute from "./AuthRoute";
 
 const HomePage = lazy(() => import("./pages/home/home"));
 const AboutUs = lazy(() => import("./pages/home/about-us"));
+const Profile = lazy(() => import("./pages/home/profile"));
 const Shop = lazy(() => import("./pages/shop/shop"));
 const Login = lazy(() => import("./pages/auth/login"));
 const Register = lazy(() => import("./pages/auth/register"));
@@ -51,6 +52,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/about-us" element={<AboutUs />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/shop" element={<Shop />} />
