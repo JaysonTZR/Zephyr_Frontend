@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Banner from "../../../components/Banner";
-import QuantityInput from "../../../components/cart/QuantityInput";
 
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
@@ -18,13 +17,11 @@ const Wishlist = () => {
   const navigate = useNavigate();
 
   const authCustomerData = localStorage.getItem("authCustomerData");
-  const customerDataObject = authCustomerData
-    ? JSON.parse(authCustomerData)
-    : null;
+  const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
 
-  const customer_id = customerDataObject
-    ? customerDataObject.customer_id
-    : null;
+  const customer_id = customerDataObject ? customerDataObject.customer_id : null;
+    
+    
 
   const [formData, setFormData] = useState([]);
 
@@ -92,7 +89,7 @@ const Wishlist = () => {
     startTransition(() => {
       fetchData();
     });
-  }, [handleDelete]);
+  }, [handleDelete, fetchData]);
 
   return (
     <div>
