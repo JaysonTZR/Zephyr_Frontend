@@ -57,7 +57,8 @@ const CMSOrderList = () => {
       );
 
       if (response.status === 200){
-        const transformedData = response.data.map((item) => ({
+        const filteredData = response.data.filter((item) => item.order_status === "active" && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
           id: item.order_id,
           customer: customerMap[item.customer_id] || item.customer_id,
           status: item.order_status,

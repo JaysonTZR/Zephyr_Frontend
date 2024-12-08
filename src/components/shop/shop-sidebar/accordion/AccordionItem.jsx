@@ -7,7 +7,7 @@ import Size from "./Size";
 import Colors from "./Colors";
 import Tags from "./Tags";
 
-const AccordionItem = () => {
+const AccordionItem = ({ onSearch, onCategorySelect, onBrandingSelect, onPriceSelect, onSizeSelect, onColorsSelect, onTagsSelect }) => {
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
     const [isBrandingOpen, setIsBrandingOpen] = useState(true);
     const [isFilterPriceOpen, setIsFilterPriceOpen] = useState(true);
@@ -17,13 +17,13 @@ const AccordionItem = () => {
 
     return (
         <div className="w-1/4 pr-12">
-            <Search />
-            <Categories setIsCategoriesOpen={setIsCategoriesOpen} isCategoriesOpen={isCategoriesOpen} />
-            <Branding setIsBrandingOpen={setIsBrandingOpen} isBrandingOpen={isBrandingOpen} />
-            <FilterPrice setIsFilterPriceOpen={setIsFilterPriceOpen} isFilterPriceOpen={isFilterPriceOpen} />
-            <Size setIsSizeOpen={setIsSizeOpen} isSizeOpen={isSizeOpen} />
-            <Colors setIsColorsOpen={setIsColorsOpen} isColorsOpen={isColorsOpen} />
-            <Tags setIsTagsOpen={setIsTagsOpen} isTagsOpen={isTagsOpen} />
+            <Search onSearch={onSearch} />
+            <Categories setIsCategoriesOpen={setIsCategoriesOpen} isCategoriesOpen={isCategoriesOpen} onCategorySelect={onCategorySelect} />
+            <Branding setIsBrandingOpen={setIsBrandingOpen} isBrandingOpen={isBrandingOpen} onBrandingSelect={onBrandingSelect}/>
+            <FilterPrice setIsFilterPriceOpen={setIsFilterPriceOpen} isFilterPriceOpen={isFilterPriceOpen} onPriceSelect={onPriceSelect}/>
+            <Size setIsSizeOpen={setIsSizeOpen} isSizeOpen={isSizeOpen} onSizeSelect={onSizeSelect}/>
+            <Colors setIsColorsOpen={setIsColorsOpen} isColorsOpen={isColorsOpen} onColorsSelect={onColorsSelect}/>
+            <Tags setIsTagsOpen={setIsTagsOpen} isTagsOpen={isTagsOpen} onTagsSelect={onTagsSelect}/>
         </div>
     );
 };

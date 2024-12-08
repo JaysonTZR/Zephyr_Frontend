@@ -24,7 +24,8 @@ const CMSCustomerList = () => {
       );
 
       if (response.status === 200){
-        const transformedData = response.data.map((item) => ({
+        const filteredData = response.data.filter((item) => item.customer_status === "active" && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
           id: item.customer_id,
           name: item.customer_name,
           gender: item.customer_gender,

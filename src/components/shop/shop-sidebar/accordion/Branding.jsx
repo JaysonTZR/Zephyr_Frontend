@@ -1,6 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from "react-toastify";
+import { apiUrl } from '../../../../constant/constants';
+import axios from "axios";
 
-const Branding = ({ setIsBrandingOpen, isBrandingOpen }) => {
+const Branding = ({ setIsBrandingOpen, isBrandingOpen, onBrandingSelect }) => {
+    const [data, setData] = useState([]);
+    const [selectedBranding, setSelectedBranding] = useState(null);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(
+                apiUrl + "category",
+                {
+        
+                }
+            );
+        
+            if (response.status === 200){
+                const filteredData = response.data.filter((item) => item.category_type === "Branding" && item.category_status === "active" && item.trash === false);
+                const transformedData = filteredData.map((item) => ({
+                    category_id: item.category_id,
+                    category_name: item.category_name,
+                }));
+        
+                setData(transformedData);
+            }
+        } catch (error) {
+            toast.error("Error Fetching Data", {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const handleBrandingClick = (categoryId) => {
+        const newSelectedBranding = selectedBranding === categoryId ? null : categoryId;
+        setSelectedBranding(newSelectedBranding);
+        onBrandingSelect(newSelectedBranding);
+    };
+
     return (
         <div className="p-2 border-b mb-2">
             <div
@@ -26,26 +74,18 @@ const Branding = ({ setIsBrandingOpen, isBrandingOpen }) => {
                 }`}
             >
                 <ul className="space-y-2 mb-3">
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            Louis Vuitton
-                        </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            Chanel
-                        </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            Hermes
-                        </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            Gucci
-                        </button>
-                    </li>
+                    {data.map((category) => (
+                        <li key={category.category_id}>
+                            <button 
+                                className={`text-gray-400 hover:text-gray-800 transition duration-300 ${
+                                selectedBranding === category.category_id ? 'text-gray-800' : ''
+                                }`}
+                                onClick={() => handleBrandingClick(category.category_id)}
+                            >
+                                {category.category_name}
+                            </button>
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>

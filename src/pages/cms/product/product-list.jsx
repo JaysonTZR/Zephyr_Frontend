@@ -28,7 +28,8 @@ const CMSProductList = () => {
       );
 
       if (response.status === 200){
-        const transformedData = response.data.map((item) => ({
+        const filteredData = response.data.filter((item) => item.product_status === "active" && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
           id: item.product_id,
           name: item.product_name,
           code: item.product_code,

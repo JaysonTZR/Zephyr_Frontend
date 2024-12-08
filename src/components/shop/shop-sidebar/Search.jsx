@@ -1,12 +1,22 @@
-import React from 'react';
+import React , { useState } from 'react';
 
-const Search = () => {
+const Search = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleInputChange = (e) => {
+      const value = e.target.value;
+      setSearchTerm(value);
+      onSearch(value);
+  };
+
   return (
     <div className="relative w-full mb-3">
         <input
             type="text"
             placeholder="Search..."
             className="w-full py-2 px-5 border rounded mb-4 pr-10"
+            value={searchTerm}
+            onChange={handleInputChange}
         />
         <div className="absolute inset-y-0 right-0 flex items-center pr-3">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-4 text-gray-100" viewBox="0 0 32 32" stroke="currentColor">

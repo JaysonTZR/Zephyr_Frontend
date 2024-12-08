@@ -26,8 +26,8 @@ const CMSCategoryList = () => {
       );
 
       if (response.status === 200){
-
-        const transformedData = response.data.map((item) => ({
+        const filteredData = response.data.filter((item) => item.category_status === "active" && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
           id: item.category_id,
           title: item.category_name,
           type: item.category_type,

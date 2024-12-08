@@ -13,6 +13,12 @@ import axios from "axios";
 const CMSCustomerEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [country, setCountry] = useState(null);
+  const [state, setState] = useState(null);
+  const [city, setCity] = useState(null);
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
   const [formData, setFormData] = useState({
     user_id: "",
     customer_name: "",
@@ -146,6 +152,89 @@ const CMSCustomerEdit = () => {
     });
   };
 
+  useEffect(() => {
+    // Fetch countries
+    const fetchCountries = async () => {
+      try {
+        const response = await axios.get(`http://api.geonames.org/countryInfoJSON?username=jaysonzr`);
+        const countryOptions = response.data.geonames.map((country) => ({
+          value: country.geonameId,
+          label: country.countryName,
+        }));
+        setCountries(countryOptions);
+
+        const selectedCountry = countryOptions.find(
+          (country) => country.label === formData.customer_country
+        );
+        if (selectedCountry) {
+          setCountry(selectedCountry);
+        }
+      } catch (error) {
+        console.error('Error fetching countries:', error);
+      }
+    };
+
+    fetchCountries();
+  }, [formData.customer_country]);
+
+  useEffect(() => {
+    if (formData.customer_country) {
+      // Fetch states
+      const fetchStates = async () => {
+        try {
+          const response = await axios.get(
+            `http://api.geonames.org/childrenJSON?geonameId=${country.value}&username=jaysonzr`
+          );
+          const stateOptions = response.data.geonames.map((state) => ({
+            value: state.geonameId,
+            label: state.name,
+          }));
+          setStates(stateOptions);
+
+          const selectedState = stateOptions.find(
+            (state) => state.label === formData.customer_state
+          );
+          if (selectedState) {
+            setState(selectedState);
+          }
+        } catch (error) {
+          console.error('Error fetching states:', error);
+        }
+      };
+
+      fetchStates();
+    }
+  }, [country, formData.customer_state]);
+
+  useEffect(() => {
+    if (formData.customer_state) {
+      // Fetch cities
+      const fetchCities = async () => {
+        try {
+          const response = await axios.get(
+            `http://api.geonames.org/childrenJSON?geonameId=${state.value}&username=jaysonzr`
+          );
+          const cityOptions = response.data.geonames.map((city) => ({
+            value: city.geonameId,
+            label: city.name,
+          }));
+          setCities(cityOptions);
+
+          const selectedCity = cityOptions.find(
+            (city) => city.label === formData.customer_city
+          );
+          if (selectedCity) {
+            setCity(selectedCity);
+          }
+        } catch (error) {
+          console.error('Error fetching cities:', error);
+        }
+      };
+
+      fetchCities();
+    }
+  }, [state, formData.customer_city]);
+
   const genderOptions = [
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
@@ -251,22 +340,17 @@ const CMSCustomerEdit = () => {
                     <label htmlFor="customer_country" className="mb-2 mt-2 w-72">
                       Country<span className="text-red-500"> *</span>
                     </label>
-                    <select
+                    <Select
                       id="customer_country"
-                      name="customer_country"
-                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      value={formData && formData.customer_country}
-                      onChange={(e) =>
-                        handleInputChange("customer_country", e.target.value)
-                      }
-                    >
-                      <option value="" disabled hidden>Select a country</option>
-                      {countryOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                      className="w-full"
+                      value={country}
+                      onChange={(e) => {
+                        setCountry(e);
+                        handleInputChange("customer_country", e.label);
+                      }}
+                      options={countries}
+                      placeholder="Select a country"
+                    />
                   </div>
 
                   {/* State */}
@@ -274,22 +358,18 @@ const CMSCustomerEdit = () => {
                     <label htmlFor="customer_state" className="mb-2 mt-2 w-72">
                       State<span className="text-red-500"> *</span>
                     </label>
-                    <select
+                    <Select
                       id="customer_state"
-                      name="customer_state"
-                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      value={formData && formData.customer_state}
-                      onChange={(e) =>
-                        handleInputChange("customer_state", e.target.value)
-                      }
-                    >
-                      <option value="" disabled hidden>Select a state</option>
-                      {stateOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                      className="w-full"
+                      value={state}
+                      onChange={(e) => {
+                          setState(e);
+                          handleInputChange("customer_state", e.label);
+                      }}
+                      options={states}
+                      placeholder="Select a state"
+                      isDisabled={!country}
+                    />
                   </div>
 
                   {/* City */}
@@ -297,22 +377,18 @@ const CMSCustomerEdit = () => {
                     <label htmlFor="customer_city" className="mb-2 mt-2 w-72">
                       City<span className="text-red-500"> *</span>
                     </label>
-                    <select
+                    <Select
                       id="customer_city"
-                      name="customer_city"
-                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      value={formData && formData.customer_city}
-                      onChange={(e) =>
-                        handleInputChange("customer_city", e.target.value)
-                      }
-                    >
-                      <option value="" disabled hidden>Select a city</option>
-                      {cityOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
+                      className="w-full"
+                      value={city}
+                      onChange={(e) => {
+                          setCity(e);
+                          handleInputChange("customer_city", e.label);
+                      }}
+                      options={cities}
+                      placeholder="Select a city"
+                      isDisabled={!state}
+                    />
                   </div>
 
                   {/* Address 1 */}

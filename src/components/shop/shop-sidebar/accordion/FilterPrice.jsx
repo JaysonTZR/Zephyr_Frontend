@@ -1,6 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from "react-toastify";
+import { apiUrl } from '../../../../constant/constants';
+import axios from "axios";
 
-const FilterPrice = ({ setIsFilterPriceOpen, isFilterPriceOpen }) => {
+const FilterPrice = ({ setIsFilterPriceOpen, isFilterPriceOpen, onPriceSelect }) => {
+    const [selectedPriceRange, setSelectedPriceRange] = useState(null);
+
+    const priceRanges = [
+        { label: '$0.00 - $50.00', min: 0, max: 50 },
+        { label: '$50.00 - $100.00', min: 50, max: 100 },
+        { label: '$100.00 - $150.00', min: 100, max: 150 },
+        { label: '$150.00 - $200.00', min: 150, max: 200 },
+        { label: '$200.00 - $250.00', min: 200, max: 250 },
+        { label: '$250.00+', min: 250, max: Infinity },
+    ];
+    
+    const handlePriceClick = (min, max) => {
+        const newSelectedPriceRange = selectedPriceRange && selectedPriceRange.min === min && selectedPriceRange.max === max
+          ? null
+          : { min, max };
+        setSelectedPriceRange(newSelectedPriceRange);
+        onPriceSelect(newSelectedPriceRange ? newSelectedPriceRange.min : 0, newSelectedPriceRange ? newSelectedPriceRange.max : Infinity);
+    };
+
     return (
         <div className="p-2 border-b mb-2">
             <div
@@ -26,36 +48,18 @@ const FilterPrice = ({ setIsFilterPriceOpen, isFilterPriceOpen }) => {
                 }`}
             >
                 <ul className="space-y-2 mb-3">
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            $0.00 - $50.00
+                    {priceRanges.map((range, index) => (
+                        <li key={index}>
+                        <button
+                            className={`text-gray-400 hover:text-gray-800 transition duration-300 ${
+                            selectedPriceRange && selectedPriceRange.min === range.min && selectedPriceRange.max === range.max ? 'text-gray-800' : ''
+                            }`}
+                            onClick={() => handlePriceClick(range.min, range.max)}
+                        >
+                            {range.label}
                         </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            $50.00 - $100.00
-                        </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            $100.00 - $150.00
-                        </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            $150.00 - $200.00
-                        </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            $200.00 - $250.00
-                        </button>
-                    </li>
-                    <li>
-                        <button className="text-gray-400 hover:text-gray-800 transition duration-300">
-                            $250.00+
-                        </button>
-                    </li>
+                        </li>
+                    ))}
                 </ul>
             </div>
         </div>

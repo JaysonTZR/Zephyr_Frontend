@@ -1,36 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
 import AccordionItem from "../../components/shop/shop-sidebar/accordion/AccordionItem";
 import ProductList from "../../components/shop/ProductList";
+import { toast } from "react-toastify";
+import { apiUrl } from "../../constant/constants";
+import axios from "axios";
 
 const Shop = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState([]);
+  const [originalItems, setOriginalItems] = useState([]);
+  const [sortOrder, setSortOrder] = useState('');
 
-  const items = [
-    { name: "Faux Biker Jacket", price: "$67.24", rating: 5 },
-    { name: "Multi-pocket Chest Bag", price: "$43.48", rating: 5, sale: true },
-    { name: "Diagonal Textured Cap", price: "$60.39", rating: 3 },
-    { name: "Ankle Boots", price: "$38.49", rating: 2, sale: true },
-    { name: "T-shirt Contrast Pocket", price: "$40.85", rating: 4 },
-    { name: "Basic Flowing Scarf", price: "$22.28", rating: 1 },
-    { name: "Faux Biker Jacket", price: "$67.24", rating: 0 },
-    { name: "Multi-pocket Chest Bag", price: "$43.48", rating: 5, sale: true },
-    { name: "Diagonal Textured Cap", price: "$60.39", rating: 0 },
-    { name: "Camouflage Jacket", price: "$89.43", rating: 4, sale: true },
-    { name: "Leather Bag", price: "$120.45", rating: 2 },
-    { name: "Basic Flowing Scarf", price: "$22.28", rating: 3 },
-    { name: "Faux Biker Jacket", price: "$67.24", rating: 5 },
-    { name: "Multi-pocket Chest Bag", price: "$43.48", rating: 5, sale: true },
-    { name: "Diagonal Textured Cap", price: "$60.39", rating: 3 },
-    { name: "Ankle Boots", price: "$38.49", rating: 2, sale: true },
-    { name: "T-shirt Contrast Pocket", price: "$40.85", rating: 4 },
-    { name: "Basic Flowing Scarf", price: "$22.28", rating: 1 },
-    { name: "Faux Biker Jacket", price: "$67.24", rating: 0 },
-    { name: "Multi-pocket Chest Bag", price: "$43.48", rating: 5, sale: true },
-    { name: "Diagonal Textured Cap", price: "$60.39", rating: 0 },
-  ];
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "product",
+        {
+
+        }
+      );
+
+      if (response.status === 200){
+        const filteredData = response.data.filter((item) => item.product_status === "active" && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
+          id: item.product_id,
+          category_id: item.category_id,
+          name: item.product_name,
+          product_image: item.product_photo,
+          price: item.product_price,
+          new: item.product_new,
+          sale: item.product_sale,
+        }));
+
+        setItems(transformedData);
+        setOriginalItems(transformedData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSortChange = (e) => {
+    const order = e.target.value;
+    setSortOrder(order);
+
+    if (order === '') {
+      setItems(originalItems);
+    } else {
+      const sortedItems = [...items].sort((a, b) => {
+        if (order === 'lowToHigh') {
+          return a.price - b.price;
+        } else if (order === 'highToLow') {
+          return b.price - a.price;
+        } else {
+          return 0;
+        }
+      });
+
+      setItems(sortedItems);
+    }
+  };
 
   const itemsPerPage = 12;
   
@@ -84,6 +129,98 @@ const Shop = () => {
     return pageNumbers;
   };
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [selectedBrandingId, setSelectedBrandingId] = useState(null);
+  const [selectedPriceRange, setSelectedPriceRange] = useState({ min: 0, max: Infinity });
+  const [selectedSizeId, setSelectedSizeId] = useState(null);
+  const [selectedTagsId, setSelectedTagsId] = useState(null);
+  const [selectedColorsId, setSelectedColorsId] = useState(null);
+
+  const handleSearch = (searchTerm) => {
+    setSearchTerm(searchTerm);
+    applyFilters(searchTerm, selectedCategoryId, selectedBrandingId, selectedPriceRange, selectedSizeId, selectedTagsId);
+  };
+
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategoryId(categoryId);
+    applyFilters(searchTerm, categoryId, selectedBrandingId, selectedPriceRange, selectedSizeId, selectedTagsId, selectedColorsId);
+  };
+
+  const handleBrandingSelect = (brandingId) => {
+    setSelectedBrandingId(brandingId);
+    applyFilters(searchTerm, selectedCategoryId, brandingId, selectedPriceRange, selectedSizeId, selectedTagsId, selectedColorsId);
+  };
+
+  const handlePriceSelect = (min, max) => {
+    setSelectedPriceRange({ min, max });
+    applyFilters(searchTerm, selectedCategoryId, selectedBrandingId, { min, max }, selectedSizeId, selectedTagsId, selectedColorsId);
+  };
+
+  const handleSizeSelect = (sizeId) => {
+    setSelectedSizeId(sizeId);
+    applyFilters(searchTerm, selectedCategoryId, selectedBrandingId, selectedPriceRange, sizeId, selectedTagsId, selectedColorsId);
+  };
+
+  const handleTagsSelect = (tagsId) => {
+    setSelectedTagsId(tagsId);
+    applyFilters(searchTerm, selectedCategoryId, selectedBrandingId, selectedPriceRange, selectedSizeId, tagsId, selectedColorsId);
+  };
+
+  const handleColorsSelect = (colorsId) => {
+    setSelectedColorsId(colorsId);
+    applyFilters(searchTerm, selectedCategoryId, selectedBrandingId, selectedPriceRange, selectedSizeId, selectedTagsId, colorsId);
+  };
+
+  const applyFilters = (searchTerm, categoryId, brandingId, priceRange, sizeId, tagsId, colorsId) => {
+    let filteredItems = originalItems;
+
+    if (categoryId) {
+      filteredItems = filteredItems.filter(item => item.category_id === categoryId);
+    }
+
+    if (brandingId) {
+      filteredItems = filteredItems.filter(item => item.category_id === brandingId);
+    }
+
+    if (searchTerm) {
+      filteredItems = filteredItems.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (priceRange) {
+      filteredItems = filteredItems.filter(item =>
+        item.price >= priceRange.min && item.price <= priceRange.max
+      );
+    }
+
+    if (sizeId) {
+      filteredItems = filteredItems.filter(item => item.category_id === sizeId);
+    }
+
+    if (colorsId) {
+      filteredItems = filteredItems.filter(item => item.category_id === colorsId);
+    }
+
+    if (tagsId) {
+      filteredItems = filteredItems.filter(item => item.category_id === tagsId);
+    }
+
+    setItems(filteredItems);
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedCategoryId(null);
+    setSelectedBrandingId(null);
+    setSelectedPriceRange({ min: 0, max: Infinity });
+    setSelectedSizeId(null);
+    setSelectedColorsId(null);
+    setSelectedTagsId(null);
+    setItems(originalItems);
+  };
+
   return (
     <div className="font-sans">
       <Header />
@@ -92,24 +229,40 @@ const Shop = () => {
       <div className="flex justify-center mb-20">
         <div className="py-8 flex w-7/12">
           {/* Left Panel */}
-          <AccordionItem />
+          <AccordionItem 
+            onSearch={handleSearch} 
+            onCategorySelect={handleCategorySelect} 
+            onBrandingSelect={handleBrandingSelect} 
+            onPriceSelect={handlePriceSelect}
+            onSizeSelect={handleSizeSelect}
+            onColorsSelect={handleColorsSelect}
+            onTagsSelect={handleTagsSelect}
+          />
 
           {/* Main Shop Area */}
           <div className="w-3/4">
-            <div className="flex justify-between mb-10">
+            <div className="flex justify-between mb-2">
               <div className="col-lg-6 col-md-6 col-sm-6">
                 <p>Showing {(currentPage - 1) * itemsPerPage + 1}–{Math.min(currentPage * itemsPerPage, items.length)} of {items.length} results</p>
               </div>
               <div className="col-lg-6 col-md-6 col-sm-6">
                 <div className="flex">
                   <p className="mr-1">Sort by Price:</p>
-                  <select className="font-semibold pb-1">
-                    <option value="">Low To High</option>
-                    <option value="">$0 - $55</option>
-                    <option value="">$55 - $100</option>
+                  <select className="font-semibold pb-1" value={sortOrder} onChange={handleSortChange}>
+                    <option value="">No Sort</option>
+                    <option value="lowToHigh">Low To High</option>
+                    <option value="highToLow">High To Low</option>
                   </select>
                 </div>
               </div>
+            </div>
+            <div className="mb-8">
+              {/* <button
+                className="bg-black text-white px-4 py-1 uppercase text-sm font-semibold"
+                onClick={clearFilters}
+              >
+                Clear Filters
+              </button> */}
             </div>
             <ProductList currentItems={currentItems} itemPerRow={3} />
             

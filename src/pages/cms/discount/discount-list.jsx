@@ -26,7 +26,8 @@ const CMSDiscountList = () => {
       );
 
       if (response.status === 200){
-        const transformedData = response.data.map((item) => ({
+        const filteredData = response.data.filter((item) => item.discount_status === "active" && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
           id: item.discount_id,
           code: item.discount_code,
           description: item.discount_description,

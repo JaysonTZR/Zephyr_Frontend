@@ -1,6 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from "react-toastify";
+import { apiUrl } from '../../../../constant/constants';
+import axios from "axios";
 
-const Tags = ({ setIsTagsOpen, isTagsOpen }) => {
+const Tags = ({ setIsTagsOpen, isTagsOpen, onTagsSelect }) => {
+    const [data, setData] = useState([]);
+    const [selectedTags, setSelectedTags] = useState(null);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(
+                apiUrl + "category",
+                {
+        
+                }
+            );
+        
+            if (response.status === 200){
+                const filteredData = response.data.filter((item) => item.category_type === "Tags" && item.category_status === "active" && item.trash === false);
+                const transformedData = filteredData.map((item) => ({
+                    category_id: item.category_id,
+                    category_name: item.category_name,
+                }));
+        
+                setData(transformedData);
+            }
+        } catch (error) {
+            toast.error("Error Fetching Data", {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const handleTagsClick = (categoryId) => {
+        const newSelectedTags = selectedTags === categoryId ? null : categoryId;
+        setSelectedTags(newSelectedTags);
+        onTagsSelect(newSelectedTags);
+    };
+
     return (
         <div className="p-2 border-b mb-2">
             <div
@@ -26,27 +74,17 @@ const Tags = ({ setIsTagsOpen, isTagsOpen }) => {
                 }`}
             >
                 <div className="space-y-2 mb-3">
-                    <button className="text-sm font-semibold text-gray-800 bg-slate-100 px-4 py-1 mr-3 uppercase">
-                        Product
-                    </button>
-                    <button className="text-sm font-semibold text-gray-800 bg-slate-100 px-4 py-1 mr-3 uppercase">
-                        Bags
-                    </button>
-                    <button className="text-sm font-semibold text-gray-800 bg-slate-100 px-4 py-1 mr-3 uppercase">
-                        Shoes
-                    </button>
-                    <button className="text-sm font-semibold text-gray-800 bg-slate-100 px-4 py-1 mr-3 uppercase">
-                        Fashion
-                    </button>
-                    <button className="text-sm font-semibold text-gray-800 bg-slate-100 px-4 py-1 mr-3 uppercase">
-                        Clothing
-                    </button>
-                    <button className="text-sm font-semibold text-gray-800 bg-slate-100 px-4 py-1 mr-3 uppercase">
-                        Hats
-                    </button>
-                    <button className="text-sm font-semibold text-gray-800 bg-slate-100 px-4 py-1 mr-3 uppercase">
-                        Accessories
-                    </button>
+                    {data.map((category) => (
+                        <button 
+                            key={category.category_id}
+                            className={`text-sm font-semibold px-4 py-1 mr-3 uppercase ${
+                            selectedTags === category.category_id ? 'text-gray-200 bg-gray-800' : 'text-gray-800 bg-slate-100'
+                            }`}
+                            onClick={() => handleTagsClick(category.category_id)}
+                        >
+                            {category.category_name}
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>

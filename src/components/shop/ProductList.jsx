@@ -12,11 +12,15 @@ const ProductList = ({ currentItems, itemPerRow }) => {
     }[itemPerRow] || "grid-cols-1";
 
     return (
+        currentItems.length === 0 ? (
+            <div className="h-60 text-center flex items-center justify-center text-lg text-gray-500">No available products.</div>
+        ) : (
         <div className={`grid ${gridColsClass} gap-6`}>
             {currentItems.map((item, index) => (
                 <ProductItem item={item} index={index} />
             ))}
         </div>
+        )
     );
 };
 

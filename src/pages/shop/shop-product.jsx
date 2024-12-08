@@ -1,23 +1,144 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import DetailsPayment from "../../assets/images/details-payment.png";
 import ProductList from "../../components/shop/ProductList";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { apiUrl } from "../../constant/constants";
 
 const ShopProduct = () => {
+  const { id } = useParams();
+  const [data, setData] = useState([]);
+  const [relatedProductData, setRelatedProductData] = useState([]);
+  const [category, setCategory] = useState([]);
   const [menuSection, setMenuSection] = useState("description");
-
-  const items = [
-    { name: "Faux Biker Jacket", price: "$67.24", rating: 5 },
-    { name: "Multi-pocket Chest Bag", price: "$43.48", rating: 5, sale: true },
-    { name: "Diagonal Textured Cap", price: "$60.39", rating: 3 },
-    { name: "Ankle Boots", price: "$38.49", rating: 2, sale: true },
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const sizes = ["XXL", "XL", "L", "S"];
+  const colors = [
+    { name: "black", class: "bg-black" },
+    { name: "blue", class: "bg-blue-900" },
+    { name: "yellow", class: "bg-yellow-500" },
+    { name: "red", class: "bg-red-500" },
+    { name: "white", class: "bg-white" },
   ];
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "product",
+        {
+
+        }
+      );
+
+      if (response.status === 200){
+        const filteredRelatedProductData = response.data.filter((item) => item.product_status === "active" && item.trash === false);
+        const shuffledData = filteredRelatedProductData.sort(() => 0.5 - Math.random());
+        const topFourData = shuffledData.slice(0, 4);
+        const transformedData = topFourData.map((item) => ({
+          id: item.product_id,
+          category_id: item.category_id,
+          name: item.product_name,
+          product_image: item.product_photo,
+          price: item.product_price,
+          new: item.product_new,
+          sale: item.product_sale,
+        }));
+        setRelatedProductData(transformedData);
+
+        const filteredData = response.data.filter((item) => item.product_id == id && item.product_status === "active" && item.trash === false);
+        setData(filteredData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  const fetchCategory = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "category",
+        {
+
+        }
+      );
+
+      if (response.status === 200){
+        const filteredData = response.data.filter((item) => item.category_status === "active" && item.trash === false);
+        setCategory(filteredData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+    fetchCategory();
+  }, [id]);
+
+  const handleSizeClick = (size) => {
+    setSelectedSize(size);
+  };
+
+  const handleColorClick = (color) => {
+    setSelectedColor(color);
+  };
+
+  const handleQuantityChange = (e) => {
+    setQuantity(e.target.value);
+  };
+
+  const getCategoryName = (categoryId) => {
+    const categoryItem = category.find((item) => item.category_id === categoryId);
+    return categoryItem ? categoryItem.category_name : "Unknown Category";
+  };
+
+  const renderProductInformation = (information) => {
+    const parts = information.split('*');
+    return parts.map((part, index) => {
+      if (index % 2 === 1) {
+        return (
+          <div key={index} className="text-lg font-semibold mt-5">
+            {part}
+          </div>
+        );
+      } else {
+        return (
+          <div key={index} className="text-gray-600 mb-4">
+            {part}
+          </div>
+        );
+      }
+    });
+  };
 
   return (
     <div>
       <Header />
-      <section className="flex justify-center p-4" style={{ backgroundColor: '#f3f2ee' }}>
+      <div className="flex justify-center p-4" style={{ backgroundColor: '#f3f2ee' }}>
         <div className="flex md:w-3/4">
           {/* Thumbnail Images Section */}
           <div className="flex flex-col w-1/4 p-4 pl-24">
@@ -33,41 +154,40 @@ const ShopProduct = () => {
             {/* This grey box represents the main product image with the same height as the left images */}
           </div>
         </div>
-      </section>
+      </div>
 
       <div className="mx-auto p-4 mt-16 mb-5 w-[800px]">
         {/* Removed border and shadow */}
         <h2 className="text-2xl font-semibold mb-2 text-center">
-          Hooded thermal anorak
+          {data.length > 0 ? data[0].product_name : "Product Name"}
         </h2>
         <div className="flex items-center justify-center mb-3">
           <span className="text-orange-400 text-xl">★★★★☆</span>
           <span className="text-gray-600 ml-1">- 5 Reviews</span>
         </div>
         <div className="text-lg font-semibold mb-5 text-center">
-          <span className="text-3xl">$270.00</span>
-          <span className="line-through ml-3 text-gray-400">$70.00</span>
+          <span className="text-3xl">${data.length > 0 ? data[0].product_price : "Product Price"}</span>
         </div>
         <p className="mb-12 text-center text-sm">
-          Coat with quilted lining and an adjustable hood. Featuring long sleeves with adjustable cuff tabs, adjustable asymmetric hem with
-          elastic side tabs and a front zip fastening with placket.
+          {data.length > 0 ? data[0].product_description : "Product Description"}
         </p>
         <div className="flex justify-center space-x-16 mb-7">
           {/* Size Selection */}
           <div className="flex items-center">
             <label className="mr-3">Size:</label>
             <div className="flex space-x-2">
-              {["XXL", "XL", "L", "S"].map((size) => (
+              {sizes.map((size) => (
                 <button
                   key={size}
-                  className={
-                    size === "XL" ? "px-4 py-2 flex items-center justify-center border cursor-pointer bg-black" : "px-4 py-2 flex items-center justify-center border cursor-pointer"
-                  }
+                  className={`px-4 py-2 flex items-center justify-center border cursor-pointer ${
+                    size === selectedSize ? "bg-black" : ""
+                  }`}
+                  onClick={() => handleSizeClick(size)}
                 >
                   <span
-                    className={
-                      size === "XL" ? "font-semibold text-white" : "font-semibold text-black"
-                    }
+                    className={`font-semibold ${
+                      size === selectedSize ? "text-white" : "text-black"
+                    }`}
                   >
                     {size}
                   </span>
@@ -80,21 +200,19 @@ const ShopProduct = () => {
           <div className="flex items-center">
             <label className="mr-2">Color:</label>
             <div className="flex justify-center space-x-2">
-              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
-                <button className="bg-black w-7 h-7 border rounded-full" />
-              </div>
-              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
-                <button className="bg-blue-900 w-7 h-7 border rounded-full" />
-              </div>
-              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
-                <button className="bg-yellow-500 w-7 h-7 border rounded-full" />
-              </div>
-              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
-                <button className="bg-red-500 w-7 h-7 border rounded-full" />
-              </div>
-              <div className="border rounded-full w-8 h-8 flex items-center justify-center">
-                <button className="bg-white w-7 h-7 border rounded-full" />
-              </div>
+              {colors.map((color) => (
+                <div
+                  key={color.name}
+                  className={`border rounded-full w-8 h-8 flex items-center justify-center ${
+                    selectedColor === color.name ? "border-slate-800" : ""
+                  }`}
+                >
+                  <button
+                    className={`${color.class} w-7 h-7 border rounded-full`}
+                    onClick={() => handleColorClick(color.name)}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -102,7 +220,8 @@ const ShopProduct = () => {
         <div className="flex items-center justify-center mb-6">
           <input
             type="number"
-            defaultValue="1"
+            value={quantity}
+            onChange={handleQuantityChange}
             className="w-20 py-2 border mr-4 text-center"
           />
           <button className="bg-black text-white w-48 px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700">
@@ -112,10 +231,10 @@ const ShopProduct = () => {
 
 
         <div className="flex items-center justify-center mb-6">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 mr-2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-          </svg>
-          <button>
+          <button className="flex items-center justify-center hover:text-red-500">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 mr-2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+            </svg>
             <span className="uppercase tracking-widest text-sm font-semibold">
               Add To Wishlist
             </span>
@@ -132,15 +251,11 @@ const ShopProduct = () => {
         <div className="font-semibold text-center">
           <div className="mb-1">
             <span className="text-gray-400">SKU: </span>
-            <span className="text-black">3812912</span>
+            <span className="text-black">{data.length > 0 ? data[0].product_code : "Product Code"}</span>
           </div>
           <div className="mb-1">
             <span className="text-gray-400">Categories: </span>
-            <span className="text-black">Clothes</span>
-          </div>
-          <div className="mb-1">
-            <span className="text-gray-400">Tag: </span>
-            <span className="text-black">Clothes, Skin, Bod</span>
+            <span className="text-black">{data.length > 0 ? getCategoryName(data[0].category_id) : "Unknown Category"}</span>
           </div>
         </div>
       </div>
@@ -194,10 +309,7 @@ const ShopProduct = () => {
             <div>
               <h1 className="text-xl font-bold mb-4">Description</h1>
               <p className="text-gray-700 mb-4">
-                Nam tempus turpis at metus scelerisque placerat nulla deumantos
-                sollicitud felis. Pellentesque diam dolor, elementum etos
-                lobortis des mollis ut risus. Sedcus faucibus an sullamcorper
-                mattis drostique des commodo pharetras lorem.
+                {data.length > 0 ? data[0].product_description : "Description"}
               </p>
             </div>
           )}
@@ -220,37 +332,7 @@ const ShopProduct = () => {
           {menuSection == "additional" && (
             <div>
               <h1 className="text-xl font-bold mb-4">Additional Information</h1>
-              <h2 className="text-lg font-semibold mt-5">
-                Products Information
-              </h2>
-              <p className="text-gray-600 mb-4">
-                A Pocket PC is a handheld computer, which features many of the
-                same capabilities as a modern PC. These handy little devices
-                allow individuals to retrieve and store e-mail messages, create
-                a contact file, coordinate appointments, surf the internet,
-                exchange text messages and more. Every product that is labeled
-                as a Pocket PC must be accompanied with specific software to
-                operate the unit and must feature a touchscreen and touchpad. As
-                is the case with any new technology product, the cost of a
-                Pocket PC was substantial during its early release. For
-                approximately $700.00, consumers could purchase one of
-                top-of-the-line Pocket PCs in 2003. These days, customers are
-                finding that prices have become much more reasonable now that
-                the newness is wearing off. For approximately $350.00, a new
-                Pocket PC can now be purchased.
-              </p>
-
-              <h2 className="text-lg font-semibold mt-5">Material Used</h2>
-              <p className="text-gray-600">
-                Polyester is deemed lower quality due to its non-natural
-                quality's. Made from synthetic materials, not natural like wool.
-                Polyester suits become creased easily and are known for not
-                being breathable. Polyester suits tend to have a shine to them
-                compared to wool and cotton suits, this can make the suit look
-                cheap. The texture of velvet is luxurious and breathable. Velvet
-                is a great choice for a dinner party jacket and can be worn all
-                year round.
-              </p>
+              {data.length > 0 ? renderProductInformation(data[0].product_information) : "Information"}
             </div>
           )}
         </div>
@@ -258,7 +340,7 @@ const ShopProduct = () => {
         <div className="container mx-auto py-10">
           <h2 className="text-3xl font-semibold mb-10 item text-center">Related Product</h2>
           <div className="px-11">
-            <ProductList currentItems={items} itemPerRow={4} />
+            <ProductList currentItems={relatedProductData} itemPerRow={4} />
           </div>
         </div>
       </div>

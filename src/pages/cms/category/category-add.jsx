@@ -16,7 +16,7 @@ const CMSCategoryAdd = () => {
   const [formData, setFormData] = useState({
     category_type: "",
     category_name: "",
-    category_status: "",
+    category_status: "active",
     trash: false,
   });
 

@@ -1,6 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { toast } from "react-toastify";
+import { apiUrl } from '../../../../constant/constants';
+import axios from "axios";
 
-const Size = ({ setIsSizeOpen, isSizeOpen }) => {
+const Size = ({ setIsSizeOpen, isSizeOpen, onSizeSelect }) => {
+    const [data, setData] = useState([]);
+    const [selectedSize, setSelectedSize] = useState(null);
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(
+                apiUrl + "category",
+                {
+        
+                }
+            );
+        
+            if (response.status === 200){
+                const filteredData = response.data.filter((item) => item.category_type === "Size" && item.category_status === "active" && item.trash === false);
+                const transformedData = filteredData.map((item) => ({
+                    category_id: item.category_id,
+                    category_name: item.category_name,
+                }));
+        
+                setData(transformedData);
+            }
+        } catch (error) {
+            toast.error("Error Fetching Data", {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const handleSizeClick = (categoryId) => {
+        const newSelectedSize = selectedSize === categoryId ? null : categoryId;
+        setSelectedSize(newSelectedSize);
+        onSizeSelect(newSelectedSize);
+    };
+
     return (
         <div className="p-2 border-b mb-2">
             <div
@@ -26,30 +74,17 @@ const Size = ({ setIsSizeOpen, isSizeOpen }) => {
                 }`}
             >
                 <div className="space-y-2 mb-3">
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        XS
-                    </button>
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        S
-                    </button>
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        M
-                    </button>
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        XL
-                    </button>
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        2XL
-                    </button>
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        XXL
-                    </button>
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        3XL
-                    </button>
-                    <button className="font-semibold text-gray-800 border border-gray-200 px-6 py-1 mr-3">
-                        4XL
-                    </button>
+                    {data.map((category) => (
+                        <button 
+                            key={category.category_id}
+                            className={`font-semibold px-6 py-1 mr-3 ${
+                            selectedSize === category.category_id ? 'text-gray-200 bg-gray-800 border border-gray-800' : 'text-gray-800 border border-gray-200'
+                            }`}
+                            onClick={() => handleSizeClick(category.category_id)}
+                        >
+                            {category.category_name}
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>
