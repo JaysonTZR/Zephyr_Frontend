@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 
-const QuantityInput = ({ item }) => {
-  const [quantity, setQuantity] = useState(item.quantity);
+const QuantityInput = ({ item, onQuantityChange  }) => {
+  const [quantity, setQuantity] = useState(item.cart_quantity);
 
   const increaseQuantity = () => {
-    setQuantity(prevQuantity => prevQuantity + 1);
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
+    onQuantityChange(item.cart_id, newQuantity);
   };
 
   const decreaseQuantity = () => {
     if (quantity > 1) {
-      setQuantity(prevQuantity => prevQuantity - 1);
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
+      onQuantityChange(item.cart_id, newQuantity);
     }
   };
 
