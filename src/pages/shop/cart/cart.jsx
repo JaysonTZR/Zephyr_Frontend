@@ -20,6 +20,8 @@ function Cart() {
   const [formData, setFormData] = useState([]);
   const [totalSum, setTotalSum] = useState(0);
   const [updatedCart, setUpdatedCart] = useState([]);
+  const [discountCode, setDiscountCode] = useState('');
+  const [discount, setDiscount] = useState(null);
 
   const authCustomerData = localStorage.getItem("authCustomerData");
   const customerDataObject = authCustomerData
@@ -139,6 +141,57 @@ function Cart() {
     }
   };
 
+  const handleDiscountCode = async () => {
+    try {
+      const response = await axios.get(apiUrl + `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`);
+
+      console.log(response);
+
+      if (response.status === 200) {
+
+        setDiscount(response.data.discount);
+
+        toast.success("Discount Applied", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }else{
+        toast.error(response.data.message, {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Invalid Discount Code", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setDiscountCode('');
+    setDiscount(null);
+  }
+
   useEffect(() => {
     startTransition(() => {
       fetchData();
@@ -222,9 +275,11 @@ function Cart() {
                     type="text"
                     placeholder="Coupon code"
                     className="border border-gray-300 py-3 px-5 w-full"
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)}
                   />
-                  <button className="bg-black text-white px-5 py-[15px] uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700">
-                    Apply
+                  <button className="bg-black text-white px-5 py-[15px] uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700" onClick={!discount ? handleDiscountCode : handleRemoveDiscount}>
+                    {!discount ? 'Apply' : 'Remove'}
                   </button>
                 </div>
 
@@ -239,10 +294,16 @@ function Cart() {
                       RM {totalSum.toFixed(2)}
                     </span>
                   </div>
+                  {discount && <div className="text-zinc-500 mt-4 flex justify-between">
+                    Discount{" "}
+                    <span className="font-semibold text-lg text-red-600">
+                      - RM {discount.discount_amount.toFixed(2)}
+                    </span>
+                  </div>}
                   <div className="text-zinc-500 mt-4 flex justify-between">
                     Total{" "}
                     <span className="font-semibold text-lg text-red-600">
-                      RM {totalSum.toFixed(2)}
+                      RM {!discount ? totalSum.toFixed(2) : (totalSum - discount.discount_amount).toFixed(2)}
                     </span>
                   </div>
                   <button
