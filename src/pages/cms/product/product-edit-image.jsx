@@ -8,12 +8,14 @@ import Header from "../../../components/cms/Header";
 import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
+import { uploadToS3, deleteFromS3 } from "../../../utils/s3Upload";
 
 const CMSProductEditImage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [imageUrl, setImageUrl] = useState('');
   const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const fileInput = useRef();
   const filesInput = useRef([]);
   const [photoReference, setPhotoReference] = useState([]);
@@ -26,9 +28,7 @@ const CMSProductEditImage = () => {
     product_name: "",
     product_code: "",
     product_photo: "",
-    product_photo_base64: null,
     product_sub_photo: "",
-    product_sub_photo_base64: null,
     product_price: 0.0,
     product_description: "",
     product_information: "",
@@ -58,10 +58,65 @@ const CMSProductEditImage = () => {
         setFormData((prevData) => ({
           ...prevData,
           product_photo: selectedFile.name,
-          product_photo_base64: reader.result.split(",")[1],
+          // product_photo_base64: reader.result.split(",")[1],
         }));
       };
     }
+  };
+
+  const handleFilesChange = (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const fileBase64 = reader.result.split(",")[1];
+        const updatedSubPhotos = [...subPhotos];
+        updatedSubPhotos[index] = file.name;
+
+        const updatedImageUrls = [...imageUrls];
+        updatedImageUrls[index] = `data:image/jpeg;base64,${fileBase64}`;
+
+        const updatedFiles = [...files];
+        updatedFiles[index] = file;
+
+        // const updatedSubPhotosBase64 = [...subPhotosBase64];
+        // updatedSubPhotosBase64[index] = fileBase64;
+
+        setSubPhotos(updatedSubPhotos);
+        setImageUrls(updatedImageUrls);
+        setFiles(updatedFiles);
+        // setSubPhotosBase64(updatedSubPhotosBase64);
+
+        setFormData((prevData) => ({
+          ...prevData,
+          product_sub_photo: updatedSubPhotos.join(', '),
+          // product_sub_photo_base64: updatedSubPhotosBase64.join(', '),
+        }));
+      };
+    }
+  };
+
+  const handleRemovePhoto = (index) => {
+    const updatedSubPhotos = subPhotos.filter((_, i) => i !== index);
+    const updatedImageUrls = imageUrls.filter((_, i) => i !== index);
+    const updatedSubPhotosBase64 = subPhotosBase64.filter((_, i) => i !== index);
+
+    setSubPhotos(updatedSubPhotos);
+    setImageUrls(updatedImageUrls);
+    setSubPhotosBase64(updatedSubPhotosBase64);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      product_sub_photo: updatedSubPhotos.join(', '),
+      // product_sub_photo_base64: updatedSubPhotosBase64.join(', '),
+    }));
+  };
+
+  const handleAddProductSubImage = () => {
+    setSubPhotos([...subPhotos, '']);
+    setImageUrls([...imageUrls, '']);
+    setSubPhotosBase64([...subPhotosBase64, '']);
   };
 
   const fetchData = useCallback(async () => {
@@ -86,16 +141,15 @@ const CMSProductEditImage = () => {
           product_status: responseData.product_status,
           created_by: responseData.created_by,
         });
-        console.log(responseData);
 
-        setFile(responseData.product_photo);
-        setImageUrl(`/assets/products/${responseData.product_photo}`);
+        // setFile(responseData.product_photo);
+        setImageUrl(`${responseData.product_photo}`);
         setPhotoReference(responseData.product_photo);
 
         const subPhotosArray = responseData.product_sub_photo !== "" ? responseData.product_sub_photo.split(',').map(photo => photo.trim()) : [''];
         setSubPhotos(subPhotosArray);
         setSubPhotosReference(subPhotosArray);
-        setImageUrls(subPhotosArray.map(photo => `/assets/products/sub_photos/${photo}`));
+        setImageUrls(subPhotosArray.map(photo => `${photo}`));
         setSubPhotosBase64(subPhotosArray.map(() => ''));
       }
     } catch (error) {
@@ -119,9 +173,32 @@ const CMSProductEditImage = () => {
   const handleSubmit = async () => {
     try {
       const deletedPhoto = photoReference === formData.product_photo ? '' : photoReference;
-
       const deletedSubPhotos = subPhotosReference.filter(photo => !subPhotos.includes(photo));
-      const deletedSubPhotosString = deletedSubPhotos.join(', ');
+
+      if (deletedPhoto) {
+        await deleteFromS3(deletedPhoto);
+      }
+
+      if (deletedSubPhotos.length > 0) {
+        await Promise.all(deletedSubPhotos.map((file) => deleteFromS3(file)));
+      }
+
+      let uploadedFile = formData.product_photo;
+      if (file) {
+        uploadedFile = await uploadToS3(file);
+      }
+
+      let updatedSubPhotos = subPhotos;
+      const validFiles = files.filter(file => file);
+      if (validFiles.length > 0) {
+        const uploadedFiles = await Promise.all(validFiles.map((file) => uploadToS3(file)));
+
+        updatedSubPhotos = [...subPhotos];
+        validFiles.forEach((file, index) => {
+          const fileIndex = files.indexOf(file);
+          updatedSubPhotos[fileIndex] = uploadedFiles[index];
+        });
+      }
 
       const response = await axios.put(
         apiUrl + `product/image/${id}`, 
@@ -130,12 +207,12 @@ const CMSProductEditImage = () => {
           'category_id': formData.category_id,
           'product_name': formData.product_name,
           'product_code': formData.product_code,
-          'product_photo': formData.product_photo,
-          'product_photo_base64': formData.product_photo_base64 ? formData.product_photo_base64 : "",
-          'product_sub_photo': formData.product_sub_photo,
-          'product_sub_photo_base64': formData.product_sub_photo_base64 ? formData.product_sub_photo_base64 : "",
-          'product_deleted_photo': deletedPhoto,
-          'product_deleted_sub_photos': deletedSubPhotosString,
+          'product_photo': uploadedFile,
+          // 'product_photo_base64': formData.product_photo_base64 ? formData.product_photo_base64 : "",
+          'product_sub_photo': updatedSubPhotos.join(', '),
+          // 'product_sub_photo_base64': formData.product_sub_photo_base64 ? formData.product_sub_photo_base64 : "",
+          // 'product_deleted_photo': deletedPhoto,
+          // 'product_deleted_sub_photos': deletedSubPhotosString,
           'product_price': formData.product_price,
           'product_description': formData.product_description,
           'product_information': formData.product_information,
@@ -198,57 +275,6 @@ const CMSProductEditImage = () => {
     setImageUrl('');
   };
 
-  const handleFilesChange = (e, index) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const fileBase64 = reader.result.split(",")[1];
-        const updatedSubPhotos = [...subPhotos];
-        updatedSubPhotos[index] = file.name;
-
-        const updatedImageUrls = [...imageUrls];
-        updatedImageUrls[index] = `data:image/jpeg;base64,${fileBase64}`;
-
-        const updatedSubPhotosBase64 = [...subPhotosBase64];
-        updatedSubPhotosBase64[index] = fileBase64;
-
-        setSubPhotos(updatedSubPhotos);
-        setImageUrls(updatedImageUrls);
-        setSubPhotosBase64(updatedSubPhotosBase64);
-
-        setFormData((prevData) => ({
-          ...prevData,
-          product_sub_photo: updatedSubPhotos.join(', '),
-          product_sub_photo_base64: updatedSubPhotosBase64.join(', '),
-        }));
-      };
-    }
-  };
-
-  const handleRemovePhoto = (index) => {
-    const updatedSubPhotos = subPhotos.filter((_, i) => i !== index);
-    const updatedImageUrls = imageUrls.filter((_, i) => i !== index);
-    const updatedSubPhotosBase64 = subPhotosBase64.filter((_, i) => i !== index);
-
-    setSubPhotos(updatedSubPhotos);
-    setImageUrls(updatedImageUrls);
-    setSubPhotosBase64(updatedSubPhotosBase64);
-
-    setFormData((prevData) => ({
-      ...prevData,
-      product_sub_photo: updatedSubPhotos.join(', '),
-      product_sub_photo_base64: updatedSubPhotosBase64.join(', '),
-    }));
-  };
-
-  const handleAddProductSubImage = () => {
-    setSubPhotos([...subPhotos, '']);
-    setImageUrls([...imageUrls, '']);
-    setSubPhotosBase64([...subPhotosBase64, '']);
-  };
-
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar page="product-list" />
@@ -301,7 +327,7 @@ const CMSProductEditImage = () => {
                       <span>Browse</span>
                     </button>
                   </div>
-                  {file && imageUrl && (
+                  {imageUrl && (
                     <div className="flex items-center mb-2">
                       <div className="w-[230px]"/>
                       <img

@@ -176,7 +176,7 @@ const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editP
                       <div className="flex flex-col items-center justify-center">
                         {item.product_image ? (
                           <img
-                            src={`/assets/products/${item.product_image}`}
+                            src={`${item.product_image}`}
                             alt="Product"
                             style={{ maxWidth: "100px", maxHeight: "100px" }}
                           />

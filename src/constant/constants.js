@@ -1,2 +1,9 @@
 export const companyName = "ZEPHYR.";
 export const apiUrl = "http://localhost:5000/api/";
+
+// AWS
+export const accessKeyId = 'ASIAU3A46UUIDMBTFFQW';
+export const secretAccessKey = 'HeOmXnPR2mVwC5JHPpV1tP1hOSbsNZ9iuO69cXom';
+export const sessionToken = 'IQoJb3JpZ2luX2VjEL///////////wEaCXVzLXdlc3QtMiJHMEUCIBiQpHz5qvJ3jGnYPYtzBVYqikuBahvCsKjbawhkpJlUAiEAtQQpFOBJ8/WFZavAnZ75I3oszkMe0eS1AYwazW9FDjwqsgIIeBAAGgwzMzI5MjA2OTQwMzIiDPyAp5h097eNgoFeACqPAlG9uAVwZP5JaJRlThO1QHPb7eqGeQSdlPssLFiXtiR6QReGSuLBwEu8Q/6AoLiYYYwEcgxJ9F1Kg4B6LpwP4DcY1fT37CyWPG3KJkODRkAUZ2kgM00B2Dyh0Zeq0BaeUALUrfmcQFpvEGXhQtH0j/IA6zxRoKg1h/FijPQ6UQA1jeJvkfZYxRto7VNpym1Dxyn1yaZ2iEHEK/e3Q8msHwVhLKzCBRDbOCLf2wJdMWkpbt+6bZSszJdGnJ11tXtc+I0kyjsGnK2NpN+raqKlorywTYw+seOgBNnDR2XTiJHzIvLZoGCffdyPdlqGDqV2ARctGKN/6PIS+2nMxWHJrtoBlZA+AcZ/YB+SqrbcNf8wxpHcugY6nQHsF1LogG5Fptv8d0zXHmj3c/GKjmJdD93tTwXg93zw/V9q5MMa2qTAEHPnus+8vn7qbiIBdBarBJ5TRrliIoBwalngWAt4fohMQx3Lcm2g+ZdToyvN/yJzsmxKzfvI2V/gWVj9VQtniUzIzOBm6mI/mOduXhg3I01G4cmf3N3psDnvrUoakCnhi2KaDHc5f8auvDEO39Y68UDJc8+4';
+export const region = 'us-east-1';
+export const bucket = 'zephyr-bucket-demo';

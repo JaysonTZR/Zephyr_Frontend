@@ -8,6 +8,7 @@ import Header from "../../../components/cms/Header";
 import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
+import { uploadToS3 } from "../../../utils/s3Upload";
 
 const CMSProductAdd = () => {
     const navigate = useNavigate();
@@ -18,6 +19,7 @@ const CMSProductAdd = () => {
     const [imageUrl, setImageUrl] = useState('');
     const [file, setFile] = useState(null);
     const [files, setFiles] = useState([]);
+    const [displayFiles, setDisplayFiles] = useState([]);
     const [fileOptions, setFileOptions] = useState([]);
     const fileInput = useRef();
     const filesInput = useRef();
@@ -32,7 +34,7 @@ const CMSProductAdd = () => {
         product_information: "",
         product_sale: false,
         product_new: false,
-        product_status: "",
+        product_status: "active",
         trash: false,
     });
 
@@ -55,11 +57,11 @@ const CMSProductAdd = () => {
             reader.readAsDataURL(selectedFile);
             reader.onloadend = () => {
                 setImageUrl(reader.result);
-                setFormData((prevData) => ({
-                    ...prevData,
-                    product_photo: selectedFile.name,
-                    product_photo_base64: reader.result.split(",")[1],
-                }));
+                // setFormData((prevData) => ({
+                //     ...prevData,
+                //     product_photo: selectedFile.name,
+                //     product_photo_base64: reader.result.split(",")[1],
+                // }));
             };
         }
     };
@@ -68,6 +70,7 @@ const CMSProductAdd = () => {
         if (e.target.files) {
             const selectedFiles = Array.from(e.target.files);
             const updatedFiles = [...files];
+            const updatedDisplayFiles = [...displayFiles];
             const updatedOptions = [...fileOptions];
 
             selectedFiles.forEach((file) => {
@@ -75,20 +78,22 @@ const CMSProductAdd = () => {
                 reader.readAsDataURL(file);
                 reader.onloadend = () => {
                     const fileBase64 = reader.result.split(",")[1];
-                    updatedFiles.push({ name: file.name, base64: fileBase64 });
+                    updatedDisplayFiles.push({ name: file.name, base64: fileBase64 });
+                    updatedFiles.push(file);
                     updatedOptions.push({ value: file.name, label: file.name });
 
-                    const fileNames = updatedFiles.map((f) => f.name).join(", ");
-                    const base64Strings = updatedFiles.map((f) => f.base64).join(", ");
+                    // const fileNames = updatedFiles.map((f) => f.name).join(", ");
+                    // const base64Strings = updatedFiles.map((f) => f.base64).join(", ");
 
                     setFiles(updatedFiles);
+                    setDisplayFiles(updatedDisplayFiles);
                     setFileOptions(updatedOptions);
 
-                    setFormData((prevData) => ({
-                        ...prevData,
-                        product_sub_photo: fileNames,
-                        product_sub_photo_base64: base64Strings,
-                    }));
+                    // setFormData((prevData) => ({
+                    //     ...prevData,
+                    //     product_sub_photo: fileNames,
+                    //     product_sub_photo_base64: base64Strings,
+                    // }));
                 };
             });
         }
@@ -98,18 +103,23 @@ const CMSProductAdd = () => {
         const updatedFiles = files.filter((file) =>
             selectedOptions.some((opt) => opt.value === file.name)
         );
+
+        const updatedDisplayFiles = displayFiles.filter((file) =>
+            selectedOptions.some((opt) => opt.value === file.name)
+        );
         
-        const fileNames = updatedFiles.map((f) => f.name).join(", ");
-        const base64Strings = updatedFiles.map((f) => f.base64).join(", ");
+        // const fileNames = updatedDisplayFiles.map((f) => f.name).join(", ");
+        // const base64Strings = updatedDisplayFiles.map((f) => f.base64).join(", ");
 
         setFiles(updatedFiles);
+        setDisplayFiles(updatedDisplayFiles);
         setFileOptions(selectedOptions);
 
-        setFormData((prevData) => ({
-            ...prevData,
-            product_sub_photo: fileNames,
-            product_sub_photo_base64: base64Strings,
-        }));
+        // setFormData((prevData) => ({
+        //     ...prevData,
+        //     product_sub_photo: fileNames,
+        //     product_sub_photo_base64: base64Strings,
+        // }));
     };
 
     const handleInputChange = (name, value) => {
@@ -145,10 +155,15 @@ const CMSProductAdd = () => {
                 });
             }
 
+            const uploadedFile = await uploadToS3(file);
+            const uploadedFiles = await Promise.all(files.map((file) => uploadToS3(file)));
+
             const response = await axios.post(
                 apiUrl + `product`, 
                 {
                     ...formData,
+                    product_photo: uploadedFile,
+                    product_sub_photo: uploadedFiles.join(", "),
                     created_by: username,
                 }, 
                 {}
@@ -551,12 +566,12 @@ const CMSProductAdd = () => {
                                                 <span>Browse</span>
                                             </button>
                                         </div>
-                                        {files.length > 0 && (
+                                        {displayFiles.length > 0 && (
                                             <div className="flex items-center mb-6">
                                                 <div className="w-1/4"/>
                                                 <div className="overflow-y-auto max-h-[360px]">
                                                     <div className="flex flex-col space-y-4">
-                                                        {files.map((file, index) => (
+                                                        {displayFiles.map((file, index) => (
                                                             <div key={index} className="flex-shrink-0">
                                                                 <img
                                                                     src={`data:image/jpeg;base64,${file.base64}`}
