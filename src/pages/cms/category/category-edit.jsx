@@ -122,6 +122,15 @@ const CMSCategoryEdit = () => {
     { value: "inactive", label: "Inactive" },
   ];
 
+  const categoryTypeOptions = [
+    { value: "Categories", label: "Categories" },
+    { value: "Branding", label: "Branding" },
+    { value: "Size", label: "Size" },
+    { value: "Colors", label: "Colors" },
+    { value: "Tags", label: "Tags" },
+  ];
+
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar page="category-list" />
@@ -162,19 +171,24 @@ const CMSCategoryEdit = () => {
                   {/* Category Type */}
                   <div className="flex flex-row">
                     <label htmlFor="category_type" className="mb-2 mt-2 w-72">
-                      Category Type<span className="text-red-500"> *</span>
+                      Status<span className="text-red-500"> *</span>
                     </label>
-                    <input
-                      type="text"
+                    <select
                       id="category_type"
                       name="category_type"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="type"
                       value={formData && formData.category_type}
                       onChange={(e) =>
                         handleInputChange("category_type", e.target.value)
                       }
-                    />
+                    >
+                      <option value="" disabled hidden>Select a category type</option>
+                      {categoryTypeOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Status */}
