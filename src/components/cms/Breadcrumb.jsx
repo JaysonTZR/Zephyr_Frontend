@@ -9,6 +9,9 @@ const Breadcrumb = () => {
     '/dashboard': 'Dashboard',
     '/profile': 'Profile',
 
+    '/contact/list': 'Manage Contact',
+    '/contact/edit': 'Edit Contact',
+
     '/category/list': 'Manage Category',
     '/category/edit': 'Edit Category',
     '/category/add': 'Add Category',

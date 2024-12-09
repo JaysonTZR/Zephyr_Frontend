@@ -30,7 +30,7 @@ const Contact = () => {
         apiUrl + `contact`,
         {
           ...formData,
-          contact_status: "active",
+          contact_status: "pending",
           trash: false,
         },
         {}

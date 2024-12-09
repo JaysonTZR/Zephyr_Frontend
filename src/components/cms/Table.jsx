@@ -136,10 +136,18 @@ const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editP
                   >
                     {header.toLowerCase() === "status" ? (
                       <div
-                        className={`py-1 w-24 rounded-full mx-auto ${
+                        className={`py-1 w-24 rounded-full mx-auto font-semibold ${
                           item.status === "active"
-                            ? "text-green-400 bg-green-100 font-semibold"
-                            : "text-red-400 bg-red-100 font-semibold"
+                            ? "text-green-400 bg-green-100"
+                            : item.status === "inactive"
+                            ? "text-red-400 bg-red-100"
+                            : item.status === "pending"
+                            ? "text-gray-400 bg-gray-100"
+                            : item.status === "in progress"
+                            ? "text-yellow-400 bg-yellow-100"
+                            : item.status === "completed"
+                            ? "text-green-400 bg-green-100"
+                            : "text-red-400 bg-red-100"
                         }`}
                       >
                         <span>{item.status.toUpperCase()}</span>

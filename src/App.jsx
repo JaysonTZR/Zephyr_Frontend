@@ -26,6 +26,9 @@ const CMSCategoryList = lazy(() => import("./pages/cms/category/category-list"))
 const CMSCategoryEdit = lazy(() => import("./pages/cms/category/category-edit"));
 const CMSCategoryAdd = lazy(() => import("./pages/cms/category/category-add"));
 
+const CMSContactList = lazy(() => import("./pages/cms/contact/contact-list"));
+const CMSContactEdit = lazy(() => import("./pages/cms/contact/contact-edit"));
+
 const CMSProductList = lazy(() => import("./pages/cms/product/product-list"));
 const CMSProductEdit = lazy(() => import("./pages/cms/product/product-edit"));
 const CMSProductEditImage = lazy(() => import("./pages/cms/product/product-edit-image"));
@@ -77,6 +80,23 @@ function App() {
           element={
             <AuthRoute>
               <CMSProfile />
+            </AuthRoute>
+          }
+        />
+
+        <Route
+          path="/cms/contact/list"
+          element={
+            <AuthRoute>
+              <CMSContactList />
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/contact/edit/:id"
+          element={
+            <AuthRoute>
+              <CMSContactEdit />
             </AuthRoute>
           }
         />
