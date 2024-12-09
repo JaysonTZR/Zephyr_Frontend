@@ -1,7 +1,7 @@
 import React, { startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ProductItem = ({ item, index }) => {
+const ProductItem = ({ item, index, wishlist, handleWishlist, handleAddToCart }) => {
     const navigate = useNavigate();
     const redirectProductPage = () => {
         startTransition(() => {
@@ -9,12 +9,14 @@ const ProductItem = ({ item, index }) => {
         });
     };
 
+    const inWishlist = wishlist.some((wishlistItem) => wishlistItem.product_id === item.id);
+
     return (
         <div key={item.id} className="relative p-1 group">
             <div className="w-full h-64 bg-gray-100 mb-5 py-5">
                 <div className="absolute top-[72px] left-[200px] transform -translate-y-1/2 translate-x-7 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
-                    <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                    <button className={`bg-white ${inWishlist ? "text-red-500" :"text-black"} w-10 h-10 mr-2 flex justify-center items-center mb-2`} onClick={()=>handleWishlist(item.id)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill={inWishlist ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                         </svg>
                     </button>
@@ -41,7 +43,7 @@ const ProductItem = ({ item, index }) => {
             
             <h2 className="mb-2">
                 <span className="opacity-100 group-hover:opacity-0 duration-300">{item.name}</span>
-                <button className="absolute left-0.5 top-[280px] transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                <button className="absolute left-0.5 top-[280px] transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded" onClick={()=>handleAddToCart(item.id)}>
                     + Add to Cart
                 </button>
             </h2>
