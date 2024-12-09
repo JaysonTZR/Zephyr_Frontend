@@ -5,7 +5,7 @@ import Footer from "../../components/Footer";
 import DetailsPayment from "../../assets/images/details-payment.png";
 import ProductList from "../../components/shop/ProductList";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../constant/constants";
 
 const ShopProduct = () => {
@@ -13,11 +13,22 @@ const ShopProduct = () => {
   const [data, setData] = useState([]);
   const [relatedProductData, setRelatedProductData] = useState([]);
   const [category, setCategory] = useState([]);
+  const [wishlist, setWishlist] = useState({});
   const [menuSection, setMenuSection] = useState("description");
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [review, setReview] = useState("");
+
+  const authCustomerData = localStorage.getItem("authCustomerData");
+  const customerDataObject = authCustomerData
+    ? JSON.parse(authCustomerData)
+    : null;
+
+  const customer_id = customerDataObject
+    ? customerDataObject.customer_id
+    : null;
+
   const sizes = ["XXL", "XL", "L", "S"];
   const colors = [
     { name: "black", class: "bg-black" },
@@ -95,9 +106,36 @@ const ShopProduct = () => {
     }
   };
 
+  const fetchWishlist = async () => {
+    try {
+      const response = await axios.get(apiUrl + `wishlist/${customer_id}`);
+
+      if (response.status === 200) {
+        const responseData = response.data.items;
+
+        const filteredItems = responseData.filter(item => item.product.product_id == id);
+
+
+        setWishlist(filteredItems[0]);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Wishlist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   useEffect(() => {
     fetchData();
     fetchCategory();
+    fetchWishlist();
   }, [id]);
 
   const handleSizeClick = (size) => {
@@ -121,6 +159,80 @@ const ShopProduct = () => {
     return categoryItem ? categoryItem.category_name : "Unknown Category";
   };
 
+  const handleAddToCart = async () => {
+    try {
+      const response = await axios.post(
+        apiUrl + "cart",
+        {
+          customer_id: customer_id,
+          product_id: id,
+          cart_quantity: quantity,
+          trash: false,
+        }
+      );
+
+      if (response.status === 201){
+        toast.success("Item Added To Cart", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Adding Cart", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
+
+  const handleAddToWishlist = async () => {
+    try {
+      const response = await axios.post(
+        apiUrl + "wishlist/item",
+        {
+          customer_id: customer_id,
+          product_id: id,
+        }
+      );
+
+      if (response.status === 201){
+        toast.success("Item Added To Wishlist", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Adding Wishlist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
+
   const renderProductInformation = (information) => {
     const parts = information.split('*');
     return parts.map((part, index) => {
@@ -143,6 +255,7 @@ const ShopProduct = () => {
   return (
     <div>
       <Header />
+      <ToastContainer />
       <div className="flex justify-center p-4" style={{ backgroundColor: '#f3f2ee' }}>
         <div className="flex md:w-3/4">
           {/* Thumbnail Images Section */}
@@ -229,14 +342,14 @@ const ShopProduct = () => {
             onChange={handleQuantityChange}
             className="w-20 py-2 border mr-4 text-center"
           />
-          <button className="bg-black text-white w-48 px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700">
+          <button className="bg-black text-white w-48 px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700" onClick={handleAddToCart}>
             Add to Cart
           </button>
         </div>
 
 
         <div className="flex items-center justify-center mb-6">
-          <button className="flex items-center justify-center hover:text-red-500">
+          <button className="flex items-center justify-center hover:text-red-500" onClick={handleAddToWishlist}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 mr-2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
             </svg>
