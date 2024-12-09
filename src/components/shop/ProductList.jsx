@@ -1,7 +1,7 @@
 import React from "react";
 import ProductItem from "./ProductItem";
 
-const ProductList = ({ currentItems, itemPerRow }) => {
+const ProductList = ({ currentItems, itemPerRow, wishlist, handleWishlist, handleAddToCart }) => {
     const gridColsClass = {
         1: "grid-cols-1",
         2: "grid-cols-2",
@@ -17,7 +17,7 @@ const ProductList = ({ currentItems, itemPerRow }) => {
         ) : (
         <div className={`grid ${gridColsClass} gap-6`}>
             {currentItems.map((item, index) => (
-                <ProductItem item={item} index={index} />
+                <ProductItem item={item} index={index} wishlist={wishlist} handleWishlist={handleWishlist} handleAddToCart={handleAddToCart}/>
             ))}
         </div>
         )

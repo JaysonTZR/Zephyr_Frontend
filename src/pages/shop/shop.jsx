@@ -4,7 +4,7 @@ import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
 import AccordionItem from "../../components/shop/shop-sidebar/accordion/AccordionItem";
 import ProductList from "../../components/shop/ProductList";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../constant/constants";
 import axios from "axios";
 
@@ -13,6 +13,16 @@ const Shop = () => {
   const [items, setItems] = useState([]);
   const [originalItems, setOriginalItems] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
+  const [wishlist, setWishlist] = useState([]);
+
+  const authCustomerData = localStorage.getItem("authCustomerData");
+  const customerDataObject = authCustomerData
+    ? JSON.parse(authCustomerData)
+    : null;
+
+  const customer_id = customerDataObject
+    ? customerDataObject.customer_id
+    : null;
 
   const fetchData = async () => {
     try {
@@ -52,9 +62,161 @@ const Shop = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const fetchWishlist = async () => {
+    try {
+      const response = await axios.get(apiUrl + `wishlist/${customer_id}`);
+
+      if (response.status === 200) {
+        const responseData = response.data.items;
+
+        console.log(responseData);
+        setWishlist(responseData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Wishlist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  
+
+  const addWishlistItem = async (productId) => {
+
+    try {
+      const response = await axios.post(
+        apiUrl + "wishlist/item",
+        {
+          customer_id: customer_id,
+          product_id: productId,
+        }
+      );
+
+      if (response.status === 201){
+        fetchWishlist();
+        toast.success("Item Added To Wishlist", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Adding Wishlist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
+  }
+
+  const removeWishlistItem = async (wishlist_item_id) => {
+
+    try {
+      const response = await axios.delete(
+        apiUrl + `wishlist/item/${wishlist_item_id}`,
+        {}
+      );
+
+      if (response.status === 200){
+        
+        toast.success("Wishlist Removed Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setWishlist([]);
+      }
+    } catch (error) {
+      toast.error("Error Removing Wishlist Item", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
+  }
+
+  const handleWishlist = async (productId) => {
+    const inWishlist = wishlist.some((wishlistItem) => wishlistItem.product_id === productId);
+
+    const filteredItems = wishlist.filter(item => item.product.product_id == productId);
+
+    const wishlistItem = filteredItems[0];
+
+    if(wishlistItem){
+      removeWishlistItem(wishlistItem.wishlist_item_id);
+    }else{
+      addWishlistItem(productId);
+    }
+  }
+
+  const handleAddToCart = async (product_id) => {
+    try {
+      const response = await axios.post(
+        apiUrl + "cart",
+        {
+          customer_id: customer_id,
+          product_id: product_id,
+          cart_quantity: 1,
+          trash: false,
+        }
+      );
+
+      if (response.status === 201){
+        toast.success("Item Added To Cart", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Adding Cart", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
+
+  
 
   const handleSortChange = (e) => {
     const order = e.target.value;
@@ -221,11 +383,17 @@ const Shop = () => {
     setItems(originalItems);
   };
 
+  useEffect(() => {
+    fetchData();
+    fetchWishlist();
+  }, []);
+
   return (
     <div className="font-sans">
       <Header />
 
       <Banner bannerText="Shop" />
+      <ToastContainer />
       <div className="flex justify-center mb-20">
         <div className="py-8 flex w-7/12">
           {/* Left Panel */}
@@ -264,7 +432,7 @@ const Shop = () => {
                 Clear Filters
               </button> */}
             </div>
-            <ProductList currentItems={currentItems} itemPerRow={3} />
+            <ProductList currentItems={currentItems} itemPerRow={3} wishlist={wishlist} handleWishlist={handleWishlist} handleAddToCart={handleAddToCart}  />
             
             <div className="mt-16 flex justify-center space-x-2">
               {renderPagination().map((page, index) => (
