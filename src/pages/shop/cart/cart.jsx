@@ -20,7 +20,7 @@ function Cart() {
   const [formData, setFormData] = useState([]);
   const [totalSum, setTotalSum] = useState(0);
   const [updatedCart, setUpdatedCart] = useState([]);
-  const [discountCode, setDiscountCode] = useState('');
+  const [discountCode, setDiscountCode] = useState("");
   const [discount, setDiscount] = useState(null);
 
   const authCustomerData = localStorage.getItem("authCustomerData");
@@ -143,12 +143,14 @@ function Cart() {
 
   const handleDiscountCode = async () => {
     try {
-      const response = await axios.get(apiUrl + `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`);
+      const response = await axios.get(
+        apiUrl +
+          `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`
+      );
 
       console.log(response);
 
       if (response.status === 200) {
-
         setDiscount(response.data.discount);
 
         toast.success("Discount Applied", {
@@ -161,7 +163,7 @@ function Cart() {
           progress: undefined,
           theme: "light",
         });
-      }else{
+      } else {
         toast.error(response.data.message, {
           position: "top-right",
           autoClose: 1500,
@@ -188,9 +190,9 @@ function Cart() {
   };
 
   const handleRemoveDiscount = () => {
-    setDiscountCode('');
+    setDiscountCode("");
     setDiscount(null);
-  }
+  };
 
   useEffect(() => {
     startTransition(() => {
@@ -231,37 +233,39 @@ function Cart() {
                   onQuantityChange={handleQuantityChange}
                   key={formData.cart_id}
                   onRemove={handleCartItemDelete}
-                />) :
-                (<div className="mx-auto py-32 w-7/12 flex justify-center text-xl">
+                />
+              ) : (
+                <div className="mx-auto py-32 w-7/12 flex justify-center text-xl">
                   Cart is empty.
-                </div>)
-              }
+                </div>
+              )}
 
               <div className="mt-7 flex justify-between items-center">
                 <button className="text-black border px-10 py-4 hover:bg-gray-100 uppercase tracking-widest font-semibold text-sm">
                   Continue Shopping
                 </button>
-                {formData.length > 0 &&
-                <button
-                  className="bg-black text-white px-10 py-4 hover:bg-zinc-700 uppercase tracking-widest font-semibold text-sm flex"
-                  onClick={() => handleCartUpdate()}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-5 mr-3"
+                {formData.length > 0 && updatedCart.length > 0 && (
+                  <button
+                    className="bg-black text-white px-10 py-4 hover:bg-zinc-700 uppercase tracking-widest font-semibold text-sm flex"
+                    onClick={() => handleCartUpdate()}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
-                    />
-                  </svg>
-                  Update Cart
-                </button>}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-5 mr-3"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"
+                      />
+                    </svg>
+                    Update Cart
+                  </button>
+                )}
               </div>
             </div>
 
@@ -278,8 +282,13 @@ function Cart() {
                     value={discountCode}
                     onChange={(e) => setDiscountCode(e.target.value)}
                   />
-                  <button className="bg-black text-white px-5 py-[15px] uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700" onClick={!discount ? handleDiscountCode : handleRemoveDiscount}>
-                    {!discount ? 'Apply' : 'Remove'}
+                  <button
+                    className="bg-black text-white px-5 py-[15px] uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700"
+                    onClick={
+                      !discount ? handleDiscountCode : handleRemoveDiscount
+                    }
+                  >
+                    {!discount ? "Apply" : "Remove"}
                   </button>
                 </div>
 
@@ -294,16 +303,21 @@ function Cart() {
                       RM {totalSum.toFixed(2)}
                     </span>
                   </div>
-                  {discount && <div className="text-zinc-500 mt-4 flex justify-between">
-                    Discount{" "}
-                    <span className="font-semibold text-lg text-red-600">
-                      - RM {discount.discount_amount.toFixed(2)}
-                    </span>
-                  </div>}
+                  {discount && (
+                    <div className="text-zinc-500 mt-4 flex justify-between">
+                      Discount{" "}
+                      <span className="font-semibold text-lg text-red-600">
+                        - RM {discount.discount_amount.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
                   <div className="text-zinc-500 mt-4 flex justify-between">
                     Total{" "}
                     <span className="font-semibold text-lg text-red-600">
-                      RM {!discount ? totalSum.toFixed(2) : (totalSum - discount.discount_amount).toFixed(2)}
+                      RM{" "}
+                      {!discount
+                        ? totalSum.toFixed(2)
+                        : (totalSum - discount.discount_amount).toFixed(2)}
                     </span>
                   </div>
                   <button
