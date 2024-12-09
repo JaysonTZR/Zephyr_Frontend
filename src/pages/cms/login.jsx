@@ -44,7 +44,7 @@ const CMSLogin = () => {
       );
 
       if (response.status === 200) {
-        const authToken = response.data.token;
+        const authCMSToken = response.data.token;
         const authUserData = response.data.user;
         const expirationTime = keepMeSignedIn
         ? new Date().getTime() + 3 * 24 * 60 * 60 * 1000 // 3 days
@@ -64,7 +64,7 @@ const CMSLogin = () => {
           return;
         }
 
-        localStorage.setItem("authToken", authToken);
+        localStorage.setItem("authCMSToken", authCMSToken);
         localStorage.setItem("authUserData", JSON.stringify(authUserData));
         localStorage.setItem('expirationTime', expirationTime);
 

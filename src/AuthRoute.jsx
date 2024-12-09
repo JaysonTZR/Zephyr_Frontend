@@ -12,7 +12,7 @@ const isSessionValid = () => {
 };
 
 const AuthRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem('authToken') && isSessionValid();
+  const isAuthenticated = !!localStorage.getItem('authCMSToken') && isSessionValid();
 
   return isAuthenticated ? children : <Navigate to="/cms" />;
 };
