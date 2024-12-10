@@ -503,7 +503,7 @@ const CMSProductAdd = () => {
                                             <input
                                                 id="file"
                                                 type="file"
-                                                accept=".png, .jpg, .jpeg"
+                                                accept=".png, .jpg, .jpeg, .avif"
                                                 className="hidden"
                                                 ref={fileInput}
                                                 onChange={handleFileChange}
@@ -549,7 +549,7 @@ const CMSProductAdd = () => {
                                             <input
                                                 id="file"
                                                 type="file"
-                                                accept=".png, .jpg, .jpeg"
+                                                accept=".png, .jpg, .jpeg, .avif"
                                                 className="hidden"
                                                 ref={filesInput}
                                                 onChange={handleFilesChange}

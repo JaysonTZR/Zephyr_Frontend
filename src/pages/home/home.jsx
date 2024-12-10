@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState, useEffect, startTransition } from "react";
+import { useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import WinterCollectionImage from "../../assets/images/momo-model.jpg";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../../constant/constants";
 
 function HomePage() {
   const options = {
@@ -10,6 +14,7 @@ function HomePage() {
     threshold: 0.1,
   };
 
+  const navigate = useNavigate();
   const [section1Ref, section1InView] = useInView(options);
   const [section2Ref, section2InView] = useInView(options);
   const [section3Ref, section3InView] = useInView(options);
@@ -17,10 +22,127 @@ function HomePage() {
   const [section5Ref, section5InView] = useInView(options);
   const [section6Ref, section6InView] = useInView(options);
   const [section7Ref, section7InView] = useInView(options);
+  const [newArrivalsProductData, setNewArrivalsProductData] = useState([]);
+  const [currentNewArrivalsIndex, setCurrentNewArrivalsIndex] = useState(0);
+  const [currentNewCollectionIndex, setCurrentNewCollectionIndex] = useState(0);
+  const [bestSellingProductData, setBestSellingProductData] = useState([]);
+  const [currentBestSellingIndex, setCurrentBestSellingIndex] = useState(0);
+  const [randomImages, setRandomImages] = useState([]);
+  const itemsPerPage = 4;
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "product",
+        {
+
+        }
+      );
+
+      if (response.status === 200){
+        const filteredRandomProductData = response.data.filter((item) => item.product_status === "active" && item.trash === false);
+        const allImagesArray = filteredRandomProductData.flatMap((item) => [
+          item.product_photo,
+          ...item.product_sub_photo.split(", "),
+        ]);
+
+        const randomImagesArray = allImagesArray.sort(() => 0.5 - Math.random()).slice(0, 6);
+        setRandomImages(randomImagesArray);
+
+        const filteredNewArrivalsProductData = response.data.filter((item) => item.product_new === true && item.product_status === "active" && item.trash === false);
+        const shuffledNewArrivalsData = filteredNewArrivalsProductData.sort(() => 0.5 - Math.random());
+        const transformedNewArrivalsData = shuffledNewArrivalsData.map((item) => ({
+          id: item.product_id,
+          name: item.product_name,
+          product_image: item.product_photo,
+          price: item.product_price,
+          new: item.product_new,
+          sale: item.product_sale,
+        }));
+        setNewArrivalsProductData(transformedNewArrivalsData);
+
+        const filteredBestSellingProductData = response.data.filter((item) => item.product_sale === true && item.product_status === "active" && item.trash === false);
+        const shuffledBestSellingData = filteredBestSellingProductData.sort(() => 0.5 - Math.random());
+        const transformedBestSellingData = shuffledBestSellingData.map((item) => ({
+          id: item.product_id,
+          name: item.product_name,
+          product_image: item.product_photo,
+          price: item.product_price,
+          new: item.product_new,
+          sale: item.product_sale,
+        }));
+        setBestSellingProductData(transformedBestSellingData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const redirectProductPage = (id) => {
+    startTransition(() => {
+      navigate("/product/" + id);
+    });
+  };
+
+  const handleNextNewArrivalsItem = () => {
+    setCurrentNewArrivalsIndex((prevIndex) => (prevIndex + 1) % newArrivalsProductData.length);
+  };
+
+  const handlePreviousNewArrivalsItem = () => {
+    setCurrentNewArrivalsIndex((prevIndex) => (prevIndex - 1 + newArrivalsProductData.length) % newArrivalsProductData.length);
+  };
+
+  const displayedNewArrivalsItems = [];
+  for (let i = 0; i < itemsPerPage; i++) {
+    const index = (currentNewArrivalsIndex + i) % newArrivalsProductData.length;
+    displayedNewArrivalsItems.push(newArrivalsProductData[index]);
+  }
+
+  const handleNextNewCollectionItem = () => {
+    setCurrentNewCollectionIndex((prevIndex) => (prevIndex + 1) % newArrivalsProductData.length);
+  };
+
+  const handlePreviousNewCollectionItem = () => {
+    setCurrentNewCollectionIndex((prevIndex) => (prevIndex - 1 + newArrivalsProductData.length) % newArrivalsProductData.length);
+  };
+
+  const displayedNewCollectionItems = [];
+  for (let i = 0; i < itemsPerPage - 1; i++) {
+    const index = (currentNewCollectionIndex + i) % newArrivalsProductData.length;
+    displayedNewCollectionItems.push(newArrivalsProductData[index]);
+  }
+
+  const handleNextBestSellingItem = () => {
+    setCurrentBestSellingIndex((prevIndex) => (prevIndex + 1) % bestSellingProductData.length);
+  };
+
+  const handlePreviousBestSellingItem = () => {
+    setCurrentBestSellingIndex((prevIndex) => (prevIndex - 1 + bestSellingProductData.length) % bestSellingProductData.length);
+  };
+
+  const displayedBestSellingItems = [];
+  for (let i = 0; i < itemsPerPage; i++) {
+    const index = (currentBestSellingIndex + i) % bestSellingProductData.length;
+    displayedBestSellingItems.push(bestSellingProductData[index]);
+  }
 
   return (
     <div className="font-sans text-center" style={{ backgroundColor: '#f1f1f0' }}>
       <Header />
+      <ToastContainer />
 
       <main>
         <section
@@ -44,66 +166,44 @@ function HomePage() {
             section2InView ? "opacity-100" : "opacity-0"
           }`}
         >
-          <button className="p-6 mr-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-          </button>
-          <div className="flex space-x-20 h-[500px]">
-            <div className="w-96">
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl text-gray-800 transition-transform duration-500 hover:scale-90">
-                Image 1
+          {newArrivalsProductData.length > 0 && (
+            <>
+              <button 
+                className="p-6 mr-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300"
+                onClick={handleNextNewCollectionItem}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <div className="flex space-x-20 h-[500px]">
+                {displayedNewCollectionItems.map((item) => (
+                  <div className="w-96">
+                    <img src={item.product_image} alt="Product" className="w-full h-full object-cover transition-transform duration-500 hover:scale-90" />
+                    <div className="flex flex-col justify-center items-start">
+                      <span className="mt-5 mb-3 text-2xl tracking-wide">
+                        {item.name}
+                      </span>
+                      <span className="mb-4 text-gray-500 text-left tracking-wider">
+                        Scelerisque duis aliquam qui lorem ipsum dolor amet, consectetur adipiscing elit.
+                      </span>
+                      <a href={`/product/${item.id}`} className="underline underline-offset-8 uppercase tracking-widest">
+                        Discover Now
+                      </a>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="flex flex-col justify-center items-start">
-                <span className="mt-5 mb-3 text-2xl tracking-wide">
-                  SOFT LEATHER JACKETS
-                </span>
-                <span className="mb-4 text-gray-500 text-left tracking-wider">
-                  Scelerisque duis aliquam qui lorem ipsum dolor amet, consectetur adipiscing elit.
-                </span>
-                <a href="/product" className="underline underline-offset-8 uppercase tracking-widest">
-                  Discover Now
-                </a>
-              </div>
-            </div>
-            <div className="w-96">
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl text-gray-800 transition-transform duration-500 hover:scale-90">
-                Image 2
-              </div>
-              <div className="flex flex-col justify-center items-start">
-                <span className="mt-5 mb-3 text-2xl tracking-wide">
-                  SOFT LEATHER JACKETS
-                </span>
-                <span className="mb-4 text-gray-500 text-left tracking-wider">
-                  Scelerisque duis aliquam qui lorem ipsum dolor amet, consectetur adipiscing elit.
-                </span>
-                <a href="/product" className="underline underline-offset-8 uppercase tracking-widest">
-                  Discover Now
-                </a>
-              </div>
-            </div>
-            <div className="w-96">
-              <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl text-gray-800 transition-transform duration-500 hover:scale-90">
-                Image 3
-              </div>
-              <div className="flex flex-col justify-center items-start">
-                <span className="mt-5 mb-3 text-2xl tracking-wide">
-                  SOFT LEATHER JACKETS
-                </span>
-                <span className="mb-4 text-gray-500 text-left tracking-wider">
-                  Scelerisque duis aliquam qui lorem ipsum dolor amet, consectetur adipiscing elit.
-                </span>
-                <a href="/product" className="underline underline-offset-8 uppercase tracking-widest">
-                  Discover Now
-                </a>
-              </div>
-            </div>
-          </div>
-          <button className="p-6 ml-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-8">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
+              <button 
+                className="p-6 ml-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300"
+                onClick={handlePreviousNewCollectionItem}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+            </>
+          )}
         </section>
 
         <section
@@ -165,38 +265,32 @@ function HomePage() {
           <div className="flex justify-center space-x-14 h-[450px]">
             <div className="w-[400px] group">
               <div className="w-full h-full">
-                <a href="/product">
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl text-gray-800 transition-transform duration-500 group-hover:scale-95">
-                    Image 4
-                  </div>
+                <a href="/shop">
+                  <img src={'https://zephyr-bucket-demo.s3.us-east-1.amazonaws.com/ShopForMen.jpg'} alt="Shop For Men" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-95" />
                 </a>
               </div>
               <div className="p-2 w-fit">
-                <a href="/product" className="text-gray-400 uppercase tracking-wide">Shop For Men</a>
+                <a href="/shop" className="text-gray-400 uppercase tracking-wide">Shop For Men</a>
               </div>
             </div>
             <div className="w-[400px] group">
               <div className="w-full h-full">
-                <a href="/product">
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl text-gray-800 transition-transform duration-500 group-hover:scale-95">
-                    Image 5
-                  </div>
+                <a href="/shop">
+                  <img src={'https://zephyr-bucket-demo.s3.us-east-1.amazonaws.com/ShopForWomen.jpg'} alt="Shop For Men" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-95" />
                 </a>
               </div>
               <div className="p-2 w-fit">
-                <a href="/product" className="text-gray-400 uppercase tracking-wide">Shop For Women</a>
+                <a href="/shop" className="text-gray-400 uppercase tracking-wide">Shop For Women</a>
               </div>
             </div>
             <div className="w-[400px] group">
               <div className="w-full h-full">
-                <a href="/product">
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-xl text-gray-800 transition-transform duration-500 group-hover:scale-95">
-                    Image 6
-                  </div>
+                <a href="/shop">
+                  <img src={'https://zephyr-bucket-demo.s3.us-east-1.amazonaws.com/ShopForAccessories.jpg'} alt="Shop For Men" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-95" />
                 </a>
               </div>
               <div className="p-2 w-fit">
-                <a href="/product" className="text-gray-400 uppercase tracking-wide">Shop Acccessories</a>
+                <a href="/shop" className="text-gray-400 uppercase tracking-wide">Shop Acccessories</a>
               </div>
             </div>
           </div>
@@ -218,104 +312,60 @@ function HomePage() {
               </a>
             </div>
           </div>
-          <div className="flex items-center justify-center">
-            <button className="p-6 mr-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            <div className="flex space-x-[51px]">
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
+          {newArrivalsProductData.length > 0 && (
+            <div className="flex items-center justify-center">
+              <button 
+                className="p-6 mr-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300"
+                onClick={handleNextNewArrivalsItem}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <div className="flex space-x-[51px]">
+                {displayedNewArrivalsItems.map((item) => (
+                  <div className="w-72 transition-transform duration-500 hover:scale-95 group">
+                    <div className="w-full h-96 bg-gray-200 flex items-center justify-center" style={{ backgroundImage: `url(${item.product_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                      <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                          <button 
+                            className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2"
+                          >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                              </svg>
+                          </button>
+                          <button 
+                            className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2"
+                            onClick={() => redirectProductPage(item.id)}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>
+                          </button>
+                      </div>
+                    </div>
+                    <div className="mt-3 text-xl tracking-wide text-left uppercase">
+                      {item.name}
+                    </div>
+                    <div className="mt-2 text-lg text-left">
+                      <span className="opacity-100 group-hover:opacity-0 duration-300">${item.price}</span>
+                      <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                          + Add to Cart
                       </button>
+                    </div>
                   </div>
-                  Image 7
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Dark Florish Onepiece
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$95.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
+                ))}
               </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
-                      </button>
-                  </div>
-                  Image 8
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Baggy Shirt
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$55.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
-              </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
-                      </button>
-                  </div>
-                  Image 9
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Cotton Off-White Shirt
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$65.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
-              </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
-                      </button>
-                  </div>
-                  Image 10
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Crop Sweater
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$50.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
-              </div>
+              <button 
+                className="p-6 ml-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300" 
+                onClick={handlePreviousNewArrivalsItem}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
             </div>
-            <button className="p-6 ml-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-8">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </div>
+          )}
         </section>
 
         <section
@@ -364,104 +414,60 @@ function HomePage() {
               </a>
             </div>
           </div>
-          <div className="flex items-center justify-center">
-            <button className="p-6 mr-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-              </svg>
-            </button>
-            <div className="flex space-x-[51px]">
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
+          {bestSellingProductData.length > 0 && (
+            <div className="flex items-center justify-center">
+              <button 
+                className="p-6 mr-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300"
+                onClick={handleNextBestSellingItem}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="size-8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <div className="flex space-x-[51px]">
+                {displayedBestSellingItems.map((item) => (
+                  <div className="w-72 transition-transform duration-500 hover:scale-95 group">
+                    <div className="w-full h-96 bg-gray-200 flex items-center justify-center" style={{ backgroundImage: `url(${item.product_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+                      <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
+                          <button 
+                            className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2"
+                          >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                              </svg>
+                          </button>
+                          <button 
+                            className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2"
+                            onClick={() => redirectProductPage(item.id)}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>
+                          </button>
+                      </div>
+                    </div>
+                    <div className="mt-3 text-xl tracking-wide text-left uppercase">
+                      {item.name}
+                    </div>
+                    <div className="mt-2 text-lg text-left">
+                      <span className="opacity-100 group-hover:opacity-0 duration-300">${item.price}</span>
+                      <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                          + Add to Cart
                       </button>
+                    </div>
                   </div>
-                  Image 7
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Dark Florish Onepiece
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$95.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
+                ))}
               </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
-                      </button>
-                  </div>
-                  Image 8
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Baggy Shirt
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$55.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
-              </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
-                      </button>
-                  </div>
-                  Image 9
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Cotton Off-White Shirt
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$65.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
-              </div>
-              <div className="w-72 transition-transform duration-500 hover:scale-95 group">
-                <div className="w-full h-96 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-                  <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
-                      <button className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                          </svg>
-                      </button>
-                  </div>
-                  Image 10
-                </div>
-                <div className="mt-3 text-xl tracking-wide text-left uppercase">
-                  Crop Sweater
-                </div>
-                <div className="mt-2 text-lg text-left">
-                  <span className="opacity-100 group-hover:opacity-0 duration-300">$50.00</span>
-                  <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
-                      + Add to Cart
-                  </button>
-                </div>
-              </div>
+              <button 
+                className="p-6 ml-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300" 
+                onClick={handlePreviousBestSellingItem}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
             </div>
-            <button className="p-6 ml-28 cursor-pointer rounded-full border border-gray-200 hover:border-gray-300 text-gray-400 hover:text-gray-500 transition-all duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-8">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-              </svg>
-            </button>
-          </div>
+          )}
         </section>
 
         <section className="py-24">
@@ -481,24 +487,9 @@ function HomePage() {
             </div>
           </div>
           <div className="flex justify-center">
-            <div className="w-96 h-80 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-              Image 12
-            </div>
-            <div className="w-96 h-80 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-              Image 13
-            </div>
-            <div className="w-96 h-80 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-              Image 14
-            </div>
-            <div className="w-96 h-80 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-              Image 15
-            </div>
-            <div className="w-96 h-80 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-              Image 16
-            </div>
-            <div className="w-96 h-80 bg-gray-200 flex items-center justify-center text-xl text-gray-800">
-              Image 17
-            </div>
+            {randomImages.map((image, index) => (
+              <img key={index} src={image} alt="Random" className="w-96 h-80 object-cover" />
+            ))}
           </div>
         </section>
 

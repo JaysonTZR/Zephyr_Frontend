@@ -68,8 +68,6 @@ const Shop = () => {
 
       if (response.status === 200) {
         const responseData = response.data.items;
-
-        console.log(responseData);
         setWishlist(responseData);
       }
     } catch (error) {

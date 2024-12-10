@@ -310,7 +310,7 @@ const CMSProductEditImage = () => {
                     <input
                       id="file"
                       type="file"
-                      accept=".png, .jpg, .jpeg"
+                      accept=".png, .jpg, .jpeg, .avif"
                       className="hidden"
                       ref={fileInput}
                       onChange={handleFileChange}
@@ -362,7 +362,7 @@ const CMSProductEditImage = () => {
                               <input
                                 id={`file_${index}`}
                                 type="file"
-                                accept=".png, .jpg, .jpeg"
+                                accept=".png, .jpg, .jpeg, .avif"
                                 className="hidden"
                                 ref={(el) => (filesInput.current[index] = el)}
                                 onChange={(e) => handleFilesChange(e, index)}

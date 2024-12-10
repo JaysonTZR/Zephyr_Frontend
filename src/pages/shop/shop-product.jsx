@@ -56,6 +56,7 @@ const ShopProduct = () => {
           category_id: item.category_id,
           name: item.product_name,
           product_image: item.product_photo,
+          product_sub_image: item.product_sub_photo.split(", "),
           price: item.product_price,
           new: item.product_new,
           sale: item.product_sale,
@@ -287,6 +288,7 @@ const ShopProduct = () => {
     fetchData();
     fetchCategory();
     fetchWishlist();
+    window.scrollTo(0, 0);
   }, [id]);
 
   return (
@@ -297,16 +299,14 @@ const ShopProduct = () => {
         <div className="flex md:w-3/4">
           {/* Thumbnail Images Section */}
           <div className="flex flex-col w-1/4 p-4 pl-24">
-            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
-            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
-            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
-            <div className="bg-gray-200 h-36 w-32 mb-4"></div>
+            {data.length > 0 && data[0].product_sub_photo.split(", ").map((subPhoto, index) => (
+              <img key={index} src={subPhoto} alt={`${index}`} className="h-36 w-32 mb-4 object-cover" />
+            ))}
           </div>
 
           {/* Main Image Section */}
-          <div className="flex-shrink-0 w-2/4 p-4">
-            <div className="bg-gray-200 h-full w-full"></div>
-            {/* This grey box represents the main product image with the same height as the left images */}
+          <div className="flex w-2/4 p-4 justify-center">
+            <img src={data.length > 0 ? data[0].product_photo : ""} alt="Product" className="h-[625px] w-auto object-cover" />
           </div>
         </div>
       </div>
