@@ -13,7 +13,7 @@ const ShopProduct = () => {
   const [data, setData] = useState([]);
   const [relatedProductData, setRelatedProductData] = useState([]);
   const [category, setCategory] = useState([]);
-  const [wishlist, setWishlist] = useState(null);
+  const [wishlist, setWishlist] = useState([]);
   const [menuSection, setMenuSection] = useState("description");
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
@@ -113,10 +113,7 @@ const ShopProduct = () => {
 
       if (response.status === 200) {
         const responseData = response.data.items;
-
-        const filteredItems = responseData.filter(item => item.product.product_id == id);
-
-        setWishlist(filteredItems[0]);
+        setWishlist(responseData);
       }
     } catch (error) {
       toast.error("Error Fetching Wishlist", {
@@ -131,6 +128,94 @@ const ShopProduct = () => {
       });
     }
   };
+
+  const addWishlistItem = async (productId) => {
+
+    try {
+      const response = await axios.post(
+        apiUrl + "wishlist/item",
+        {
+          customer_id: customer_id,
+          product_id: productId,
+        }
+      );
+
+      if (response.status === 201){
+        fetchWishlist();
+        toast.success("Item Added To Wishlist", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Adding Wishlist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
+  }
+
+  const removeWishlistItem = async (wishlist_item_id) => {
+
+    try {
+      const response = await axios.delete(
+        apiUrl + `wishlist/item/${wishlist_item_id}`,
+        {}
+      );
+
+      if (response.status === 200){
+        
+        toast.success("Wishlist Removed Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setWishlist([]);
+      }
+    } catch (error) {
+      toast.error("Error Removing Wishlist Item", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
+  }
+
+  const handleWishlist = async (productId) => {
+    const filteredItems = wishlist.filter(item => item.product.product_id == productId);
+
+    const wishlistItem = filteredItems[0];
+
+    if(wishlistItem){
+      removeWishlistItem(wishlistItem.wishlist_item_id);
+    }else{
+      addWishlistItem(productId);
+    }
+  }
 
   
 
@@ -155,14 +240,14 @@ const ShopProduct = () => {
     return categoryItem ? categoryItem.category_name : "Unknown Category";
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (product_id, qty) => {
     try {
       const response = await axios.post(
         apiUrl + "cart",
         {
           customer_id: customer_id,
-          product_id: id,
-          cart_quantity: quantity,
+          product_id: product_id,
+          cart_quantity: qty,
           trash: false,
         }
       );
@@ -193,78 +278,6 @@ const ShopProduct = () => {
     }
   }
 
-  const handleAddToWishlist = async () => {
-    try {
-      const response = await axios.post(
-        apiUrl + "wishlist/item",
-        {
-          customer_id: customer_id,
-          product_id: id,
-        }
-      );
-
-      if (response.status === 201){
-        fetchWishlist();
-        toast.success("Item Added To Wishlist", {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-    } catch (error) {
-      toast.error("Error Adding Wishlist", {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
-  }
-
-  const handleRemoveWishlistItem = async () => {
-    try {
-      const response = await axios.delete(
-        apiUrl + `wishlist/item/${wishlist.wishlist_item_id}`,
-        {}
-      );
-
-      if (response.status === 200){
-        
-        toast.success("Wishlist Removed Successfully", {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        setWishlist(null);
-      }
-    } catch (error) {
-      toast.error("Error Removing Wishlist Item", {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
-  }
-
   const renderProductInformation = (information) => {
     const parts = information.split('*');
     return parts.map((part, index) => {
@@ -283,6 +296,8 @@ const ShopProduct = () => {
       }
     });
   };
+
+  const inWishlist = wishlist.some((wishlistItem) => wishlistItem.product_id == id);
 
   useEffect(() => {
     fetchData();
@@ -379,19 +394,19 @@ const ShopProduct = () => {
             onChange={handleQuantityChange}
             className="w-20 py-2 border mr-4 text-center"
           />
-          <button className="bg-black text-white w-48 px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700" onClick={handleAddToCart}>
+          <button className="bg-black text-white w-48 px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700" onClick={()=>handleAddToCart(id, quantity)}>
             Add to Cart
           </button>
         </div>
 
 
         <div className="flex items-center justify-center mb-6">
-          <button className="flex items-center justify-center hover:text-red-500" onClick={wishlist ? handleRemoveWishlistItem : handleAddToWishlist}>
+          <button className="flex items-center justify-center hover:text-red-500" onClick={()=>handleWishlist(id)}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 mr-2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
             </svg>
             <span className="uppercase tracking-widest text-sm font-semibold">
-              {wishlist ? "Remove From Wishlist" : "Add to Wishlist"}
+              {inWishlist ? "Remove From Wishlist" : "Add to Wishlist"}
             </span>
           </button>
         </div>
@@ -507,7 +522,7 @@ const ShopProduct = () => {
         <div className="container mx-auto py-10">
           <h2 className="text-3xl font-semibold mb-10 item text-center">Related Product</h2>
           <div className="px-11">
-            <ProductList currentItems={relatedProductData} itemPerRow={4} />
+            <ProductList currentItems={relatedProductData} itemPerRow={4} wishlist={wishlist} handleWishlist={handleWishlist} handleAddToCart={handleAddToCart} />
           </div>
         </div>
       </div>

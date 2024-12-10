@@ -10,7 +10,7 @@ const CartItem = ({ item, index, onQuantityChange, onRemove }) => {
             className="grid grid-cols-10 gap-6 items-center py-10 border-b"
         >
             <div className="col-span-5 flex items-center">
-                <div className="w-20 h-20 bg-gray-100 mr-6"></div>
+                <div className="w-20 h-20 mr-6" style={{ backgroundImage: `url(${item.product.product_photo})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
                 <div>
                     <p>{item.product.product_name}</p>
                     <p className="text-lg font-semibold">RM {(item.product.product_price).toFixed(2)}</p>

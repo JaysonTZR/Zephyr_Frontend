@@ -17,11 +17,13 @@ const Wishlist = () => {
   const navigate = useNavigate();
 
   const authCustomerData = localStorage.getItem("authCustomerData");
-  const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
+  const customerDataObject = authCustomerData
+    ? JSON.parse(authCustomerData)
+    : null;
 
-  const customer_id = customerDataObject ? customerDataObject.customer_id : null;
-    
-    
+  const customer_id = customerDataObject
+    ? customerDataObject.customer_id
+    : null;
 
   const [formData, setFormData] = useState([]);
 
@@ -36,7 +38,7 @@ const Wishlist = () => {
       if (response.status === 200) {
         const responseData = response.data.items;
 
-        // console.log(responseData[0].product.product_price);
+        console.log(responseData);
         setFormData(responseData);
       }
     } catch (error) {
@@ -51,7 +53,7 @@ const Wishlist = () => {
         theme: "light",
       });
     }
-  }, [customer_id]);
+  }, []);
 
   const handleDelete = async (wishlist_item_id) => {
     try {
@@ -60,6 +62,7 @@ const Wishlist = () => {
       );
 
       if (response.status === 200) {
+        fetchData();
         toast.success("Wishlist Item Removed Successfully", {
           position: "top-right",
           autoClose: 1500,
@@ -85,11 +88,23 @@ const Wishlist = () => {
     }
   };
 
+  const redirectProductPage = (id) => {
+    startTransition(() => {
+      navigate("/product/" + id);
+    });
+  };
+
+  const redirectShopPage = () => {
+    startTransition(() => {
+      navigate("/shop");
+    });
+  };
+
   useEffect(() => {
     startTransition(() => {
       fetchData();
     });
-  }, [handleDelete, fetchData]);
+  }, []);
 
   return (
     <div>
@@ -116,19 +131,32 @@ const Wishlist = () => {
               key={item.product.product_id}
               className="grid grid-cols-10 gap-6 items-center py-10 border-b"
             >
-              <div className="col-span-6 flex items-center">
-                <div className="w-20 h-20 bg-gray-100 mr-6"></div>
+              <button
+                className="col-span-6 flex items-center"
+                onClick={() => redirectProductPage(item.product.product_id)}
+              >
+                <div
+                  className="w-20 h-20 mr-6"
+                  style={{
+                    backgroundImage: `url(${item.product.product_photo})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                ></div>
                 <div>
                   <p>{item.product.product_name}</p>
                   <p className="text-lg font-semibold">{item.price}</p>
                 </div>
-              </div>
+              </button>
               {/* <div className="col-span-2 text-center">
                 <QuantityInput item={item}/>
               </div> */}
-              <div className="col-span-3 text-center font-semibold text-lg">
+              <button
+                className="col-span-3 text-center font-semibold text-lg"
+                onClick={() => redirectProductPage(item.product.product_id)}
+              >
                 RM {item.product.product_price.toFixed(2)}
-              </div>
+              </button>
               <div
                 className="col-span-1 text-center border rounded-full w-9 h-9 flex items-center justify-center"
                 style={{ backgroundColor: "#f3f2ee" }}
@@ -150,10 +178,10 @@ const Wishlist = () => {
 
         <div className="flex justify-end">
           <button
-            onClick={handleCheckout}
+            onClick={redirectShopPage}
             className="bg-black text-white w-60 px-6 py-4 mt-8 uppercase tracking-widest font-semibold text-sm hover:bg-gray-800"
           >
-            Proceed to Checkout
+            SHOP FOR MORE
           </button>
         </div>
       </div>

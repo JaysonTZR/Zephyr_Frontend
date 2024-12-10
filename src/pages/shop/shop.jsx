@@ -64,6 +64,7 @@ const Shop = () => {
 
   const fetchWishlist = async () => {
     try {
+
       const response = await axios.get(apiUrl + `wishlist/${customer_id}`);
 
       if (response.status === 200) {
@@ -163,8 +164,6 @@ const Shop = () => {
   }
 
   const handleWishlist = async (productId) => {
-    const inWishlist = wishlist.some((wishlistItem) => wishlistItem.product_id === productId);
-
     const filteredItems = wishlist.filter(item => item.product.product_id == productId);
 
     const wishlistItem = filteredItems[0];

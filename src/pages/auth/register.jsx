@@ -32,7 +32,7 @@ function Register() {
     user_status: "active",
     user_trash: false,
     customer_name: "",
-    customer_gender: "",
+    customer_gender: "male",
     customer_mobile_no: "",
     customer_country: "",
     customer_state: "",

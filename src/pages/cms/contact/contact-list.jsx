@@ -75,7 +75,7 @@ const CMSContactList = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-100">
-      <Sidebar page="category-list" />
+      <Sidebar page="contact-list" />
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <Header />

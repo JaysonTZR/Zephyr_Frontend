@@ -29,6 +29,16 @@ function HomePage() {
   const [currentBestSellingIndex, setCurrentBestSellingIndex] = useState(0);
   const [randomImages, setRandomImages] = useState([]);
   const itemsPerPage = 4;
+  const [wishlist, setWishlist] = useState([]);
+
+  const authCustomerData = localStorage.getItem("authCustomerData");
+  const customerDataObject = authCustomerData
+    ? JSON.parse(authCustomerData)
+    : null;
+
+  const customer_id = customerDataObject
+    ? customerDataObject.customer_id
+    : null;
 
   const fetchData = async () => {
     try {
@@ -87,9 +97,158 @@ function HomePage() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const fetchWishlist = async () => {
+    try {
+
+      const response = await axios.get(apiUrl + `wishlist/${customer_id}`);
+
+      if (response.status === 200) {
+        const responseData = response.data.items;
+        setWishlist(responseData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Wishlist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  
+
+  const addWishlistItem = async (productId) => {
+
+    try {
+      const response = await axios.post(
+        apiUrl + "wishlist/item",
+        {
+          customer_id: customer_id,
+          product_id: productId,
+        }
+      );
+
+      if (response.status === 201){
+        fetchWishlist();
+        toast.success("Item Added To Wishlist", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Adding Wishlist", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
+  }
+
+  const removeWishlistItem = async (wishlist_item_id) => {
+
+    try {
+      const response = await axios.delete(
+        apiUrl + `wishlist/item/${wishlist_item_id}`,
+        {}
+      );
+
+      if (response.status === 200){
+        
+        toast.success("Wishlist Removed Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        setWishlist([]);
+      }
+    } catch (error) {
+      toast.error("Error Removing Wishlist Item", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
+  }
+
+  const handleWishlist = async (productId) => {
+    const filteredItems = wishlist.filter(item => item.product.product_id == productId);
+
+    const wishlistItem = filteredItems[0];
+
+    if(wishlistItem){
+      removeWishlistItem(wishlistItem.wishlist_item_id);
+    }else{
+      addWishlistItem(productId);
+    }
+  }
+
+  const handleAddToCart = async (product_id) => {
+    try {
+      const response = await axios.post(
+        apiUrl + "cart",
+        {
+          customer_id: customer_id,
+          product_id: product_id,
+          cart_quantity: 1,
+          trash: false,
+        }
+      );
+
+      if (response.status === 201){
+        toast.success("Item Added To Cart", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Adding Cart", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }
+
+  
 
   const redirectProductPage = (id) => {
     startTransition(() => {
@@ -138,6 +297,11 @@ function HomePage() {
     const index = (currentBestSellingIndex + i) % bestSellingProductData.length;
     displayedBestSellingItems.push(bestSellingProductData[index]);
   }
+
+  useEffect(() => {
+    fetchData();
+    fetchWishlist();
+  }, []);
 
   return (
     <div className="font-sans text-center" style={{ backgroundColor: '#f1f1f0' }}>
@@ -328,9 +492,10 @@ function HomePage() {
                     <div className="w-full h-96 bg-gray-200 flex items-center justify-center" style={{ backgroundImage: `url(${item.product_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                       <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
                           <button 
-                            className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2"
+                            className={`bg-white ${(wishlist.some((wishlistItem) => wishlistItem.product_id === item.id)) ? "text-red-500" :"text-black"} w-10 h-10 mr-2 flex justify-center items-center mb-2`}
+                            onClick={()=>handleWishlist(item.id)}
                           >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill={(wishlist.some((wishlistItem) => wishlistItem.product_id === item.id)) ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                               </svg>
                           </button>
@@ -349,7 +514,7 @@ function HomePage() {
                     </div>
                     <div className="mt-2 text-lg text-left">
                       <span className="opacity-100 group-hover:opacity-0 duration-300">${item.price}</span>
-                      <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded" onClick={()=>handleAddToCart(item.id, 1)}>
                           + Add to Cart
                       </button>
                     </div>
@@ -430,9 +595,10 @@ function HomePage() {
                     <div className="w-full h-96 bg-gray-200 flex items-center justify-center" style={{ backgroundImage: `url(${item.product_image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
                       <div className="absolute top-[16px] left-[233px] opacity-0 group-hover:opacity-100 transition-all duration-500">
                           <button 
-                            className="bg-white text-black w-10 h-10 mr-2 flex justify-center items-center mb-2"
+                            className={`bg-white ${(wishlist.some((wishlistItem) => wishlistItem.product_id === item.id)) ? "text-red-500" :"text-black"} w-10 h-10 mr-2 flex justify-center items-center mb-2`}
+                            onClick={()=>handleWishlist(item.id)}
                           >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                              <svg xmlns="http://www.w3.org/2000/svg" fill={(wishlist.some((wishlistItem) => wishlistItem.product_id === item.id)) ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
                               </svg>
                           </button>
@@ -451,7 +617,7 @@ function HomePage() {
                     </div>
                     <div className="mt-2 text-lg text-left">
                       <span className="opacity-100 group-hover:opacity-0 duration-300">${item.price}</span>
-                      <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded">
+                      <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded" onClick={()=>handleAddToCart(item.id, 1)}>
                           + Add to Cart
                       </button>
                     </div>

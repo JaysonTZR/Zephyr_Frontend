@@ -86,6 +86,7 @@ function Cart() {
       const response = await axios.put(apiUrl + `cart`, updatedCart);
 
       if (response.status === 200) {
+        fetchData();
         toast.success("Cart Updated", {
           position: "top-right",
           autoClose: 1500,
@@ -116,6 +117,7 @@ function Cart() {
       const response = await axios.delete(apiUrl + `cart/${cart_id}`);
 
       if (response.status === 200) {
+        fetchData();
         toast.success("Cart Item Removed", {
           position: "top-right",
           autoClose: 1500,
@@ -147,8 +149,6 @@ function Cart() {
         apiUrl +
           `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`
       );
-
-      console.log(response);
 
       if (response.status === 200) {
         setDiscount(response.data.discount);
@@ -194,11 +194,17 @@ function Cart() {
     setDiscount(null);
   };
 
+  const redirectShopPage = () => {
+    startTransition(() => {
+      navigate("/shop");
+    });
+  };
+
   useEffect(() => {
     startTransition(() => {
       fetchData();
     });
-  }, [handleCartUpdate, handleCartItemDelete, fetchData]);
+  }, []);
 
   return (
     <div>
@@ -241,7 +247,7 @@ function Cart() {
               )}
 
               <div className="mt-7 flex justify-between items-center">
-                <button className="text-black border px-10 py-4 hover:bg-gray-100 uppercase tracking-widest font-semibold text-sm">
+                <button className="text-black border px-10 py-4 hover:bg-gray-100 uppercase tracking-widest font-semibold text-sm" onClick={redirectShopPage}>
                   Continue Shopping
                 </button>
                 {formData.length > 0 && updatedCart.length > 0 && (
@@ -320,12 +326,12 @@ function Cart() {
                         : (totalSum - discount.discount_amount).toFixed(2)}
                     </span>
                   </div>
-                  <button
+                  {formData.length > 0 && <button
                     onClick={handleCheckout}
                     className="bg-black text-white w-full px-6 py-3 mt-8 uppercase tracking-widest font-semibold text-sm hover:bg-gray-800"
                   >
                     Proceed to Checkout
-                  </button>
+                  </button>}
                 </div>
               </div>
             </div>
