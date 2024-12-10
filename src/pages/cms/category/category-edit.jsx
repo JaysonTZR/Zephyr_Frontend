@@ -171,7 +171,7 @@ const CMSCategoryEdit = () => {
                   {/* Category Type */}
                   <div className="flex flex-row">
                     <label htmlFor="category_type" className="mb-2 mt-2 w-72">
-                      Status<span className="text-red-500"> *</span>
+                      Type<span className="text-red-500"> *</span>
                     </label>
                     <select
                       id="category_type"

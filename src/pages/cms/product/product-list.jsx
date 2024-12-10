@@ -12,23 +12,30 @@ import axios from "axios";
 const CMSProductList = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState([]);
+  const [formOriData, setFormOriData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
 
-  const tableHeader = ["product_image", "name", "code", "price", "new", "sale", "status", "created_at"];
+  const tableHeader = [
+    "product_image",
+    "name",
+    "code",
+    "price",
+    "new",
+    "sale",
+    "status",
+    "created_at",
+  ];
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        apiUrl + "product",
-        {
+      const response = await axios.get(apiUrl + "product", {});
 
-        }
-      );
-
-      if (response.status === 200){
-        const filteredData = response.data.filter((item) => item.product_status === "active" && item.trash === false);
+      if (response.status === 200) {
+        const filteredData = response.data.filter(
+          (item) => item.product_status === "active" && item.trash === false
+        );
         const transformedData = filteredData.map((item) => ({
           id: item.product_id,
           name: item.product_name,
@@ -44,6 +51,7 @@ const CMSProductList = () => {
         }));
 
         setFormData(transformedData);
+        setFormOriData(transformedData);
       }
     } catch (error) {
       toast.error("Error Fetching Data", {
@@ -72,15 +80,26 @@ const CMSProductList = () => {
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   const handleFilterValueChange = (e) => {
     setFilterValue(e.target.value);
+
+    const filteredData = formOriData.filter((item) => {
+      return item[selectedField]
+        .toString()
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase());
+    });
+
+    setFormData(filteredData);
   };
 
   const clearFilter = () => {
     setSelectedField("");
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   return (
@@ -101,15 +120,43 @@ const CMSProductList = () => {
                 </div>
 
                 <div className="flex space-x-4">
-                  <button onClick={() => setShowFilters(!showFilters)} className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-5 mr-2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+                      />
                     </svg>
                     Filter
                   </button>
-                  <button onClick={addProduct} className=" text-white w-36 h-9 rounded-md text-sm focus:outline-none hover:bg-zinc-700 bg-black flex justify-center items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  <button
+                    onClick={addProduct}
+                    className=" text-white w-36 h-9 rounded-md text-sm focus:outline-none hover:bg-zinc-700 bg-black flex justify-center items-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-5 mr-2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
                     </svg>
                     Add Product
                   </button>
@@ -127,9 +174,19 @@ const CMSProductList = () => {
                       className="border rounded-md p-2 col-span-5"
                     >
                       <option value="">Select Field</option>
-                      <option value="username">Username</option>
-                      <option value="role">Role</option>
-                      <option value="status">Status</option>
+                      {tableHeader.map(
+                        (item, index) =>
+                          item !== "created_at" &&
+                          item !== "product_image" &&
+                          item !== "price" &&
+                          item !== "created_by" && (
+                            <option key={index} value={item}>
+                              {(
+                                item.charAt(0).toUpperCase() + item.slice(1)
+                              ).replace(/_/g, " ")}
+                            </option>
+                          )
+                      )}
                     </select>
 
                     {/* Right column: Enter value for selected filter field */}
@@ -141,8 +198,42 @@ const CMSProductList = () => {
                         className="border rounded-md p-2 col-span-5"
                       >
                         <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <option value="active" label="Active">
+                          Active
+                        </option>
+                        <option value="inactive" label="Inactive">
+                          Inactive
+                        </option>
+                      </select>
+                    ) : selectedField === "new" ? (
+                      <select
+                        name="filterValue"
+                        value={filterValue}
+                        onChange={handleFilterValueChange}
+                        className="border rounded-md p-2 col-span-5"
+                      >
+                        <option value="">All</option>
+                        <option value="true" label="New">
+                          New
+                        </option>
+                        <option value="false" label="Not New">
+                          Not New
+                        </option>
+                      </select>
+                    ) : selectedField === "sale" ? (
+                      <select
+                        name="filterValue"
+                        value={filterValue}
+                        onChange={handleFilterValueChange}
+                        className="border rounded-md p-2 col-span-5"
+                      >
+                        <option value="">All</option>
+                        <option value="true" label="Sale">
+                          Sale
+                        </option>
+                        <option value="false" label="Not Sale">
+                          Not Sale
+                        </option>
                       </select>
                     ) : (
                       <input
@@ -156,7 +247,7 @@ const CMSProductList = () => {
                     )}
 
                     {/* Clear Button */}
-                    <button 
+                    <button
                       onClick={clearFilter}
                       className="text-white h-9 rounded-md text-sm focus:outline-none hover:bg-zinc-700 bg-black flex justify-center items-center"
                     >
@@ -174,7 +265,6 @@ const CMSProductList = () => {
                 deletePath={true}
                 editPhotoPath={"/cms/product/edit-image"}
               />
-
             </div>
           </main>
           <Footer />

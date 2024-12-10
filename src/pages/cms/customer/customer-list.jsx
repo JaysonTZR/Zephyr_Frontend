@@ -10,6 +10,7 @@ import axios from "axios";
 
 const CMSCustomerList = () => {
   const [formData, setFormData] = useState([]);
+  const [formOriData, setFormOriData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
@@ -35,6 +36,7 @@ const CMSCustomerList = () => {
         }));
 
         setFormData(transformedData);
+        setFormOriData(transformedData);
       }
     } catch (error) {
       toast.error("Error Fetching Data", {
@@ -50,28 +52,29 @@ const CMSCustomerList = () => {
     }
   };
 
-  const filteredData = formData.filter((item) => {
-    if (selectedField && filterValue) {
-      return item[selectedField]
-        .toString()
-        .toLowerCase()
-        .includes(filterValue.toLowerCase());
-    }
-    return true;
-  });
-
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   const handleFilterValueChange = (e) => {
     setFilterValue(e.target.value);
+
+    const filteredData = formOriData.filter((item) => {
+      return item[selectedField]
+        .toString()
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase());
+    });
+
+    setFormData(filteredData);
   };
 
   const clearFilter = () => {
     setSelectedField("");
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   useEffect(() => {
@@ -117,9 +120,16 @@ const CMSCustomerList = () => {
                       className="border rounded-md p-2 col-span-5"
                     >
                       <option value="">Select Field</option>
-                      <option value="username">Username</option>
-                      <option value="role">Role</option>
-                      <option value="status">Status</option>
+                      {tableHeader.map(
+                        (item, index) =>
+                          item !== "created_at" && (
+                            <option key={index} value={item}>
+                              {(
+                                item.charAt(0).toUpperCase() + item.slice(1)
+                              ).replace(/_/g, " ")}
+                            </option>
+                          )
+                      )}
                     </select>
 
                     {/* Right column: Enter value for selected filter field */}
@@ -131,8 +141,27 @@ const CMSCustomerList = () => {
                         className="border rounded-md p-2 col-span-5"
                       >
                         <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <option value="active" label="Active">
+                          Active
+                        </option>
+                        <option value="inactive" label="Inactive">
+                          Inactive
+                        </option>
+                      </select>
+                    ) : selectedField === "gender" ? (
+                      <select
+                        name="gender"
+                        value={filterValue}
+                        onChange={handleFilterValueChange}
+                        className="border rounded-md p-2 col-span-5"
+                      >
+                        <option value="">All Gender</option>
+                        <option value="male" label="Male">
+                          Male
+                        </option>
+                        <option value="female" label="Female">
+                          Female
+                        </option>
                       </select>
                     ) : (
                       <input
@@ -159,7 +188,7 @@ const CMSCustomerList = () => {
               {/* Table Section */}
               <Table
                 tableHeader={tableHeader}
-                tableData={filteredData}
+                tableData={formData}
                 editPath={"/cms/customer/edit"}
                 deletePath={true}
               />

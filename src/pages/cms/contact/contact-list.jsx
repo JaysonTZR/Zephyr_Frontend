@@ -11,6 +11,7 @@ import axios from "axios";
 
 const CMSContactList = () => {
   const navigate = useNavigate();
+  const [formOriData, setFormOriData] = useState([]);
   const [formData, setFormData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
@@ -20,13 +21,12 @@ const CMSContactList = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        apiUrl + "contact",
-        {}
-      );
+      const response = await axios.get(apiUrl + "contact", {});
 
-      if (response.status === 200){
-        const filteredData = response.data.filter((item) => item.trash === false);
+      if (response.status === 200) {
+        const filteredData = response.data.filter(
+          (item) => item.trash === false
+        );
         const transformedData = filteredData.map((item) => ({
           id: item.contact_id,
           name: item.contact_name,
@@ -39,8 +39,8 @@ const CMSContactList = () => {
         }));
 
         setFormData(transformedData);
+        setFormOriData(transformedData);
       }
-
     } catch (error) {
       toast.error("Error Fetching Data", {
         position: "top-right",
@@ -58,15 +58,26 @@ const CMSContactList = () => {
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   const handleFilterValueChange = (e) => {
     setFilterValue(e.target.value);
+
+    const filteredData = formOriData.filter((item) => {
+      return item[selectedField]
+        .toString()
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase());
+    });
+
+    setFormData(filteredData);
   };
 
   const clearFilter = () => {
     setSelectedField("");
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   useEffect(() => {
@@ -91,9 +102,23 @@ const CMSContactList = () => {
                 </div>
 
                 <div className="flex space-x-4">
-                  <button onClick={() => setShowFilters(!showFilters)} className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="size-5 mr-2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"
+                      />
                     </svg>
                     Filter
                   </button>
@@ -111,9 +136,16 @@ const CMSContactList = () => {
                       className="border rounded-md p-2 col-span-5"
                     >
                       <option value="">Select Field</option>
-                      <option value="username">Username</option>
-                      <option value="role">Role</option>
-                      <option value="status">Status</option>
+                      {tableHeader.map(
+                        (item, index) =>
+                          item !== "created_at" && (
+                            <option key={index} value={item}>
+                              {(
+                                item.charAt(0).toUpperCase() + item.slice(1)
+                              ).replace(/_/g, " ")}
+                            </option>
+                          )
+                      )}
                     </select>
 
                     {/* Right column: Enter value for selected filter field */}
@@ -125,8 +157,12 @@ const CMSContactList = () => {
                         className="border rounded-md p-2 col-span-5"
                       >
                         <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <option value="active" label="Active">
+                          Active
+                        </option>
+                        <option value="inactive" label="Inactive">
+                          Inactive
+                        </option>
                       </select>
                     ) : (
                       <input
@@ -140,7 +176,7 @@ const CMSContactList = () => {
                     )}
 
                     {/* Clear Button */}
-                    <button 
+                    <button
                       onClick={clearFilter}
                       className="text-white h-9 rounded-md text-sm focus:outline-none hover:bg-zinc-700 bg-black flex justify-center items-center"
                     >
@@ -151,7 +187,11 @@ const CMSContactList = () => {
               )}
 
               {/* Table Section */}
-              <Table tableHeader={tableHeader} tableData={formData} editPath={"/cms/contact/edit"}/>
+              <Table
+                tableHeader={tableHeader}
+                tableData={formData}
+                editPath={"/cms/contact/edit"}
+              />
             </div>
           </main>
           <Footer />

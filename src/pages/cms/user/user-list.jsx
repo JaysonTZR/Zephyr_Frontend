@@ -12,6 +12,7 @@ import axios from "axios";
 const CMSUserList = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState([]);
+  const [formOriData, setFormOriData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
@@ -20,15 +21,12 @@ const CMSUserList = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        apiUrl + "user",
-        {
+      const response = await axios.get(apiUrl + "user", {});
 
-        }
-      );
-
-      if (response.status === 200){
-        const filteredData = response.data.filter((item) => item.user_status === "active" && item.trash === false);
+      if (response.status === 200) {
+        const filteredData = response.data.filter(
+          (item) => item.user_status === "active" && item.trash === false
+        );
         const transformedData = filteredData.map((item) => ({
           id: item.user_id,
           username: item.user_name,
@@ -41,6 +39,7 @@ const CMSUserList = () => {
         }));
 
         setFormData(transformedData);
+        setFormOriData(transformedData);
       }
     } catch (error) {
       toast.error("Error Fetching Data", {
@@ -69,15 +68,26 @@ const CMSUserList = () => {
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   const handleFilterValueChange = (e) => {
     setFilterValue(e.target.value);
+
+    const filteredData = formOriData.filter((item) => {
+      return item[selectedField]
+        .toString()
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase());
+    });
+
+    setFormData(filteredData);
   };
 
   const clearFilter = () => {
     setSelectedField("");
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   return (
@@ -99,9 +109,10 @@ const CMSUserList = () => {
                 </div>
 
                 <div className="flex space-x-4">
-                  <button 
+                  <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center">
+                    className=" text-gray-700 w-24 h-9 rounded-md text-sm focus:outline-none hover:bg-gray-300 border border-black flex justify-center items-center"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -152,9 +163,16 @@ const CMSUserList = () => {
                       className="border rounded-md p-2 col-span-5"
                     >
                       <option value="">Select Field</option>
-                      <option value="username">Username</option>
-                      <option value="role">Role</option>
-                      <option value="status">Status</option>
+                      {tableHeader.map(
+                        (item, index) =>
+                          item !== "created_at" && (
+                            <option key={index} value={item}>
+                              {(
+                                item.charAt(0).toUpperCase() + item.slice(1)
+                              ).replace(/_/g, " ")}
+                            </option>
+                          )
+                      )}
                     </select>
 
                     {/* Right column: Enter value for selected filter field */}
@@ -166,8 +184,30 @@ const CMSUserList = () => {
                         className="border rounded-md p-2 col-span-5"
                       >
                         <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <option value="active" label="Active">
+                          Active
+                        </option>
+                        <option value="inactive" label="Inactive">
+                          Inactive
+                        </option>
+                      </select>
+                    ) : selectedField === "role" ? (
+                      <select
+                        name="role"
+                        value={filterValue}
+                        onChange={handleFilterValueChange}
+                        className="border rounded-md p-2 col-span-5"
+                      >
+                        <option value="">All Roles</option>
+                        <option value="admin" label="Admin">
+                          Admin
+                        </option>
+                        <option value="staff" label="Staff">
+                          Staff
+                        </option>
+                        <option value="customer" label="Customer">
+                          Customer
+                        </option>
                       </select>
                     ) : (
                       <input
@@ -181,7 +221,7 @@ const CMSUserList = () => {
                     )}
 
                     {/* Clear Button */}
-                    <button 
+                    <button
                       onClick={clearFilter}
                       className="text-white h-9 rounded-md text-sm focus:outline-none hover:bg-zinc-700 bg-black flex justify-center items-center"
                     >
@@ -198,7 +238,6 @@ const CMSUserList = () => {
                 editPath={"/cms/user/edit"}
                 deletePath={true}
               />
-              
             </div>
           </main>
           <Footer />

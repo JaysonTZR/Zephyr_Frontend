@@ -11,6 +11,7 @@ import axios from "axios";
 
 const CMSDiscountList = () => {
   const navigate = useNavigate();
+  const [formOriData, setFormOriData] = useState([]);
   const [formData, setFormData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
@@ -26,7 +27,7 @@ const CMSDiscountList = () => {
       );
 
       if (response.status === 200){
-        const filteredData = response.data.filter((item) => item.discount_status === "active" && item.trash === false);
+        const filteredData = response.data.filter((item) => item.trash === false);
         const transformedData = filteredData.map((item) => ({
           id: item.discount_id,
           code: item.discount_code,
@@ -39,6 +40,7 @@ const CMSDiscountList = () => {
         }));
 
         setFormData(transformedData);
+        setFormOriData(transformedData);
       }
     } catch (error) {
       toast.error("Error Fetching Data", {
@@ -60,28 +62,29 @@ const CMSDiscountList = () => {
     });
   };
 
-  const filteredData = formData.filter((item) => {
-    if (selectedField && filterValue) {
-      return item[selectedField]
-        .toString()
-        .toLowerCase()
-        .includes(filterValue.toLowerCase());
-    }
-    return true;
-  });
-
   const handleFieldChange = (e) => {
     setSelectedField(e.target.value);
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   const handleFilterValueChange = (e) => {
     setFilterValue(e.target.value);
+
+    const filteredData = formOriData.filter((item) => {
+      return item[selectedField]
+        .toString()
+        .toLowerCase()
+        .includes(e.target.value.toLowerCase());
+    });
+
+    setFormData(filteredData);
   };
 
   const clearFilter = () => {
     setSelectedField("");
     setFilterValue("");
+    setFormData(formOriData);
   };
 
   useEffect(() => {
@@ -161,9 +164,16 @@ const CMSDiscountList = () => {
                       className="border rounded-md p-2 col-span-5"
                     >
                       <option value="">Select Field</option>
-                      <option value="username">Username</option>
-                      <option value="role">Role</option>
-                      <option value="status">Status</option>
+                      {tableHeader.map(
+                        (item, index) =>
+                          item !== "created_at" && (
+                            <option key={index} value={item}>
+                              {(
+                                item.charAt(0).toUpperCase() + item.slice(1)
+                              ).replace(/_/g, " ")}
+                            </option>
+                          )
+                      )}
                     </select>
 
                     {/* Right column: Enter value for selected filter field */}
@@ -175,8 +185,12 @@ const CMSDiscountList = () => {
                         className="border rounded-md p-2 col-span-5"
                       >
                         <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
+                        <option value="active" label="Active">
+                          Active
+                        </option>
+                        <option value="inactive" label="Inactive">
+                          Inactive
+                        </option>
                       </select>
                     ) : (
                       <input
@@ -203,7 +217,7 @@ const CMSDiscountList = () => {
               {/* Table Section */}
               <Table
                 tableHeader={tableHeader}
-                tableData={filteredData}
+                tableData={formData}
                 editPath={"/cms/discount/edit"}
                 deletePath={true}
               />
