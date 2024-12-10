@@ -1,16 +1,9 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  startTransition,
-} from "react";
-
+import React, { useEffect, useState, useCallback, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Banner from "../../../components/Banner";
 import CartList from "../../../components/cart/CartList";
-
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
@@ -24,17 +17,16 @@ function Cart() {
   const [discount, setDiscount] = useState(null);
 
   const authCustomerData = localStorage.getItem("authCustomerData");
-  const customerDataObject = authCustomerData
-    ? JSON.parse(authCustomerData)
-    : null;
-
-  const customer_id = customerDataObject
-    ? customerDataObject.customer_id
-    : null;
+  const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
+  const customer_id = customerDataObject ? customerDataObject.customer_id : null;
 
   const handleCheckout = () => {
     startTransition(() => {
-      navigate("/checkout");
+      if (discount) {
+        navigate("/checkout", { state: { discount_id: discount.discount_id, discount_amount: discount.discount_amount } });
+      } else {
+        navigate("/checkout");
+      }
     });
   };
 
@@ -83,7 +75,10 @@ function Cart() {
 
   const handleCartUpdate = async () => {
     try {
-      const response = await axios.put(apiUrl + `cart`, updatedCart);
+      const response = await axios.put(
+        apiUrl + `cart`, 
+        updatedCart
+      );
 
       if (response.status === 200) {
         fetchData();
@@ -114,7 +109,9 @@ function Cart() {
 
   const handleCartItemDelete = async (cart_id) => {
     try {
-      const response = await axios.delete(apiUrl + `cart/${cart_id}`);
+      const response = await axios.delete(
+        apiUrl + `cart/${cart_id}`
+      );
 
       if (response.status === 200) {
         fetchData();
@@ -146,8 +143,7 @@ function Cart() {
   const handleDiscountCode = async () => {
     try {
       const response = await axios.get(
-        apiUrl +
-          `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`
+        apiUrl + `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`
       );
 
       if (response.status === 200) {
@@ -201,17 +197,14 @@ function Cart() {
   };
 
   useEffect(() => {
-    startTransition(() => {
-      fetchData();
-    });
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div>
       <Header />
-
-      <Banner bannerText="Shopping Cart" />
       <ToastContainer />
+      <Banner bannerText="Shopping Cart" />
       <div className="flex justify-center mb-20">
         <div className="py-8 w-7/12">
           <div className="container mx-auto flex flex-col lg:flex-row lg:space-x-2">
@@ -252,7 +245,7 @@ function Cart() {
                 </button>
                 {formData.length > 0 && updatedCart.length > 0 && (
                   <button
-                    className="bg-black text-white px-10 py-4 hover:bg-zinc-700 uppercase tracking-widest font-semibold text-sm flex"
+                    className="bg-black text-white px-6 py-4 hover:bg-zinc-700 uppercase tracking-widest font-semibold text-sm flex"
                     onClick={() => handleCartUpdate()}
                   >
                     <svg
@@ -306,21 +299,21 @@ function Cart() {
                   <div className="text-zinc-500 mt-5 flex justify-between">
                     Subtotal{" "}
                     <span className="font-semibold text-lg text-red-600">
-                      RM {totalSum.toFixed(2)}
+                      $ {totalSum.toFixed(2)}
                     </span>
                   </div>
                   {discount && (
                     <div className="text-zinc-500 mt-4 flex justify-between">
                       Discount{" "}
                       <span className="font-semibold text-lg text-red-600">
-                        - RM {discount.discount_amount.toFixed(2)}
+                        - $ {discount.discount_amount.toFixed(2)}
                       </span>
                     </div>
                   )}
                   <div className="text-zinc-500 mt-4 flex justify-between">
                     Total{" "}
                     <span className="font-semibold text-lg text-red-600">
-                      RM{" "}
+                      ${" "}
                       {!discount
                         ? totalSum.toFixed(2)
                         : (totalSum - discount.discount_amount).toFixed(2)}

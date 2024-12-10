@@ -236,8 +236,8 @@ const CMSCustomerEdit = () => {
   }, [state, formData.customer_city]);
 
   const genderOptions = [
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
   ];
 
   const countryOptions = [

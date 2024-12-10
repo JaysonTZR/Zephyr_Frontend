@@ -70,6 +70,7 @@ const CMSDiscountAdd = () => {
         progress: undefined,
         theme: "light",
       });
+      setButtonDisabled(false);
     }
   };
 

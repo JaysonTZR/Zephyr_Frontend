@@ -197,6 +197,7 @@ const CMSProductAdd = () => {
                 progress: undefined,
                 theme: "light",
             });
+            setButtonDisabled(false);
         }
     };
 

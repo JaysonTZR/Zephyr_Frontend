@@ -104,6 +104,7 @@ const CMSUserAdd = () => {
         progress: undefined,
         theme: "light",
       });
+      setButtonDisabled(false);
     }
   };
 

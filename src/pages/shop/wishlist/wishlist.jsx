@@ -155,7 +155,7 @@ const Wishlist = () => {
                 className="col-span-3 text-center font-semibold text-lg"
                 onClick={() => redirectProductPage(item.product.product_id)}
               >
-                RM {item.product.product_price.toFixed(2)}
+                $ {item.product.product_price.toFixed(2)}
               </button>
               <div
                 className="col-span-1 text-center border rounded-full w-9 h-9 flex items-center justify-center"

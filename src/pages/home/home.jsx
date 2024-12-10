@@ -513,7 +513,7 @@ function HomePage() {
                       {item.name}
                     </div>
                     <div className="mt-2 text-lg text-left">
-                      <span className="opacity-100 group-hover:opacity-0 duration-300">${item.price}</span>
+                      <span className="opacity-100 group-hover:opacity-0 duration-300">$ {item.price}</span>
                       <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded" onClick={()=>handleAddToCart(item.id, 1)}>
                           + Add to Cart
                       </button>
@@ -616,7 +616,7 @@ function HomePage() {
                       {item.name}
                     </div>
                     <div className="mt-2 text-lg text-left">
-                      <span className="opacity-100 group-hover:opacity-0 duration-300">${item.price}</span>
+                      <span className="opacity-100 group-hover:opacity-0 duration-300">$ {item.price}</span>
                       <button className="absolute left-0 transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded" onClick={()=>handleAddToCart(item.id, 1)}>
                           + Add to Cart
                       </button>

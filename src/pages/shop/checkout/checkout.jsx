@@ -1,175 +1,301 @@
-import React from "react";
+import React, { useEffect, useState, useCallback, startTransition } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Banner from "../../../components/Banner";
 import CheckoutList from "../../../components/checkout/CheckoutList";
+import { ToastContainer, toast } from "react-toastify";
+import { apiUrl } from "../../../constant/constants";
+import axios from "axios";
 
 const Checkout = () => {
-  const items = [
-    { name: "Faux Biker Jacket", price: "67.24" },
-    { name: "Multi-pocket Chest Bag", price: "43.48" },
-    { name: "Diagonal Textured Cap", price: "60.39" },
-    { name: "Ankle Boots", price: "38.49" },
-  ];
+  const navigate = useNavigate();
+  const location = useLocation();
+  const discountAmount = location.state?.discount_amount || 0;
+  const discountId = location.state?.discount_id || null;
+  const [cartData, setCartData] = useState([]);
+  const [totalSum, setTotalSum] = useState(0);
+  const [isOrderNotesEnabled, setIsOrderNotesEnabled] = useState(false);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const authCustomerData = localStorage.getItem("authCustomerData");
+  const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
+  const authUserData = localStorage.getItem("authUserData");
+  const userDataObject = authUserData ? JSON.parse(authUserData) : null;
+
+  const [formData, setFormData] = useState({
+    billing_name: customerDataObject.customer_name,
+    billing_address: `${customerDataObject.customer_address_1}, ${customerDataObject.customer_address_2}, ${customerDataObject.customer_address_3}`,
+    billing_address_optional: "",
+    billing_country: customerDataObject.customer_country,
+    billing_state: customerDataObject.customer_state,
+    billing_city: customerDataObject.customer_city,
+    billing_mobile_no: customerDataObject.customer_mobile_no,
+    billing_email: userDataObject.user_email,
+    billing_notes: "",
+    trash: false,
+  });
+
+  const roundValue = (value) => {
+    const roundedValue = (Math.round(value * 10) / 10).toFixed(2);
+    const difference = (value - roundedValue).toFixed(2);
+    const signedDifference = difference > 0 ? `- $ ${difference}` : `+ $ ${Math.abs(difference).toFixed(2)}`;
+    return { roundedValue, signedDifference };
+  };
+
+  const { roundedValue, signedDifference } = roundValue(totalSum - (discountAmount ? parseFloat(discountAmount) : 0));
+
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + `cart/customer/${customerDataObject.customer_id}`
+      );
+
+      if (response.status === 200) {
+        const responseData = response.data.items;
+        
+        setCartData(responseData);
+        setTotalSum(response.data.totalSum);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }, [customerDataObject.customer_id]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleSubmit = async () => {
+    setButtonDisabled(true);
+    try {
+      const response = await axios.post(
+        apiUrl + `salesorder`, 
+        {
+          // ...formData,
+        }, 
+        {}
+      );
+
+      if (response.status === 201) {
+        toast.success("Checkout Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          onClose: () => {
+            startTransition(() => {
+              navigate("/");
+            });
+          },
+        });
+      }
+    } catch (error) {
+      toast.error("Error Checkout", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setButtonDisabled(false);
+    }
+  };
+
+  const handleInputChange = (name, value) => {
+    setFormData((prevData) => {
+      const updatedData = {
+        ...prevData,
+        [name]: value,
+      };
+  
+      return updatedData;
+    });
+  };
+
+  const handleCheckboxChange = (e) => {
+    setIsOrderNotesEnabled(e.target.checked);
+    handleInputChange("billing_notes", "")
+  };
 
   return (
     <div>
       <Header />
-
+      <ToastContainer />
       <Banner bannerText="Check Out" />
       <div className="flex justify-center py-8">
         <div className="flex justify-between w-7/12 space-x-8">
           <div className="w-2/3">
             <h2 className="font-semibold uppercase border-b pb-6 mb-4">Billing Details</h2>
-            <form>
-              <div className="grid grid-cols-2 gap-4 mt-7">
-                <div className="flex-col">
-                  <label>First Name<span className="text-red-600">*</span></label>
-                  <input
-                    type="text"
-                    className="border py-3 px-4 w-full mt-4"
-                  />
-                </div>
-                <div className="flex-col">
-                  <label>Last Name<span className="text-red-600">*</span></label>
-                  <input
-                    type="text"
-                    className="border py-3 px-4 w-full mt-4"
-                  />
-                </div>
-              </div>
+            <div>
               <div className="flex-col mt-6">
-                <label>Country<span className="text-red-600">*</span></label>
+                <label>Name<span className="text-red-600"> *</span></label>
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
+                  value={formData && formData.billing_name}
+                  onChange={(e) =>
+                    handleInputChange("billing_name", e.target.value)
+                  }
                 />
               </div>
               <div className="mt-6">
                 <div className="flex-col">
-                  <label>Address<span className="text-red-600">*</span></label>
+                  <label>Address<span className="text-red-600"> *</span></label>
                   <input
                     type="text"
                     className="border py-3 px-4 w-full mt-4"
                     placeholder="Street Address"
+                    value={formData && formData.billing_address}
+                    onChange={(e) =>
+                      handleInputChange("billing_address", e.target.value)
+                    }
                   />
                 </div>
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-5"
                   placeholder="Apartment, suite, unit ect (optional)"
+                  value={formData && formData.billing_address_optional}
+                  onChange={(e) =>
+                    handleInputChange("billing_address_optional", e.target.value)
+                  }
                 />
               </div>
               <div className="flex-col mt-6">
-                <label>Town / City<span className="text-red-600">*</span></label>
+                <label>Country<span className="text-red-600"> *</span></label>
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
+                  value={formData && formData.billing_country}
+                  onChange={(e) =>
+                    handleInputChange("billing_country", e.target.value)
+                  }
                 />
               </div>
               <div className="flex-col mt-6">
-                <label>Country / State<span className="text-red-600">*</span></label>
+                <label>State<span className="text-red-600"> *</span></label>
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
+                  value={formData && formData.billing_state}
+                  onChange={(e) =>
+                    handleInputChange("billing_state", e.target.value)
+                  }
                 />
               </div>
               <div className="flex-col mt-6">
-                <label>Postcode / ZIP<span className="text-red-600">*</span></label>
+                <label>City<span className="text-red-600"> *</span></label>
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
+                  value={formData && formData.billing_city}
+                  onChange={(e) =>
+                    handleInputChange("billing_city", e.target.value)
+                  }
                 />
               </div>
               <div className="grid grid-cols-2 gap-4 mt-6">
                 <div className="flex-col">
-                  <label>Phone<span className="text-red-600">*</span></label>
+                  <label>Phone<span className="text-red-600"> *</span></label>
                   <input
                     type="text"
                     className="border py-3 px-4 w-full mt-4"
+                    value={formData && formData.billing_mobile_no}
+                    onChange={(e) =>
+                      handleInputChange("billing_mobile_no", e.target.value)
+                    }
                   />
                 </div>
                 <div className="flex-col">
-                  <label>Email<span className="text-red-600">*</span></label>
+                  <label>Email<span className="text-red-600"> *</span></label>
                   <input
                     type="text"
                     className="border py-3 px-4 w-full mt-4"
+                    value={formData && formData.billing_email}
+                    onChange={(e) =>
+                      handleInputChange("billing_email", e.target.value)
+                    }
                   />
                 </div>
               </div>
               <div className="mt-6">
                 <label className="inline-flex items-center text-sm">
-                  <input type="checkbox" className="mr-3" /> Create an account?
-                </label>
-              </div>
-              <div className="mt-4">
-                <label className="inline-flex items-center text-sm">
-                  Create an account by below. If you are a returning customer please login at the top of the page.
+                  <input type="checkbox" className="mr-3" onChange={handleCheckboxChange} /> Note about your order, e.g, special note for delivery.
                 </label>
               </div>
               <div className="flex-col mt-6">
-                <label>Account Password<span className="text-red-600">*</span></label>
-                <input
-                  type="text"
-                  className="border py-3 px-4 w-full mt-4"
-                />
-              </div>
-              <div className="mt-6">
-                <label className="inline-flex items-center text-sm">
-                  <input type="checkbox" className="mr-3" /> Note about your order, e.g, special note for delivery.
-                </label>
-              </div>
-              <div className="flex-col mt-6">
-                <label>Order Notes<span className="text-red-600">*</span></label>
+                <label>Order Notes</label>
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
                   placeholder="Notes about your order, e.g, special note for delivery"
+                  value={formData && formData.billing_notes}
+                  onChange={(e) =>
+                    handleInputChange("billing_notes", e.target.value)
+                  }
+                  disabled={!isOrderNotesEnabled}
                 />
               </div>
-            </form>
+            </div>
           </div>
           <div className="w-1/3 p-7 h-fit" style={{ backgroundColor: '#f3f2ee' }}>
             <h2 className="text-2xl font-semibold uppercase mb-4 border-b-2 pb-6">Your Order</h2>
             <div className="p-1 mt-6">
               <div className="flex justify-between mb-3 text-lg">
-                <span>Product</span>
+                <span>Product(s)</span>
                 <span>Total</span>
               </div>
               <ul className="mb-4">
-                <CheckoutList items={items} />
+                <CheckoutList items={cartData} />
               </ul>
               <div className="border-t-2 border-b-2 py-6 mb-5">
+                {discountAmount !== 0 && (
+                  <div className="flex justify-between mb-4">
+                    <span>Discount</span>
+                    <span className="text-red-600 font-semibold text-lg">- $ {parseFloat(discountAmount).toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between mb-4">
                   <span>Subtotal</span>
-                  <span className="text-red-600 font-semibold text-lg">$750.99</span>
+                  <span className="text-red-600 font-semibold text-lg">$ {totalSum - parseFloat(discountAmount)}</span>
+                </div>
+                <div className="flex justify-between mb-4">
+                  <span>Rounding</span>
+                  <span className="text-red-600 font-semibold text-lg">{signedDifference}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Total</span>
-                  <span className="text-red-600 font-semibold text-lg">$750.99</span>
+                  <span className="text-red-600 font-semibold text-lg">$ {roundedValue}</span>
                 </div>
-              </div>
-              <div className="mb-4">
-                <label className="inline-flex items-center">
-                  <input type="checkbox" className="mr-2" /> Create an account?
-                </label>
               </div>
               <div className="mb-4">
                 <span>
                   Lorem ipsum dolor sit amet consect adipisicing elit. Aspernatur pariatur libero conseqr nisi perferendis.
                 </span>
               </div>
-              <div className="mb-4">
-                <label className="inline-flex items-center">
-                  <input type="checkbox" className="mr-2" /> Check Payment
-                </label>
-              </div>
-              <div className="mb-4">
-                <label className="inline-flex items-center">
-                  <input type="checkbox" className="mr-2" /> Paypal
-                </label>
-              </div>
-              <button className="bg-black text-white w-full py-4 mt-2 uppercase tracking-widest font-semibold text-sm">
+              <button 
+                className="bg-black text-white w-full py-4 mt-2 uppercase tracking-widest font-semibold text-sm"
+                onClick={handleSubmit}
+                disabled={buttonDisabled}
+              >
                 Place Order
               </button>
             </div>

@@ -19,7 +19,7 @@ const AnnualSalesChart = ({ data }) => {
           <VictoryAxis
             dependentAxis
             style={{ tickLabels: { fontSize: 7, padding: 5, fontWeight:'bold' } }}
-            tickFormat={(x) => `RM${x / 1000}k`}
+            tickFormat={(x) => `$${x / 1000}k`}
           />
           <VictoryBar
             data={data}

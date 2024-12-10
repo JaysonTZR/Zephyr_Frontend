@@ -336,7 +336,7 @@ const ShopProduct = () => {
           <span className="text-gray-600 ml-1">- 5 Reviews</span>
         </div>
         <div className="text-lg font-semibold mb-5 text-center">
-          <span className="text-3xl">${data.length > 0 ? data[0].product_price : "Product Price"}</span>
+          <span className="text-3xl">$ {data.length > 0 ? data[0].product_price : "Product Price"}</span>
         </div>
         <p className="mb-12 text-center text-sm">
           {data.length > 0 ? data[0].product_description : "Product Description"}

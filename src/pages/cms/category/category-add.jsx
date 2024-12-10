@@ -73,6 +73,7 @@ const CMSCategoryAdd = () => {
         progress: undefined,
         theme: "light",
       });
+      setButtonDisabled(false);
     }
   };
 

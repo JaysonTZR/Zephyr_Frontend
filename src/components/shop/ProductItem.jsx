@@ -63,7 +63,7 @@ const ProductItem = ({ item, index, wishlist, handleWishlist, handleAddToCart })
                     </svg>
                 ))}
             </div>
-            <p className="text-gray-700 text-lg font-semibold">${item.price}</p>
+            <p className="text-gray-700 text-lg font-semibold">$ {item.price}</p>
         </div>
     );
 };
