@@ -186,8 +186,10 @@ const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editP
                       </div>
                     ) : header.toLowerCase() === "created_at" ? (
                       format(new Date(item.created_at), 'yyyy-MM-dd HH:mm:ss')
+                    ) : header.toLowerCase() === "total_price" ? (
+                      <span>$ {item[header.toLowerCase()]}</span>
                     ) : (
-                      item[header.toLowerCase()] 
+                      item[header.toLowerCase()]
                     )
                     }
                   </td>

@@ -11,7 +11,7 @@ import axios from "axios";
 const CMSOrderList = () => {
   const [formOriData, setFormOriData] = useState([]);
   const [formData, setFormData] = useState([]);
-  const [customerMap, setCustomerMap] = useState(false);
+  const [customerMap, setCustomerMap] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [selectedField, setSelectedField] = useState("");
   const [filterValue, setFilterValue] = useState("");
@@ -20,7 +20,10 @@ const CMSOrderList = () => {
 
   const fetchCustomerData = async () => {
     try {
-      const response = await axios.get(apiUrl + "customer", {});
+      const response = await axios.get(
+        apiUrl + "customer", 
+        {}
+      );
 
       if (response.status === 200) {
         const customerData = response.data.reduce((acc, customer) => {
@@ -45,7 +48,10 @@ const CMSOrderList = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(apiUrl + "salesorder", {});
+      const response = await axios.get(
+        apiUrl + "salesorder", 
+        {}
+      );
 
       if (response.status === 200) {
         const filteredData = response.data.filter(

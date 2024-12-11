@@ -23,28 +23,60 @@ const Checkout = () => {
   const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
   const authUserData = localStorage.getItem("authUserData");
   const userDataObject = authUserData ? JSON.parse(authUserData) : null;
-
   const [formData, setFormData] = useState({
-    billing_name: customerDataObject.customer_name,
-    billing_address: `${customerDataObject.customer_address_1}, ${customerDataObject.customer_address_2}, ${customerDataObject.customer_address_3}`,
-    billing_address_optional: "",
-    billing_country: customerDataObject.customer_country,
-    billing_state: customerDataObject.customer_state,
-    billing_city: customerDataObject.customer_city,
-    billing_mobile_no: customerDataObject.customer_mobile_no,
-    billing_email: userDataObject.user_email,
-    billing_notes: "",
-    trash: false,
+    billing: {
+      billing_name: customerDataObject.customer_name,
+      billing_address: `${customerDataObject.customer_address_1}, ${customerDataObject.customer_address_2}, ${customerDataObject.customer_address_3}`,
+      billing_address_optional: "",
+      billing_country: customerDataObject.customer_country,
+      billing_state: customerDataObject.customer_state,
+      billing_city: customerDataObject.customer_city,
+      billing_mobile_no: customerDataObject.customer_mobile_no,
+      billing_email: userDataObject.user_email,
+      billing_notes: "",
+    },
+    salesOrder: {
+      customer_id: customerDataObject.customer_id,
+      discount_id: "",
+      order_subtotal: 0,
+      order_rounding: 0,
+      order_total: 0,
+      order_status: "pending",
+    }
   });
 
   const roundValue = (value) => {
     const roundedValue = (Math.round(value * 10) / 10).toFixed(2);
-    const difference = (value - roundedValue).toFixed(2);
-    const signedDifference = difference > 0 ? `- $ ${difference}` : `+ $ ${Math.abs(difference).toFixed(2)}`;
-    return { roundedValue, signedDifference };
+    const difference = (roundedValue - value).toFixed(2);
+    return { roundedValue, difference };
   };
 
-  const { roundedValue, signedDifference } = roundValue(totalSum - (discountAmount ? parseFloat(discountAmount) : 0));
+  useEffect(() => {  
+    const { roundedValue, difference } = roundValue(totalSum - (discountAmount ? parseFloat(discountAmount) : 0));
+
+    setFormData((prevData) => ({
+      ...prevData,
+      billing: {
+        billing_name: customerDataObject.customer_name,
+        billing_address: `${customerDataObject.customer_address_1}, ${customerDataObject.customer_address_2}, ${customerDataObject.customer_address_3}`,
+        billing_address_optional: prevData.billing.billing_address_optional,
+        billing_country: customerDataObject.customer_country,
+        billing_state: customerDataObject.customer_state,
+        billing_city: customerDataObject.customer_city,
+        billing_mobile_no: customerDataObject.customer_mobile_no,
+        billing_email: userDataObject.user_email,
+        billing_notes: prevData.billing.billing_notes,
+      },
+      salesOrder: {
+        customer_id: customerDataObject.customer_id,
+        discount_id: discountId,
+        order_subtotal: totalSum - parseFloat(discountAmount),
+        order_rounding: parseFloat(difference),
+        order_total: roundedValue,
+        order_status: 'pending',
+      }
+    }));
+  }, [totalSum, discountId, discountAmount]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -82,12 +114,11 @@ const Checkout = () => {
       const response = await axios.post(
         apiUrl + `salesorder`, 
         {
-          // ...formData,
+          ...formData,
         }, 
         {}
       );
-
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.success("Checkout Successfully", {
           position: "top-right",
           autoClose: 1500,
@@ -119,20 +150,19 @@ const Checkout = () => {
     }
   };
 
-  const handleInputChange = (name, value) => {
-    setFormData((prevData) => {
-      const updatedData = {
-        ...prevData,
+  const handleInputChange = (section, name, value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [section]: {
+        ...prevData[section],
         [name]: value,
-      };
-  
-      return updatedData;
-    });
+      },
+    }));
   };
 
   const handleCheckboxChange = (e) => {
     setIsOrderNotesEnabled(e.target.checked);
-    handleInputChange("billing_notes", "")
+    handleInputChange("billing", "billing_notes", "");
   };
 
   return (
@@ -150,9 +180,9 @@ const Checkout = () => {
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
-                  value={formData && formData.billing_name}
+                  value={formData && formData.billing.billing_name}
                   onChange={(e) =>
-                    handleInputChange("billing_name", e.target.value)
+                    handleInputChange("billing", "billing_name", e.target.value)
                   }
                 />
               </div>
@@ -163,9 +193,9 @@ const Checkout = () => {
                     type="text"
                     className="border py-3 px-4 w-full mt-4"
                     placeholder="Street Address"
-                    value={formData && formData.billing_address}
+                    value={formData && formData.billing.billing_address}
                     onChange={(e) =>
-                      handleInputChange("billing_address", e.target.value)
+                      handleInputChange("billing", "billing_address", e.target.value)
                     }
                   />
                 </div>
@@ -173,9 +203,9 @@ const Checkout = () => {
                   type="text"
                   className="border py-3 px-4 w-full mt-5"
                   placeholder="Apartment, suite, unit ect (optional)"
-                  value={formData && formData.billing_address_optional}
+                  value={formData && formData.billing.billing_address_optional}
                   onChange={(e) =>
-                    handleInputChange("billing_address_optional", e.target.value)
+                    handleInputChange("billing", "billing_address_optional", e.target.value)
                   }
                 />
               </div>
@@ -184,9 +214,9 @@ const Checkout = () => {
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
-                  value={formData && formData.billing_country}
+                  value={formData && formData.billing.billing_country}
                   onChange={(e) =>
-                    handleInputChange("billing_country", e.target.value)
+                    handleInputChange("billing", "billing_country", e.target.value)
                   }
                 />
               </div>
@@ -195,9 +225,9 @@ const Checkout = () => {
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
-                  value={formData && formData.billing_state}
+                  value={formData && formData.billing.billing_state}
                   onChange={(e) =>
-                    handleInputChange("billing_state", e.target.value)
+                    handleInputChange("billing", "billing_state", e.target.value)
                   }
                 />
               </div>
@@ -206,9 +236,9 @@ const Checkout = () => {
                 <input
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
-                  value={formData && formData.billing_city}
+                  value={formData && formData.billing.billing_city}
                   onChange={(e) =>
-                    handleInputChange("billing_city", e.target.value)
+                    handleInputChange("billing", "billing_city", e.target.value)
                   }
                 />
               </div>
@@ -218,9 +248,9 @@ const Checkout = () => {
                   <input
                     type="text"
                     className="border py-3 px-4 w-full mt-4"
-                    value={formData && formData.billing_mobile_no}
+                    value={formData && formData.billing.billing_mobile_no}
                     onChange={(e) =>
-                      handleInputChange("billing_mobile_no", e.target.value)
+                      handleInputChange("billing", "billing_mobile_no", e.target.value)
                     }
                   />
                 </div>
@@ -229,9 +259,9 @@ const Checkout = () => {
                   <input
                     type="text"
                     className="border py-3 px-4 w-full mt-4"
-                    value={formData && formData.billing_email}
+                    value={formData && formData.billing.billing_email}
                     onChange={(e) =>
-                      handleInputChange("billing_email", e.target.value)
+                      handleInputChange("billing", "billing_email", e.target.value)
                     }
                   />
                 </div>
@@ -247,9 +277,9 @@ const Checkout = () => {
                   type="text"
                   className="border py-3 px-4 w-full mt-4"
                   placeholder="Notes about your order, e.g, special note for delivery"
-                  value={formData && formData.billing_notes}
+                  value={formData && formData.billing.billing_notes}
                   onChange={(e) =>
-                    handleInputChange("billing_notes", e.target.value)
+                    handleInputChange("billing", "billing_notes", e.target.value)
                   }
                   disabled={!isOrderNotesEnabled}
                 />
@@ -279,11 +309,11 @@ const Checkout = () => {
                 </div>
                 <div className="flex justify-between mb-4">
                   <span>Rounding</span>
-                  <span className="text-red-600 font-semibold text-lg">{signedDifference}</span>
+                  <span className="text-red-600 font-semibold text-lg">{formData.salesOrder.order_rounding < 0 ? `- $ ${Math.abs(formData.salesOrder.order_rounding).toFixed(2)}` : `+ $ ${formData.salesOrder.order_rounding.toFixed(2)}`}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Total</span>
-                  <span className="text-red-600 font-semibold text-lg">$ {roundedValue}</span>
+                  <span className="text-red-600 font-semibold text-lg">$ {formData.salesOrder.order_total}</span>
                 </div>
               </div>
               <div className="mb-4">
@@ -292,7 +322,7 @@ const Checkout = () => {
                 </span>
               </div>
               <button 
-                className="bg-black text-white w-full py-4 mt-2 uppercase tracking-widest font-semibold text-sm"
+                className="bg-black hover:bg-zinc-700 text-white w-full py-4 mt-2 uppercase tracking-widest font-semibold text-sm"
                 onClick={handleSubmit}
                 disabled={buttonDisabled}
               >

@@ -159,17 +159,6 @@ function Cart() {
           progress: undefined,
           theme: "light",
         });
-      } else {
-        toast.error(response.data.message, {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
       }
     } catch (error) {
       toast.error("Invalid Discount Code", {

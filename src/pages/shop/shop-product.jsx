@@ -290,6 +290,20 @@ const ShopProduct = () => {
     }
 
     try {
+      if (selectedSize === null || selectedColor === null) {
+        toast.error("Size and Color must be selected", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        return;
+      }
+
       const response = await axios.post(apiUrl + "cart", {
         customer_id: customer_id,
         product_id: product_id,
@@ -674,7 +688,7 @@ const ShopProduct = () => {
               <p className="text-gray-700 mb-4">
                 - Good value for money. It has been a reliable device for me.
               </p>
-              <div className="mt-10">
+              {/* <div className="mt-10">
                 <textarea
                   className="w-full px-4 py-3 rounded-md border border-gray-300 resize-none"
                   rows="2"
@@ -685,7 +699,7 @@ const ShopProduct = () => {
                 <button className="mt-2 bg-black text-white w-28 px-6 py-3 uppercase tracking-widest font-semibold text-sm hover:bg-zinc-700">
                   Submit
                 </button>
-              </div>
+              </div> */}
             </div>
           )}
 

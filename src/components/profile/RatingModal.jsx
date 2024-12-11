@@ -22,19 +22,21 @@ function RatingModal({ isOpen, onClose, product, onSubmit }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded-md w-1/2">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Rate Product: </h2>
-          <button
-            className="text-gray-800 hover:text-red-500"
-            onClick={onClose}
-          >
-            ✕
-          </button>
+        <div className="mb-4 border-b">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Review Product</h2>
+            <button
+              className="text-gray-800 hover:text-red-500"
+              onClick={onClose}
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Product Info */}
         <div className="flex items-start mb-4">
-          <div className="w-16 h-16 bg-gray-300 mr-4"></div>
+          <img src={product?.productImage} alt="Product" className="object-cover w-16 h-16 mr-4" />
           <div>
             <div className="font-semibold text-lg">{product?.productName}</div>
             <div className="text-sm text-gray-500">
@@ -45,7 +47,7 @@ function RatingModal({ isOpen, onClose, product, onSubmit }) {
 
         {/* Rating Section */}
         <div className="mb-4">
-          <h3 className="font-semibold text-md mb-2">Overall Rating:</h3>
+          <h3 className="font-semibold text-md mb-2">Rate this product:</h3>
           <div className="flex items-center">
             {/* Rating stars */}
             <div className="flex">
@@ -80,17 +82,18 @@ function RatingModal({ isOpen, onClose, product, onSubmit }) {
         <div className="mb-4">
           <h3 className="font-semibold text-md mb-2">Product review:</h3>
           <textarea
-            className="w-full border border-gray-300 rounded-md p-2"
+            className="resize-none w-full border border-gray-300 rounded-md p-2"
             rows={4}
             value={review}
             onChange={(e) => setReview(e.target.value)}
+
           ></textarea>
         </div>
 
         {/* Submit Button */}
         <div className="text-right">
           <button
-            className="px-4 py-2 bg-black text-white hover:bg-zinc-700"
+            className="px-4 py-2 bg-black text-white font-semibold hover:bg-zinc-700"
             onClick={handleSubmit}
           >
             Submit

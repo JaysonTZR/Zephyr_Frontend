@@ -240,18 +240,6 @@ const CMSCustomerEdit = () => {
     { value: "female", label: "Female" },
   ];
 
-  const countryOptions = [
-    { value: "Malaysia", label: "Malaysia" },
-  ];
-
-  const stateOptions = [
-    { value: "Selangor", label: "Selangor" },
-  ];
-
-  const cityOptions = [
-    { value: "Klang", label: "Klang" },
-  ];
-
   const statusOptions = [
     { value: "active", label: "Active" },
     { value: "inactive", label: "Inactive" },
@@ -275,7 +263,7 @@ const CMSCustomerEdit = () => {
               </div>
 
               <div className="p-6">
-                <form className="space-y-6">
+                <div className="space-y-6">
                   {/* Username */}
                   <div className="flex flex-row">
                     <label htmlFor="customer_name" className="mb-2 mt-2 w-72">
@@ -484,7 +472,7 @@ const CMSCustomerEdit = () => {
                       Update
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           </main>

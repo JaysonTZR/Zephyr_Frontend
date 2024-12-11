@@ -37,8 +37,6 @@ const Wishlist = () => {
 
       if (response.status === 200) {
         const responseData = response.data.items;
-
-        console.log(responseData);
         setFormData(responseData);
       }
     } catch (error) {

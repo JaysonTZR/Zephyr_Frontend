@@ -1,4 +1,4 @@
-import React, { useEffect, useState, startTransition } from "react";
+import React, { useEffect, useState, useCallback, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 import Header from "../../components/Header";
@@ -16,9 +16,8 @@ function Profile() {
   const authUserData = localStorage.getItem("authUserData");
   const userDataObject = authUserData ? JSON.parse(authUserData) : null;
   const authCustomerData = localStorage.getItem("authCustomerData");
-  const customerDataObject = authCustomerData
-    ? JSON.parse(authCustomerData)
-    : null;
+  const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
+  const customerId = customerDataObject ? customerDataObject.customer_id : null;
   const [country, setCountry] = useState(null);
   const [state, setState] = useState(null);
   const [city, setCity] = useState(null);
@@ -33,69 +32,211 @@ function Profile() {
     user_password: "",
     confirm_user_password: "",
     customer_name: customerDataObject ? customerDataObject.customer_name : "",
-    customer_gender: customerDataObject
-      ? customerDataObject.customer_gender
-      : "",
-    customer_mobile_no: customerDataObject
-      ? customerDataObject.customer_mobile_no
-      : "",
-    customer_address_1: customerDataObject
-      ? customerDataObject.customer_address_1
-      : "",
-    customer_address_2: customerDataObject
-      ? customerDataObject.customer_address_2
-      : "",
-    customer_address_3: customerDataObject
-      ? customerDataObject.customer_address_3
-      : "",
-    customer_country: customerDataObject
-      ? customerDataObject.customer_country
-      : "",
+    customer_gender: customerDataObject ? customerDataObject.customer_gender : "",
+    customer_mobile_no: customerDataObject? customerDataObject.customer_mobile_no : "",
+    customer_address_1: customerDataObject? customerDataObject.customer_address_1 : "",
+    customer_address_2: customerDataObject? customerDataObject.customer_address_2 : "",
+    customer_address_3: customerDataObject? customerDataObject.customer_address_3 : "",
+    customer_country: customerDataObject? customerDataObject.customer_country : "",
     customer_state: customerDataObject ? customerDataObject.customer_state : "",
     customer_city: customerDataObject ? customerDataObject.customer_city : "",
   });
+  const [orderData, setOrderData] = useState([]);
+  const [orderItemData, setOrderItemData] = useState([]);
+  const [productMap, setProductMap] = useState(false);
+  const [orders, setOrders] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   // dummy data
-  const orders = [
-    {
-      order_id: "Order #001",
-      items: [
-        {
-          productName: "Fragrance Oil Aromatherapy (15ml)",
-          productVariant: "Lavender & Peony",
-          price: "RM6.00",
-          quantity: 1,
-          returnPolicy: "30 Days Free Returns",
-          status: "In Transit",
-        },
-      ],
-    },
-    {
-      order_id: "Order #002",
-      items: [
-        {
-          productName: "100pcs/box Anti Fog Wipes Glasses Cloth",
-          productVariant: "Anti Fog Wipe-100pc",
-          price: "RM4.90",
-          quantity: 1,
-          returnPolicy: "Free Returns",
-          status: "Completed",
-        },
-        {
-          productName:
-            "KMH Non-Scratch Magic Dishwashing Cloth Steel Wire Wiping Cloth",
-          productVariant: "1pc",
-          price: "RM0.29",
-          quantity: 1,
-          returnPolicy: "Free Returns",
-          status: "Completed",
-        },
-      ],
-    },
-  ];
+  // const orders = [
+  //   {
+  //     order_id: "Order #1",
+  //     items: [
+  //       {
+  //         productName: "Fragrance Oil Aromatherapy (15ml)",
+  //         productVariant: "Lavender & Peony",
+  //         price: "RM6.00",
+  //         quantity: 1,
+  //         returnPolicy: "30 Days Free Returns",
+  //         status: "In Transit",
+  //       },
+  //     ],
+  //   },
+  //   {
+  //     order_id: "Order #2",
+  //     items: [
+  //       {
+  //         productName: "100pcs/box Anti Fog Wipes Glasses Cloth",
+  //         productVariant: "Anti Fog Wipe-100pc",
+  //         price: "RM4.90",
+  //         quantity: 1,
+  //         returnPolicy: "Free Returns",
+  //         status: "Completed",
+  //       },
+  //       {
+  //         productName:
+  //           "KMH Non-Scratch Magic Dishwashing Cloth Steel Wire Wiping Cloth",
+  //         productVariant: "1pc",
+  //         price: "RM0.29",
+  //         quantity: 1,
+  //         returnPolicy: "Free Returns",
+  //         status: "Completed",
+  //       },
+  //     ],
+  //   },
+  // ];
+
+  const fetchOrderData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "salesorder", 
+        {}
+      );
+
+      if (response.status === 200) {
+        const filteredData = response.data.filter((item) => item.customer_id == customerId && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
+          id: item.order_id,
+          status: item.order_status,
+          trash: item.trash,
+          updated_at: item.updated_at,
+          created_at: item.created_at,
+        }));
+
+        setOrderData(transformedData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }, [customerId]);
+
+  const fetchProductData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "product", 
+        {}
+      );
+
+      if (response.status === 200) {
+        const productData = response.data.reduce((acc, product) => {
+        acc[product.product_id] = {
+          name: product.product_name,
+          image: product.product_photo,
+        };
+        return acc;
+        }, {});
+        setProductMap(productData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }, []);
+
+  const fetchOrderItemData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "salesorderitem", 
+        {}
+      );
+
+      if (response.status === 200) {
+        const filteredData = response.data.filter((item) => item.trash === false);
+        const transformedData = filteredData.map((item) => ({
+          id: item.order_item_id,
+          order_id: item.order_id,
+          product_name: productMap[item.product_id]?.name || item.product_id,
+          product_image: productMap[item.product_id]?.image || '',
+          order_item_quantity: item.order_item_quantity,
+          order_item_total_price: item.order_item_total_price,
+          order_item_description: item.order_item_description,
+          status: item.order_item_status,
+          trash: item.trash,
+          updated_at: item.updated_at,
+          created_at: item.created_at,
+        }));
+
+        setOrderItemData(transformedData);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  }, [productMap]);
+
+  useEffect(() => {
+    fetchOrderData();
+    fetchProductData();
+  }, [fetchOrderData, fetchProductData]);
+
+  useEffect(() => {
+    if (Object.keys(productMap).length > 0) {
+      fetchOrderItemData();
+    }
+  }, [productMap, fetchOrderItemData]);
+
+  useEffect(() => {
+    if (orderData.length > 0 && orderItemData.length > 0) {
+      const mappedOrders = orderData.map((order) => ({
+        order_id: order.id,
+        items: orderItemData
+          .filter((item) => item.order_id === order.id)
+          .map((item) => ({
+            productName: item.product_name,
+            productImage: item.product_image,
+            productVariant: item.order_item_description,
+            price: item.order_item_total_price,
+            quantity: item.order_item_quantity,
+            status: item.status,
+          })),
+      }));
+      setOrders(mappedOrders);
+    }
+  }, [orderData, orderItemData]);
+
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Pending":
+        return "bg-gray-100 text-gray-800";
+      case "In Progress":
+        return "bg-yellow-100 text-yellow-800";
+      case "Completed":
+        return "bg-green-100 text-green-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   const openModal = (product) => {
     setSelectedProduct(product);
@@ -240,10 +381,7 @@ function Profile() {
         const authCustomerData = customerResponse.data.data;
 
         localStorage.setItem("authUserData", JSON.stringify(authUserData));
-        localStorage.setItem(
-          "authCustomerData",
-          JSON.stringify(authCustomerData)
-        );
+        localStorage.setItem("authCustomerData", JSON.stringify(authCustomerData));
 
         toast.success("Data Updated Successfully", {
           position: "top-right",
@@ -748,18 +886,7 @@ function Profile() {
                       {/* Store Name */}
                       <div className="flex justify-between items-center mb-3">
                         <div className="font-semibold text-lg">
-                          {order.order_id}
-                        </div>
-                        <div
-                          className={`text-sm px-2 py-1 rounded-lg ${
-                            order.items[0]?.status === "In Transit"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : order.items[0]?.status === "Completed"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {order.items[0]?.status}
+                          Order #{order.order_id}
                         </div>
                       </div>
 
@@ -770,7 +897,7 @@ function Profile() {
                           className="flex items-start justify-between mb-4 border-b border-gray-200 pb-4"
                         >
                           {/* Product Image */}
-                          <div className="w-16 h-16 bg-gray-300 mr-4"></div>
+                          <img src={item.productImage} alt="Product" className="object-cover w-16 h-16 mr-4" />
 
                           {/* Product Info */}
                           <div className="flex-1">
@@ -780,15 +907,22 @@ function Profile() {
                             <div className="text-sm text-gray-500">
                               {item.productVariant}
                             </div>
-                            <button className="text-sm text-blue-500 mt-2" onClick={() => openModal(item)}>
-                              Rate Now
-                            </button>
+                            {item.status === "completed" && (
+                              <button className="text-sm text-blue-500 mt-2" onClick={() => openModal(item)}>
+                                Review Product
+                              </button>
+                            )}
                           </div>
 
                           {/* Price & Quantity */}
                           <div className="text-right">
+                            <div
+                              className={`text-sm px-2 py-1 rounded-lg mb-1 ${getStatusClass(capitalizeFirstLetter(item.status))}`}
+                            >
+                              {capitalizeFirstLetter(item.status)}
+                            </div>
                             <div className="text-sm font-semibold">
-                              {item.price}
+                              $ {item.price}
                             </div>
                             <div className="text-sm text-gray-500">
                               Qty: {item.quantity}
