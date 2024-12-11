@@ -25,7 +25,7 @@ const CMSUserList = () => {
 
       if (response.status === 200) {
         const filteredData = response.data.filter(
-          (item) => item.user_status === "active" && item.trash === false
+          (item) => item.trash === false
         );
         const transformedData = filteredData.map((item) => ({
           id: item.user_id,
