@@ -185,46 +185,9 @@ const Shop = () => {
 
   const handleAddToCart = async (product_id) => {
 
-    if(!customer_id){
-      redirectLoginPage();
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        apiUrl + "cart",
-        {
-          customer_id: customer_id,
-          product_id: product_id,
-          cart_quantity: 1,
-          trash: false,
-        }
-      );
-
-      if (response.status === 201){
-        toast.success("Item Added To Cart", {
-          position: "top-right",
-          autoClose: 1500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      }
-    } catch (error) {
-      toast.error("Error Adding Cart", {
-        position: "top-right",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-    }
+    startTransition(() => {
+      navigate("/product/" + product_id);
+    });
   }
 
   

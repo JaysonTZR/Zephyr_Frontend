@@ -13,9 +13,11 @@ const CartItem = ({ item, index, onQuantityChange, onRemove }) => {
                 <div className="w-20 h-20 mr-6" style={{ backgroundImage: `url(${item.product.product_photo})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
                 <div>
                     <p>{item.product.product_name}</p>
+                    <p>{item.cart_description}</p>
                     <p className="text-lg font-semibold">$ {(item.product.product_price).toFixed(2)}</p>
                 </div>
             </div>
+            
             <div className="col-span-2 text-center">
                 <QuantityInput item={item} onQuantityChange={onQuantityChange} />
             </div>
