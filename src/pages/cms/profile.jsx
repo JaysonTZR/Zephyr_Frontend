@@ -188,6 +188,7 @@ const CMSProfile = () => {
 
   const accessOptions = [
     { value: "Dashboard", label: "Dashboard" },
+    { value: "Manage Contact", label: "Manage Contact" },
     { value: "Manage Category", label: "Manage Category" },
     { value: "Manage Product", label: "Manage Product" },
     { value: "Manage Discount", label: "Manage Discount" },

@@ -139,6 +139,13 @@ const CMSUserEdit = () => {
       );
 
       if (response.status === 200) {
+        const authUserData = localStorage.getItem('authUserData');
+        if (authUserData) {
+          const userDataObject = JSON.parse(authUserData);
+          userDataObject.user_access = formData.user_access;
+          localStorage.setItem('authUserData', JSON.stringify(userDataObject));
+        }
+        
         toast.success("Data Updated Successfully", {
           position: "top-right",
           autoClose: 1500,
@@ -200,6 +207,7 @@ const CMSUserEdit = () => {
 
   const accessOptions = [
     { value: "Dashboard", label: "Dashboard" },
+    { value: "Manage Contact", label: "Manage Contact" },
     { value: "Manage Category", label: "Manage Category" },
     { value: "Manage Product", label: "Manage Product" },
     { value: "Manage Discount", label: "Manage Discount" },

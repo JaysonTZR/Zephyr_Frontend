@@ -70,7 +70,7 @@ function App() {
         <Route
           path="/cms/dashboard"
           element={
-            <AuthRoute>
+            <AuthRoute requiredAccess="Dashboard">
               <Dashboard />
             </AuthRoute>
           }
@@ -88,7 +88,7 @@ function App() {
           path="/cms/contact/list"
           element={
             <AuthRoute>
-              <CMSContactList />
+              <CMSContactList requiredAccess="Manage Contact"/>
             </AuthRoute>
           }
         />
@@ -96,7 +96,7 @@ function App() {
           path="/cms/contact/edit/:id"
           element={
             <AuthRoute>
-              <CMSContactEdit />
+              <CMSContactEdit requiredAccess="Manage Contact"/>
             </AuthRoute>
           }
         />
@@ -105,7 +105,7 @@ function App() {
           path="/cms/category/list"
           element={
             <AuthRoute>
-              <CMSCategoryList />
+              <CMSCategoryList requiredAccess="Manage Category"/>
             </AuthRoute>
           }
         />
@@ -113,7 +113,7 @@ function App() {
           path="/cms/category/edit/:id"
           element={
             <AuthRoute>
-              <CMSCategoryEdit />
+              <CMSCategoryEdit requiredAccess="Manage Category"/>
             </AuthRoute>
           }
         />
@@ -121,7 +121,7 @@ function App() {
           path="/cms/category/add"
           element={
             <AuthRoute>
-              <CMSCategoryAdd />
+              <CMSCategoryAdd requiredAccess="Manage Category"/>
             </AuthRoute>
           }
         />
@@ -130,7 +130,7 @@ function App() {
           path="/cms/product/list"
           element={
             <AuthRoute>
-              <CMSProductList />
+              <CMSProductList requiredAccess="Manage Product"/>
             </AuthRoute>
           }
         />
@@ -138,7 +138,7 @@ function App() {
           path="/cms/product/edit/:id"
           element={
             <AuthRoute>
-              <CMSProductEdit />
+              <CMSProductEdit requiredAccess="Manage Product"/>
             </AuthRoute>
           }
         />
@@ -146,7 +146,7 @@ function App() {
           path="/cms/product/edit-image/:id"
           element={
             <AuthRoute>
-              <CMSProductEditImage />
+              <CMSProductEditImage requiredAccess="Manage Product"/>
             </AuthRoute>
           }
         />
@@ -154,7 +154,7 @@ function App() {
           path="/cms/product/add"
           element={
             <AuthRoute>
-              <CMSProductAdd />
+              <CMSProductAdd requiredAccess="Manage Product"/>
             </AuthRoute>
           }
         />
@@ -163,7 +163,7 @@ function App() {
           path="/cms/discount/list"
           element={
             <AuthRoute>
-              <CMSDiscountList />
+              <CMSDiscountList requiredAccess="Manage Discount"/>
             </AuthRoute>
           }
         />
@@ -171,7 +171,7 @@ function App() {
           path="/cms/discount/edit/:id"
           element={
             <AuthRoute>
-              <CMSDiscountEdit />
+              <CMSDiscountEdit requiredAccess="Manage Discount"/>
             </AuthRoute>
           }
         />
@@ -179,7 +179,7 @@ function App() {
           path="/cms/discount/add"
           element={
             <AuthRoute>
-              <CMSDiscountAdd />
+              <CMSDiscountAdd requiredAccess="Manage Discount"/>
             </AuthRoute>
           }
         />
@@ -188,7 +188,7 @@ function App() {
           path="/cms/customer/list"
           element={
             <AuthRoute>
-              <CMSCustomerList />
+              <CMSCustomerList requiredAccess="Manage Customer"/>
             </AuthRoute>
           }
         />
@@ -196,7 +196,7 @@ function App() {
           path="/cms/customer/edit/:id"
           element={
             <AuthRoute>
-              <CMSCustomerEdit />
+              <CMSCustomerEdit requiredAccess="Manage Customer"/>
             </AuthRoute>
           }
         />
@@ -205,7 +205,7 @@ function App() {
           path="/cms/order/list"
           element={
             <AuthRoute>
-              <CMSOrderList />
+              <CMSOrderList requiredAccess="Manage Order"/>
             </AuthRoute>
           }
         />
@@ -213,7 +213,7 @@ function App() {
           path="/cms/order/detail/:id"
           element={
             <AuthRoute>
-              <CMSOrderDetail />
+              <CMSOrderDetail requiredAccess="Manage Order"/>
             </AuthRoute>
           }
         />
@@ -222,7 +222,7 @@ function App() {
           path="/cms/user/list"
           element={
             <AuthRoute>
-              <CMSUserList />
+              <CMSUserList requiredAccess="Manage User"/>
             </AuthRoute>
           }
         />
@@ -230,7 +230,7 @@ function App() {
           path="/cms/user/edit/:id"
           element={
             <AuthRoute>
-              <CMSUserEdit />
+              <CMSUserEdit requiredAccess="Manage User"/>
             </AuthRoute>
           }
         />
@@ -238,7 +238,7 @@ function App() {
           path="/cms/user/add"
           element={
             <AuthRoute>
-              <CMSUserAdd />
+              <CMSUserAdd requiredAccess="Manage User"/>
             </AuthRoute>
           }
         />

@@ -17,22 +17,22 @@ const AboutUs = () => {
                 <div className="flex justify-center">
                     <img src={AboutUsImage} alt="AboutUs" className="object-cover w-auto h-full"/>
                 </div>
-                <div class="container px-56 py-2 mb-6">
-                    <div class="grid grid-cols-3 gap-8">
-                        <div class="py-6">
-                            <h2 class="text-2xl font-semibold mb-4">Who We Are ?</h2>
+                <div className="container px-56 py-2 mb-6">
+                    <div className="grid grid-cols-3 gap-8">
+                        <div className="py-6">
+                            <h2 className="text-2xl font-semibold mb-4">Who We Are ?</h2>
                             <p>
                                 Contextual advertising programs sometimes have strict policies that need to be adhered to. Let's take Google as an example.
                             </p>
                         </div>
-                        <div class="py-6">
-                            <h2 class="text-2xl font-semibold mb-4">Who We Do ?</h2>
+                        <div className="py-6">
+                            <h2 className="text-2xl font-semibold mb-4">Who We Do ?</h2>
                             <p>
                                 In this digital generation where information can be easily obtained within seconds, business cards still have retained their importance.
                             </p>
                         </div>
-                        <div class="py-6">
-                            <h2 class="text-2xl font-semibold mb-4">Why Choose Us ?</h2>
+                        <div className="py-6">
+                            <h2 className="text-2xl font-semibold mb-4">Why Choose Us ?</h2>
                             <p>
                                 A two or three storey house is the ideal way to maximise the piece of earth on which our home sits, but for older or infirm people.
                             </p>

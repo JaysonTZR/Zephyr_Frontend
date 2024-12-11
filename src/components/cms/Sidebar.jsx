@@ -2,6 +2,9 @@ import React from "react";
 import Logo from "../../assets/logo/logo.png"
 
 const Sidebar = ({ page }) => {
+  const authUserData = localStorage.getItem('authUserData');
+  const userDataObject = authUserData ? JSON.parse(authUserData) : null;
+  const userAccess = userDataObject ? userDataObject.user_access : null;
 
   const menuItems = [
     {
@@ -89,6 +92,8 @@ const Sidebar = ({ page }) => {
     },
   ];
 
+  const filteredMenuItems = menuItems.filter(item => userAccess.includes(item.label));
+
   return (
     <div className="w-64 bg-white border-r fixed h-full z-20">
       <div className="p-6">
@@ -96,7 +101,7 @@ const Sidebar = ({ page }) => {
           <img src={Logo} alt="Logo" className="object-cover w-auto h-full" />
         </div>
         <ul>
-          {menuItems.map((item, index) => (
+          {filteredMenuItems.map((item, index) => (
             <li key={index} className="mb-2">
               <a
                 href={item.href}

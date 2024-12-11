@@ -13,6 +13,17 @@ const CMSLogin = () => {
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
 
+  const accessPageMapping = {
+    "Dashboard": "/cms/dashboard",
+    "Manage Contact": "/cms/contact/list",
+    "Manage Category": "/cms/category/list",
+    "Manage Product": "/cms/product/list",
+    "Manage Discount": "/cms/discount/list",
+    "Manage Customer": "/cms/customer/list",
+    "Manage Order": "/cms/order/list",
+    "Manage User": "/cms/user/list",
+  };
+
   const handleSubmit = async () => {
     let hasError = false;
 
@@ -79,7 +90,13 @@ const CMSLogin = () => {
           theme: "light",
           onClose: () => {
             startTransition(() => {
-              navigate("/cms/dashboard");
+              const userAccess = authUserData.user_access.split(',');
+              if (userAccess && userAccess.length > 0) {
+                const firstPage = accessPageMapping[userAccess[0].trim()] || "/cms/dashboard";
+                navigate(firstPage);
+              } else {
+                navigate("/cms/dashboard");
+              }
             });
           },
         });
