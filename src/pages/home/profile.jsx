@@ -4,9 +4,11 @@ import Select from "react-select";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
+import RatingModal from "../../components/profile/RatingModal";
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../constant/constants";
 import axios from "axios";
+
 
 function Profile() {
   const navigate = useNavigate();
@@ -53,10 +55,13 @@ function Profile() {
     customer_city: customerDataObject ? customerDataObject.customer_city : "",
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   // dummy data
   const orders = [
     {
-      storeName: "Hinode",
+      order_id: "Order #001",
       items: [
         {
           productName: "Fragrance Oil Aromatherapy (15ml)",
@@ -69,7 +74,7 @@ function Profile() {
       ],
     },
     {
-      storeName: "KMH Gadgets",
+      order_id: "Order #002",
       items: [
         {
           productName: "100pcs/box Anti Fog Wipes Glasses Cloth",
@@ -91,6 +96,22 @@ function Profile() {
       ],
     },
   ];
+
+  const openModal = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedProduct(null);
+  };
+
+  const handleSubmitRating = ({ rating, review }) => {
+    console.log("Submitted Rating:", rating, "Review:", review);
+    // Add API call or logic here to save the rating and review
+  };
+
 
   const handleProfileClick = async (buttonName) => {
     setSelectedButton(buttonName);
@@ -357,6 +378,13 @@ function Profile() {
 
       <Banner bannerText="Profile" />
       <ToastContainer />
+      <RatingModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        product={selectedProduct}
+        onSubmit={handleSubmitRating}
+      />
+    
       <div className="flex justify-center mb-20">
         <div className="py-8 w-9/12">
           <div className="bg-white rounded-md shadow-lg flex p-8 h-[800px]">
@@ -720,7 +748,7 @@ function Profile() {
                       {/* Store Name */}
                       <div className="flex justify-between items-center mb-3">
                         <div className="font-semibold text-lg">
-                          {order.storeName}
+                          {order.order_id}
                         </div>
                         <div
                           className={`text-sm px-2 py-1 rounded-lg ${
@@ -752,9 +780,9 @@ function Profile() {
                             <div className="text-sm text-gray-500">
                               {item.productVariant}
                             </div>
-                            <div className="text-sm text-blue-500 mt-2">
+                            <button className="text-sm text-blue-500 mt-2" onClick={() => openModal(item)}>
                               Rate Now
-                            </div>
+                            </button>
                           </div>
 
                           {/* Price & Quantity */}
@@ -770,6 +798,7 @@ function Profile() {
                       ))}
                     </div>
                   ))}
+                  
                 </div>
               )}
             </div>
