@@ -199,6 +199,12 @@ function HomePage() {
   }
 
   const handleWishlist = async (productId) => {
+
+    if(!customer_id){
+      redirectLoginPage();
+      return;
+    }
+
     const filteredItems = wishlist.filter(item => item.product.product_id == productId);
 
     const wishlistItem = filteredItems[0];
@@ -211,6 +217,12 @@ function HomePage() {
   }
 
   const handleAddToCart = async (product_id) => {
+
+    if(!customer_id){
+      redirectLoginPage();
+      return;
+    }
+
     try {
       const response = await axios.post(
         apiUrl + "cart",
@@ -253,6 +265,12 @@ function HomePage() {
   const redirectProductPage = (id) => {
     startTransition(() => {
       navigate("/product/" + id);
+    });
+  };
+
+  const redirectLoginPage = () => {
+    startTransition(() => {
+      navigate("/login");
     });
   };
 
@@ -300,7 +318,8 @@ function HomePage() {
 
   useEffect(() => {
     fetchData();
-    fetchWishlist();
+    customer_id && fetchWishlist();
+    
   }, []);
 
   return (

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, startTransition } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Banner from "../../components/Banner";
@@ -9,6 +10,7 @@ import { apiUrl } from "../../constant/constants";
 import axios from "axios";
 
 const Shop = () => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [items, setItems] = useState([]);
   const [originalItems, setOriginalItems] = useState([]);
@@ -164,6 +166,12 @@ const Shop = () => {
   }
 
   const handleWishlist = async (productId) => {
+
+    if(!customer_id){
+      redirectLoginPage();
+      return;
+    }
+
     const filteredItems = wishlist.filter(item => item.product.product_id == productId);
 
     const wishlistItem = filteredItems[0];
@@ -176,6 +184,12 @@ const Shop = () => {
   }
 
   const handleAddToCart = async (product_id) => {
+
+    if(!customer_id){
+      redirectLoginPage();
+      return;
+    }
+
     try {
       const response = await axios.post(
         apiUrl + "cart",
@@ -380,9 +394,15 @@ const Shop = () => {
     setItems(originalItems);
   };
 
+  const redirectLoginPage = () => {
+    startTransition(() => {
+      navigate("/login");
+    });
+  };
+
   useEffect(() => {
     fetchData();
-    fetchWishlist();
+    customer_id && fetchWishlist();
   }, []);
 
   return (

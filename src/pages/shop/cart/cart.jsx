@@ -196,7 +196,19 @@ function Cart() {
     });
   };
 
+  const redirectLoginPage = () => {
+    startTransition(() => {
+      navigate("/login");
+    });
+  };
+
   useEffect(() => {
+
+    if(!customer_id){
+      redirectLoginPage();
+      return;
+    }
+
     fetchData();
   }, [fetchData]);
 

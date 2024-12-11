@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, startTransition } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import DetailsPayment from "../../assets/images/details-payment.png";
@@ -9,6 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../constant/constants";
 
 const ShopProduct = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [relatedProductData, setRelatedProductData] = useState([]);
@@ -239,6 +240,12 @@ const ShopProduct = () => {
   };
 
   const handleWishlist = async (productId) => {
+
+    if(!customer_id){
+      redirectLoginPage();
+      return;
+    }
+
     const filteredItems = wishlist.filter(
       (item) => item.product.product_id == productId
     );
@@ -276,6 +283,12 @@ const ShopProduct = () => {
   };
 
   const handleAddToCart = async (product_id, qty) => {
+
+    if(!customer_id){
+      redirectLoginPage();
+      return;
+    }
+
     try {
       const response = await axios.post(apiUrl + "cart", {
         customer_id: customer_id,
@@ -333,10 +346,17 @@ const ShopProduct = () => {
     (wishlistItem) => wishlistItem.product_id == id
   );
 
+  const redirectLoginPage = () => {
+    startTransition(() => {
+      navigate("/login");
+    });
+  };
+
   useEffect(() => {
     fetchData();
     fetchCategory();
-    fetchWishlist();
+
+    customer_id && fetchWishlist();
     fetchRating();
     window.scrollTo(0, 0);
   }, [id]);
