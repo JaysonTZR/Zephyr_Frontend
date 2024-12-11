@@ -36,11 +36,11 @@ const ShopProduct = () => {
 
   const sizes = ["XXL", "XL", "L", "S"];
   const colors = [
-    { name: "black", class: "bg-black" },
-    { name: "blue", class: "bg-blue-900" },
-    { name: "yellow", class: "bg-yellow-500" },
-    { name: "red", class: "bg-red-500" },
-    { name: "white", class: "bg-white" },
+    { name: "Black", class: "bg-black" },
+    { name: "Blue", class: "bg-blue-900" },
+    { name: "Yellow", class: "bg-yellow-500" },
+    { name: "Red", class: "bg-red-500" },
+    { name: "White", class: "bg-white" },
   ];
 
   const fetchData = async () => {
@@ -294,6 +294,7 @@ const ShopProduct = () => {
         customer_id: customer_id,
         product_id: product_id,
         cart_quantity: qty,
+        cart_description: `Size: ${selectedSize}, Color: ${selectedColor}`,
         trash: false,
       });
 
