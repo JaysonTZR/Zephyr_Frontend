@@ -12,6 +12,7 @@ import axios from "axios";
 const CMSCategoryEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [formData, setFormData] = useState({
     category_type: "",
     category_name: "",
@@ -23,7 +24,12 @@ const CMSCategoryEdit = () => {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        apiUrl + `category/${id}`
+        apiUrl + `category/${id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -75,7 +81,11 @@ const CMSCategoryEdit = () => {
           'category_status': formData.category_status,
           'created_by': formData.created_by,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

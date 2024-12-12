@@ -1,9 +1,13 @@
 import React, { useState, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
+import { toast } from "react-toastify";
+import axios from "axios";
+import { apiUrl } from "../../constant/constants";
 
-const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editPhotoPath }) => {
+const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editPhotoPath, onRefresh }) => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [isHeaderChecked, setIsHeaderChecked] = useState(false);
   const [checkedState, setCheckedState] = useState(
     new Array(tableData.length).fill(false)
@@ -35,8 +39,45 @@ const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editP
     setShowDropdown(null);
   };
 
-  const handleDelete = (index) => {
-    setShowDropdown(null);
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.delete(
+        apiUrl + deletePath + `/${id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Data Deleted Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          onClose: () => {
+            onRefresh();
+          },
+        });
+      }
+      setShowDropdown(null);
+    } catch (error) {
+      toast.error("Error Deleting Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
   };
 
   const handleHeaderCheckboxChange = (e) => {
@@ -69,6 +110,10 @@ const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editP
 
   const goToPreviousPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const getDeleteId = (item) => {
+    return deletePath === 'user' ? item.user_id : item.id;
   };
 
   return (
@@ -254,7 +299,7 @@ const Table = ({ tableHeader, tableData, detailPath, editPath, deletePath, editP
                           )}
                           {deletePath && (
                             <button
-                              onClick={() => handleDelete(item.id)}
+                              onClick={() => handleDelete(getDeleteId(item))}
                               className="flex items-center px-4 py-2 text-sm w-full border text-red-500 bg-red-200 hover:bg-red-500 hover:text-white"
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 mr-2">

@@ -12,6 +12,7 @@ import axios from "axios";
 const CMSOrderDetail = () => {
     const navigate = useNavigate();
     const { id } = useParams();
+    const authCMSToken = localStorage.getItem('authCMSToken');
     const [showFilters, setShowFilters] = useState(false);
     const [selectedField, setSelectedField] = useState("");
     const [filterValue, setFilterValue] = useState("");
@@ -55,7 +56,11 @@ const CMSOrderDetail = () => {
         try {
             const response = await axios.get(
                 apiUrl + "salesorderitem", 
-                {}
+                {
+                    headers: {
+                        Authorization: `Bearer ${authCMSToken}`,
+                    },
+                }
             );
         
             if (response.status === 200) {
@@ -94,7 +99,11 @@ const CMSOrderDetail = () => {
         try {
             const response = await axios.get(
                 apiUrl + "billing", 
-                {}
+                {
+                    headers: {
+                        Authorization: `Bearer ${authCMSToken}`,
+                    },
+                }
             );
         
             if (response.status === 200) {

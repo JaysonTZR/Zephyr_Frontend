@@ -12,6 +12,7 @@ import axios from "axios";
 const CMSDiscountEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [formData, setFormData] = useState({
     discount_description: "",
     discount_code: "",
@@ -23,7 +24,12 @@ const CMSDiscountEdit = () => {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        apiUrl + `discount/${id}`
+        apiUrl + `discount/${id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -75,7 +81,11 @@ const CMSDiscountEdit = () => {
           'discount_amount': formData.discount_amount,
           'discount_status': formData.discount_status,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

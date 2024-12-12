@@ -10,6 +10,7 @@ import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
 const Dashboard = () => {
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [totalSales, setTotalSales] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
   const [totalNewProduct, setTotalNewProduct] = useState(0);
@@ -17,7 +18,14 @@ const Dashboard = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(apiUrl + "salesorder", {});
+      const response = await axios.get(
+        apiUrl + "salesorder",
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const filteredData = response.data.filter(
@@ -45,7 +53,14 @@ const Dashboard = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get(apiUrl + "productreview", {});
+      const response = await axios.get(
+        apiUrl + "productreview",
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const filteredData = response.data.filter(
@@ -97,7 +112,14 @@ const Dashboard = () => {
 
   const fetchRatings = async () => {
     try {
-      const response = await axios.get(apiUrl + "productrating", {});
+      const response = await axios.get(
+        apiUrl + "productrating",
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const filteredData = response.data.filter(

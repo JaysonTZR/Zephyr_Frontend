@@ -11,6 +11,7 @@ import axios from "axios";
 
 const CMSUserList = () => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem("authCMSToken");
   const [formData, setFormData] = useState([]);
   const [formOriData, setFormOriData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -21,7 +22,14 @@ const CMSUserList = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(apiUrl + "user", {});
+      const response = await axios.get(
+        apiUrl + "user",
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const filteredData = response.data.filter(
@@ -29,6 +37,7 @@ const CMSUserList = () => {
         );
         const transformedData = filteredData.map((item) => ({
           id: item.user_id,
+          user_id: item.user_id,
           username: item.user_name,
           email: item.user_email,
           role: item.user_role,
@@ -236,7 +245,8 @@ const CMSUserList = () => {
                 tableHeader={tableHeader}
                 tableData={formData}
                 editPath={"/cms/user/edit"}
-                deletePath={true}
+                deletePath={"user"}
+                onRefresh={fetchData}
               />
             </div>
           </main>

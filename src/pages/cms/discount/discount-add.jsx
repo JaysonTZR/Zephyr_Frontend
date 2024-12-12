@@ -10,6 +10,7 @@ import axios from "axios";
 
 const CMSDiscountAdd = () => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [formData, setFormData] = useState({
     discount_description: "",
     discount_code: "",
@@ -39,7 +40,11 @@ const CMSDiscountAdd = () => {
         {
           ...formData,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 201) {

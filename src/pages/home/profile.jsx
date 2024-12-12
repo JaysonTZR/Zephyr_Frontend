@@ -13,6 +13,7 @@ import axios from "axios";
 function Profile() {
   const navigate = useNavigate();
   const [selectedButton, setSelectedButton] = useState("Profile");
+  const authToken = localStorage.getItem("authToken");
   const authUserData = localStorage.getItem("authUserData");
   const userDataObject = authUserData ? JSON.parse(authUserData) : null;
   const authCustomerData = localStorage.getItem("authCustomerData");
@@ -53,7 +54,11 @@ function Profile() {
     try {
       const response = await axios.get(
         apiUrl + "salesorder", 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       
@@ -119,7 +124,11 @@ function Profile() {
     try {
       const response = await axios.get(
         apiUrl + "salesorderitem", 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -240,6 +249,11 @@ function Profile() {
           customer_id: customerId,
           rating_level: rating ? rating : 5,
           review: review
+        },
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
         }
       );
 
@@ -371,7 +385,11 @@ function Profile() {
           user_password: formData.user_password,
           created_by: userDataObject.created_by,
         },
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       const customerUpdate = axios.put(
@@ -390,7 +408,11 @@ function Profile() {
           customer_address_3: formData.customer_address_3,
           customer_status: customerDataObject.customer_status,
         },
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       const [userResponse, customerResponse] = await Promise.all([

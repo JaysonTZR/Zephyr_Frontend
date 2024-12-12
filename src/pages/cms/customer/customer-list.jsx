@@ -9,6 +9,7 @@ import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
 const CMSCustomerList = () => {
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [formData, setFormData] = useState([]);
   const [formOriData, setFormOriData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -20,14 +21,19 @@ const CMSCustomerList = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        apiUrl + "customer/",
-        {}
+        apiUrl + "customer",
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200){
         const filteredData = response.data.filter((item) => item.trash === false);
         const transformedData = filteredData.map((item) => ({
           id: item.customer_id,
+          user_id: item.user_id,
           name: item.customer_name,
           gender: item.customer_gender,
           mobile_no: item.customer_mobile_no,
@@ -190,7 +196,8 @@ const CMSCustomerList = () => {
                 tableHeader={tableHeader}
                 tableData={formData}
                 editPath={"/cms/customer/edit"}
-                deletePath={true}
+                deletePath={"user"}
+                onRefresh={fetchData}
               />
             </div>
           </main>

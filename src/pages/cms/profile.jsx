@@ -12,6 +12,7 @@ import axios from "axios";
 
 const CMSProfile = () => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const authUserData = localStorage.getItem('authUserData');
   const userDataObject = authUserData ? JSON.parse(authUserData) : null;
   const userId = userDataObject ? userDataObject.user_id : null;
@@ -33,7 +34,12 @@ const CMSProfile = () => {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        apiUrl + `user/${userId}`
+        apiUrl + `user/${userId}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -136,7 +142,11 @@ const CMSProfile = () => {
           'user_password': formData.user_password,
           'created_by': formData.created_by,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

@@ -11,6 +11,7 @@ import axios from "axios";
 const CMSProductEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [category, setCategory] = useState([]);
   const [formData, setFormData] = useState({
     category_id: "",
@@ -118,7 +119,11 @@ const CMSProductEdit = () => {
           'product_status': formData.product_status,
           'created_by': formData.created_by,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

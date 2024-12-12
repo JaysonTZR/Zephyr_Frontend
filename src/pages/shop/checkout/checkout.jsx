@@ -18,7 +18,7 @@ const Checkout = () => {
   const [totalSum, setTotalSum] = useState(0);
   const [isOrderNotesEnabled, setIsOrderNotesEnabled] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-
+  const authToken = localStorage.getItem("authToken");
   const authCustomerData = localStorage.getItem("authCustomerData");
   const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
   const authUserData = localStorage.getItem("authUserData");
@@ -81,7 +81,12 @@ const Checkout = () => {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        apiUrl + `cart/customer/${customerDataObject.customer_id}`
+        apiUrl + `cart/customer/${customerDataObject.customer_id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -116,7 +121,11 @@ const Checkout = () => {
         {
           ...formData,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
       if (response.status === 200) {
         toast.success("Checkout Successfully", {
