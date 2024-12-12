@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function RatingModal({ isOpen, onClose, product, onSubmit }) {
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(5);
   const [review, setReview] = useState("");
 
   const handleRating = (value) => {
@@ -10,7 +10,8 @@ function RatingModal({ isOpen, onClose, product, onSubmit }) {
 
   const handleSubmit = () => {
     // Pass rating and review to the parent component
-    onSubmit({ rating, review });
+    const id = product.order_item_id;
+    onSubmit({ id, rating, review });
     setRating(0); // Reset state
     setReview("");
     onClose(); // Close modal

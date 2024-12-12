@@ -49,51 +49,14 @@ function Profile() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // dummy data
-  // const orders = [
-  //   {
-  //     order_id: "Order #1",
-  //     items: [
-  //       {
-  //         productName: "Fragrance Oil Aromatherapy (15ml)",
-  //         productVariant: "Lavender & Peony",
-  //         price: "RM6.00",
-  //         quantity: 1,
-  //         returnPolicy: "30 Days Free Returns",
-  //         status: "In Transit",
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     order_id: "Order #2",
-  //     items: [
-  //       {
-  //         productName: "100pcs/box Anti Fog Wipes Glasses Cloth",
-  //         productVariant: "Anti Fog Wipe-100pc",
-  //         price: "RM4.90",
-  //         quantity: 1,
-  //         returnPolicy: "Free Returns",
-  //         status: "Completed",
-  //       },
-  //       {
-  //         productName:
-  //           "KMH Non-Scratch Magic Dishwashing Cloth Steel Wire Wiping Cloth",
-  //         productVariant: "1pc",
-  //         price: "RM0.29",
-  //         quantity: 1,
-  //         returnPolicy: "Free Returns",
-  //         status: "Completed",
-  //       },
-  //     ],
-  //   },
-  // ];
-
   const fetchOrderData = useCallback(async () => {
     try {
       const response = await axios.get(
         apiUrl + "salesorder", 
         {}
       );
+
+      
 
       if (response.status === 200) {
         const filteredData = response.data.filter((item) => item.customer_id == customerId && item.trash === false);
@@ -164,17 +127,19 @@ function Profile() {
         const transformedData = filteredData.map((item) => ({
           id: item.order_item_id,
           order_id: item.order_id,
+          product_id: item.product_id,
           product_name: productMap[item.product_id]?.name || item.product_id,
           product_image: productMap[item.product_id]?.image || '',
           order_item_quantity: item.order_item_quantity,
           order_item_total_price: item.order_item_total_price,
           order_item_description: item.order_item_description,
+          rating_id: item.rating_id,
           status: item.order_item_status,
           trash: item.trash,
           updated_at: item.updated_at,
           created_at: item.created_at,
         }));
-
+        
         setOrderItemData(transformedData);
       }
     } catch (error) {
@@ -209,14 +174,18 @@ function Profile() {
         items: orderItemData
           .filter((item) => item.order_id === order.id)
           .map((item) => ({
+            order_item_id: item.id,
+            productId: item.product_id,
             productName: item.product_name,
             productImage: item.product_image,
             productVariant: item.order_item_description,
             price: item.order_item_total_price,
             quantity: item.order_item_quantity,
+            rating: item.rating_id,
             status: item.status,
           })),
       }));
+
       setOrders(mappedOrders);
     }
   }, [orderData, orderItemData]);
@@ -248,9 +217,46 @@ function Profile() {
     setSelectedProduct(null);
   };
 
-  const handleSubmitRating = ({ rating, review }) => {
-    console.log("Submitted Rating:", rating, "Review:", review);
+  const handleSubmitRating = async({ id, rating, review }) => {
+    console.log("Order Item ID: ",id,"Submitted Rating:", rating, "Review:", review);
     // Add API call or logic here to save the rating and review
+
+    try {
+      const response = await axios.post(
+        apiUrl + "productrating", 
+        {
+          order_item_id: id,
+          customer_id: customerId,
+          rating_level: rating,
+          review: review
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Rated Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error) {
+      toast.error("Error Occured in Rating", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+
   };
 
 
@@ -509,6 +515,12 @@ function Profile() {
       width: "227px",
     }),
   };
+
+  const redirectProductPage = (id) => {
+    startTransition(() => {
+        navigate("/product/" + id);
+    });
+};
 
   return (
     <div>
@@ -897,21 +909,29 @@ function Profile() {
                           className="flex items-start justify-between mb-4 border-b border-gray-200 pb-4"
                         >
                           {/* Product Image */}
-                          <img src={item.productImage} alt="Product" className="object-cover w-16 h-16 mr-4" />
+                          <img src={item.productImage} alt="Product" className="object-cover w-16 h-16 mr-4" onClick={()=>redirectProductPage(item.productId)}/>
 
                           {/* Product Info */}
                           <div className="flex-1">
-                            <div className="text-sm font-semibold">
+                            <button className="text-sm font-semibold" onClick={()=>redirectProductPage(item.productId)}>
                               {item.productName}
-                            </div>
+                            </button>
                             <div className="text-sm text-gray-500">
                               {item.productVariant}
                             </div>
-                            {item.status === "completed" && (
+                            {(item.status === "completed" && item.rating == null) && (
                               <button className="text-sm text-blue-500 mt-2" onClick={() => openModal(item)}>
-                                Review Product
+                                Review Product {item.rating}
                               </button>
                             )}
+
+                            {(item.status === "completed" && item.rating) && (
+                              <div className="text-sm text-blue-500 mt-2">
+                                Rated
+                              </div>
+                            )}
+                            
+
                           </div>
 
                           {/* Price & Quantity */}
