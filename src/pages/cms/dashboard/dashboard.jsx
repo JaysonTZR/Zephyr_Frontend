@@ -258,8 +258,8 @@ const Dashboard = () => {
                 Welcome to Zephyr E-commerce Management System!
               </h2>
               <p className="text text-gray-500 pt-4">
-                For assistance, feel free to reach out to us at +60 12-313 9872
-                or email us at twice@gmail.com.my. We are here to provide
+                For assistance, feel free to reach out to us at +60 12-345 6789
+                or email us at twice@gmail.com. We are here to provide
                 guidance on maximizing your experience with your current screen.
               </p>
             </div>
