@@ -14,6 +14,7 @@ import axios from "axios";
 const CMSUserEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const animatedComponents = makeAnimated();
   const [changePasswordClicked, setChangePasswordClicked] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
@@ -32,7 +33,12 @@ const CMSUserEdit = () => {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        apiUrl + `user/${id}`
+        apiUrl + `user/${id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -135,7 +141,11 @@ const CMSUserEdit = () => {
           'user_password': formData.user_password,
           'created_by': formData.created_by,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

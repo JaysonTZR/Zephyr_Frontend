@@ -16,7 +16,7 @@ const Shop = () => {
   const [originalItems, setOriginalItems] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
   const [wishlist, setWishlist] = useState([]);
-
+  const authToken = localStorage.getItem("authToken");
   const authCustomerData = localStorage.getItem("authCustomerData");
   const customerDataObject = authCustomerData
     ? JSON.parse(authCustomerData)
@@ -72,7 +72,14 @@ const Shop = () => {
   const fetchRating = async (products) => {
 
     try {
-      const response = await axios.get(apiUrl + `productrating`);
+      const response = await axios.get(
+        apiUrl + `productrating`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
   
       if (response.status === 200) {
         const ratings = response.data;
@@ -119,7 +126,14 @@ const Shop = () => {
   const fetchWishlist = async () => {
     try {
 
-      const response = await axios.get(apiUrl + `wishlist/${customer_id}`);
+      const response = await axios.get(
+        apiUrl + `wishlist/${customer_id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const responseData = response.data.items;
@@ -149,6 +163,11 @@ const Shop = () => {
         {
           customer_id: customer_id,
           product_id: productId,
+        },
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
         }
       );
 
@@ -185,7 +204,11 @@ const Shop = () => {
     try {
       const response = await axios.delete(
         apiUrl + `wishlist/item/${wishlist_item_id}`,
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200){

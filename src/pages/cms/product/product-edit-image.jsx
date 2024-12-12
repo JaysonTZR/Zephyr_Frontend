@@ -13,6 +13,7 @@ import { uploadToS3, deleteFromS3 } from "../../../utils/s3Upload";
 const CMSProductEditImage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [imageUrl, setImageUrl] = useState('');
   const [file, setFile] = useState(null);
   const [files, setFiles] = useState([]);
@@ -221,7 +222,11 @@ const CMSProductEditImage = () => {
           'product_status': formData.product_status,
           'created_by': formData.created_by,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

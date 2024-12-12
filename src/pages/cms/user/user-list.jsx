@@ -11,6 +11,7 @@ import axios from "axios";
 
 const CMSUserList = () => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem("authCMSToken");
   const [formData, setFormData] = useState([]);
   const [formOriData, setFormOriData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -21,7 +22,14 @@ const CMSUserList = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(apiUrl + "user", {});
+      const response = await axios.get(
+        apiUrl + "user",
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const filteredData = response.data.filter(

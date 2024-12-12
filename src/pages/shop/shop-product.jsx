@@ -12,6 +12,7 @@ import { use } from "react";
 const ShopProduct = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authToken = localStorage.getItem("authToken");
   const [data, setData] = useState([]);
   const [relatedProductData, setRelatedProductData] = useState([]);
   const [category, setCategory] = useState([]);
@@ -100,7 +101,14 @@ const ShopProduct = () => {
   const fetchRatingList = async (products) => {
   
       try {
-        const response = await axios.get(apiUrl + `productrating`);
+        const response = await axios.get(
+          apiUrl + `productrating`,
+          {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
     
         if (response.status === 200) {
           const ratings = response.data;
@@ -169,7 +177,11 @@ const ShopProduct = () => {
     try {
       const response = await axios.get(
         apiUrl + `productrating/product/${id}`,
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -204,7 +216,11 @@ const ShopProduct = () => {
     try {
       const response = await axios.get(
         apiUrl + `productreview/product/${id}`,
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -230,7 +246,14 @@ const ShopProduct = () => {
 
   const fetchWishlist = async () => {
     try {
-      const response = await axios.get(apiUrl + `wishlist/${customer_id}`);
+      const response = await axios.get(
+        apiUrl + `wishlist/${customer_id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const responseData = response.data.items;
@@ -252,10 +275,18 @@ const ShopProduct = () => {
 
   const addWishlistItem = async (productId) => {
     try {
-      const response = await axios.post(apiUrl + "wishlist/item", {
-        customer_id: customer_id,
-        product_id: productId,
-      });
+      const response = await axios.post(
+        apiUrl + "wishlist/item", 
+        {
+          customer_id: customer_id,
+          product_id: productId,
+        },
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
       if (response.status === 201) {
         fetchWishlist();
@@ -288,7 +319,11 @@ const ShopProduct = () => {
     try {
       const response = await axios.delete(
         apiUrl + `wishlist/item/${wishlist_item_id}`,
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -379,13 +414,21 @@ const ShopProduct = () => {
         return;
       }
 
-      const response = await axios.post(apiUrl + "cart", {
-        customer_id: customer_id,
-        product_id: product_id,
-        cart_quantity: qty,
-        cart_description: `Size: ${selectedSize}, Color: ${selectedColor}`,
-        trash: false,
-      });
+      const response = await axios.post(
+        apiUrl + "cart", 
+        {
+          customer_id: customer_id,
+          product_id: product_id,
+          cart_quantity: qty,
+          cart_description: `Size: ${selectedSize}, Color: ${selectedColor}`,
+          trash: false,
+        },
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
       if (response.status === 201) {
         toast.success("Item Added To Cart", {

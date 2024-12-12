@@ -13,6 +13,7 @@ import axios from "axios";
 const CMSCustomerEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [country, setCountry] = useState(null);
   const [state, setState] = useState(null);
   const [city, setCity] = useState(null);
@@ -36,7 +37,12 @@ const CMSCustomerEdit = () => {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        apiUrl + `customer/${id}`
+        apiUrl + `customer/${id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -102,7 +108,11 @@ const CMSCustomerEdit = () => {
           'customer_address_3': formData.customer_address_3,
           'customer_status': formData.customer_status,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

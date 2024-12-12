@@ -12,6 +12,7 @@ import axios from "axios";
 const CMSContactEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [formData, setFormData] = useState({
     contact_name: "",
     contact_email: "",
@@ -23,7 +24,12 @@ const CMSContactEdit = () => {
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
-        apiUrl + `contact/${id}`
+        apiUrl + `contact/${id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -75,7 +81,11 @@ const CMSContactEdit = () => {
           'contact_message': formData.contact_message,
           'contact_status': formData.contact_status,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

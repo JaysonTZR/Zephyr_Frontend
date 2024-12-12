@@ -1,12 +1,12 @@
 import React, { useState, startTransition } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../constant/constants";
 import axios from "axios";
 
 const Contact = () => {
+  const authToken = localStorage.getItem("authToken");
   const [formData, setFormData] = useState({
     contact_name: "",
     contact_email: "",
@@ -33,7 +33,11 @@ const Contact = () => {
           contact_status: "pending",
           trash: false,
         },
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 201) {

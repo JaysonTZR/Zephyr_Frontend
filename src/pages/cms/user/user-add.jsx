@@ -12,6 +12,7 @@ import axios from "axios";
 
 const CMSUserAdd = () => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const animatedComponents = makeAnimated();
   const authUserData = localStorage.getItem('authUserData');
   const userDataObject = authUserData ? JSON.parse(authUserData) : null;
@@ -73,7 +74,11 @@ const CMSUserAdd = () => {
           ...formData,
           created_by: username,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 201) {

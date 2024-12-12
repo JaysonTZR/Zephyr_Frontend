@@ -9,6 +9,7 @@ import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
 const CMSOrderList = () => {
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [formOriData, setFormOriData] = useState([]);
   const [formData, setFormData] = useState([]);
   const [customerMap, setCustomerMap] = useState([]);
@@ -22,7 +23,11 @@ const CMSOrderList = () => {
     try {
       const response = await axios.get(
         apiUrl + "customer", 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -50,7 +55,11 @@ const CMSOrderList = () => {
     try {
       const response = await axios.get(
         apiUrl + "salesorder", 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

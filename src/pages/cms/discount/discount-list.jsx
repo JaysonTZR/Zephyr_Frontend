@@ -11,6 +11,7 @@ import axios from "axios";
 
 const CMSDiscountList = () => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem("authCMSToken");
   const [formOriData, setFormOriData] = useState([]);
   const [formData, setFormData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -23,7 +24,11 @@ const CMSDiscountList = () => {
     try {
       const response = await axios.get(
         apiUrl + "discount/",
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200){

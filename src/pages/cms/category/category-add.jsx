@@ -10,6 +10,7 @@ import axios from "axios";
 
 const CMSCategoryAdd = () => {
   const navigate = useNavigate();
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const authUserData = localStorage.getItem('authUserData');
   const userDataObject = authUserData ? JSON.parse(authUserData) : null;
   const username = userDataObject ? userDataObject.user_name : null;
@@ -42,7 +43,11 @@ const CMSCategoryAdd = () => {
           ...formData,
           created_by: username,
         }, 
-        {}
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 201) {

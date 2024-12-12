@@ -12,6 +12,7 @@ import { uploadToS3 } from "../../../utils/s3Upload";
 
 const CMSProductAdd = () => {
     const navigate = useNavigate();
+    const authCMSToken = localStorage.getItem('authCMSToken');
     const authUserData = localStorage.getItem('authUserData');
     const userDataObject = authUserData ? JSON.parse(authUserData) : null;
     const username = userDataObject ? userDataObject.user_name : null;
@@ -166,7 +167,11 @@ const CMSProductAdd = () => {
                     product_sub_photo: uploadedFiles.join(", "),
                     created_by: username,
                 }, 
-                {}
+                {
+                    headers: {
+                        Authorization: `Bearer ${authCMSToken}`,
+                    },
+                }
             );
 
             if (response.status === 201) {

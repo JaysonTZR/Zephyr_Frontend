@@ -15,7 +15,7 @@ function Cart() {
   const [updatedCart, setUpdatedCart] = useState([]);
   const [discountCode, setDiscountCode] = useState("");
   const [discount, setDiscount] = useState(null);
-
+  const authToken = localStorage.getItem("authToken");
   const authCustomerData = localStorage.getItem("authCustomerData");
   const customerDataObject = authCustomerData ? JSON.parse(authCustomerData) : null;
   const customer_id = customerDataObject ? customerDataObject.customer_id : null;
@@ -32,7 +32,14 @@ function Cart() {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(apiUrl + `cart/customer/${customer_id}`);
+      const response = await axios.get(
+        apiUrl + `cart/customer/${customer_id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const responseData = response.data.items;
@@ -77,7 +84,14 @@ function Cart() {
     try {
       const response = await axios.put(
         apiUrl + `cart`, 
-        updatedCart
+        {
+          updatedCart
+        },
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -110,7 +124,12 @@ function Cart() {
   const handleCartItemDelete = async (cart_id) => {
     try {
       const response = await axios.delete(
-        apiUrl + `cart/${cart_id}`
+        apiUrl + `cart/${cart_id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -143,7 +162,12 @@ function Cart() {
   const handleDiscountCode = async () => {
     try {
       const response = await axios.get(
-        apiUrl + `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`
+        apiUrl + `discount/validate?customer_id=${customer_id}&discount_code=${discountCode}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {

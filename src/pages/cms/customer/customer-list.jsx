@@ -9,6 +9,7 @@ import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
 const CMSCustomerList = () => {
+  const authCMSToken = localStorage.getItem('authCMSToken');
   const [formData, setFormData] = useState([]);
   const [formOriData, setFormOriData] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -20,8 +21,12 @@ const CMSCustomerList = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        apiUrl + "customer/",
-        {}
+        apiUrl + "customer",
+        {
+          headers: {
+              Authorization: `Bearer ${authCMSToken}`,
+          },
+        }
       );
 
       if (response.status === 200){

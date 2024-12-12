@@ -1,21 +1,15 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  startTransition,
-} from "react";
+import React, { useEffect, useState, useCallback, startTransition } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/Header";
 import Footer from "../../../components/Footer";
 import Banner from "../../../components/Banner";
-
 import { ToastContainer, toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
 const Wishlist = () => {
   const navigate = useNavigate();
-
+  const authToken = localStorage.getItem("authToken");
   const authCustomerData = localStorage.getItem("authCustomerData");
   const customerDataObject = authCustomerData
     ? JSON.parse(authCustomerData)
@@ -33,7 +27,14 @@ const Wishlist = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(apiUrl + `wishlist/${customer_id}`);
+      const response = await axios.get(
+        apiUrl + `wishlist/${customer_id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         const responseData = response.data.items;
@@ -56,7 +57,12 @@ const Wishlist = () => {
   const handleDelete = async (wishlist_item_id) => {
     try {
       const response = await axios.delete(
-        apiUrl + `wishlist/item/${wishlist_item_id}`
+        apiUrl + `wishlist/item/${wishlist_item_id}`,
+        {
+          headers: {
+              Authorization: `Bearer ${authToken}`,
+          },
+        }
       );
 
       if (response.status === 200) {
