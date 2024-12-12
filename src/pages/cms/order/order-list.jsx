@@ -234,7 +234,6 @@ const CMSOrderList = () => {
                 tableHeader={tableHeader}
                 tableData={formData}
                 detailPath={"/cms/order/detail"}
-                deletePath={true}
               />
             </div>
           </main>

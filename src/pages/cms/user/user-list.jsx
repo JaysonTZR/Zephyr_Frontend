@@ -37,6 +37,7 @@ const CMSUserList = () => {
         );
         const transformedData = filteredData.map((item) => ({
           id: item.user_id,
+          user_id: item.user_id,
           username: item.user_name,
           email: item.user_email,
           role: item.user_role,
@@ -244,7 +245,8 @@ const CMSUserList = () => {
                 tableHeader={tableHeader}
                 tableData={formData}
                 editPath={"/cms/user/edit"}
-                deletePath={true}
+                deletePath={"user"}
+                onRefresh={fetchData}
               />
             </div>
           </main>

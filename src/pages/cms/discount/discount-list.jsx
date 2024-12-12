@@ -224,7 +224,8 @@ const CMSDiscountList = () => {
                 tableHeader={tableHeader}
                 tableData={formData}
                 editPath={"/cms/discount/edit"}
-                deletePath={true}
+                deletePath={"discount"}
+                onRefresh={fetchData}
               />
             </div>
           </main>

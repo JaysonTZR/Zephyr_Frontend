@@ -245,7 +245,8 @@ const CMSCategoryList = () => {
                 tableHeader={tableHeader}
                 tableData={formData}
                 editPath={"/cms/category/edit"}
-                deletePath={true}
+                deletePath={"category"}
+                onRefresh={fetchData}
               />
             </div>
           </main>

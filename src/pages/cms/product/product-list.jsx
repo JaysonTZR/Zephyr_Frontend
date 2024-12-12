@@ -262,8 +262,9 @@ const CMSProductList = () => {
                 tableHeader={tableHeader}
                 tableData={formData}
                 editPath={"/cms/product/edit"}
-                deletePath={true}
+                deletePath={"product"}
                 editPhotoPath={"/cms/product/edit-image"}
+                onRefresh={fetchData}
               />
             </div>
           </main>
