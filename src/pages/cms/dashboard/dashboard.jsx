@@ -1,25 +1,134 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../../components/cms/Sidebar";
 import Footer from "../../../components/cms/Footer";
 import Breadcrumb from "../../../components/cms/Breadcrumb";
 import Header from "../../../components/cms/Header";
 import AnnualSalesChart from "../../../components/cms/AnnualSalesChart";
 
+import { toast } from "react-toastify";
+import { apiUrl } from "../../../constant/constants";
+import axios from "axios";
+
 const Dashboard = () => {
-  const salesData = [
-    { month: "Jan", sales: 3000 },
-    { month: "Feb", sales: 2500 },
-    { month: "Mar", sales: 4000 },
-    { month: "Apr", sales: 3500 },
-    { month: "May", sales: 4500 },
-    { month: "Jun", sales: 5000 },
-    { month: "Jul", sales: 5500 },
-    { month: "Aug", sales: 6000 },
-    { month: "Sep", sales: 5200 },
-    { month: "Oct", sales: 4800 },
-    { month: "Nov", sales: 5300 },
-    { month: "Dec", sales: 6200 },
-  ];
+  const [totalSales, setTotalSales] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [totalNewProduct, setTotalNewProduct] = useState(0);
+  const [totalRating, setTotalRating] = useState(0);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(apiUrl + "salesorder", {});
+
+      if (response.status === 200) {
+        const filteredData = response.data.filter(
+          (item) => item.trash === false && item.order_status === "completed"
+        );
+
+        const totalSales = filteredData.reduce((sum, order) => sum + order.order_total,0);
+
+        setTotalSales(totalSales);
+
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(apiUrl + "productreview", {});
+
+      if (response.status === 200) {
+        const filteredData = response.data.filter(
+          (item) => item.trash === false
+        );
+
+        setTotalReviews(filteredData.length);
+
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(apiUrl + "product", {});
+
+      if (response.status === 200) {
+        const filteredData = response.data.filter(
+          (item) => item.trash === false && item.product_new === true
+        );
+
+        setTotalNewProduct(filteredData.length);
+
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  const fetchRatings = async () => {
+    try {
+      const response = await axios.get(apiUrl + "productrating", {});
+
+      if (response.status === 200) {
+        const filteredData = response.data.filter(
+          (item) => item.trash === false
+        );
+
+        const totalRating = filteredData.reduce((sum, rating) => sum + rating.rating_level,0);
+
+        setTotalRating(totalRating/filteredData.length);
+
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+    fetchReviews();
+    fetchProducts();
+    fetchRatings();
+  }, []);
 
   return (
     <div className="flex min-h-screen bg-slate-100">
@@ -54,7 +163,7 @@ const Dashboard = () => {
 
                 <div>
                   <h3 className="text-lg font-semibold">Total Sales</h3>
-                  <p className="text-2xl font-bold text-green-500">$25,000</p>
+                  <p className="text-2xl font-bold text-green-500">RM {totalSales.toFixed(2)}</p>
                 </div>
               </div>
               <div className="bg-white flex items-center py-4 px-4 border rounded-lg">
@@ -75,7 +184,7 @@ const Dashboard = () => {
 
                 <div>
                   <h3 className="text-lg font-semibold">Total Reviews</h3>
-                  <p className="text-2xl font-bold text-blue-500">1,200</p>
+                  <p className="text-2xl font-bold text-blue-500">{totalReviews}</p>
                 </div>
               </div>
               <div className="bg-white flex items-center py-4 px-4 border rounded-lg">
@@ -96,7 +205,7 @@ const Dashboard = () => {
 
                 <div>
                   <h3 className="text-lg font-semibold">New Products</h3>
-                  <p className="text-2xl font-bold text-purple-500">50</p>
+                  <p className="text-2xl font-bold text-purple-500">{totalNewProduct}</p>
                 </div>
               </div>
               <div className="bg-white flex items-center py-4 px-4 border rounded-lg">
@@ -117,7 +226,7 @@ const Dashboard = () => {
 
                 <div>
                   <h3 className="text-lg font-semibold">Total Rating</h3>
-                  <p className="text-2xl font-bold text-yellow-500">4.8</p>
+                  <p className="text-2xl font-bold text-yellow-500">{totalRating.toFixed(1)}</p>
                 </div>
               </div>
             </div>
@@ -127,7 +236,7 @@ const Dashboard = () => {
                 Welcome to Zephyr E-commerce Management System!
               </h2>
               <p className="text text-gray-500 pt-4">
-                For assistance, feel free to reach out to us at +60 12-345 6789
+                For assistance, feel free to reach out to us at +60 12-313 9872
                 or email us at twice@gmail.com.my. We are here to provide
                 guidance on maximizing your experience with your current screen.
               </p>

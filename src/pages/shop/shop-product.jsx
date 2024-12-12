@@ -69,8 +69,11 @@ const ShopProduct = () => {
           price: item.product_price,
           new: item.product_new,
           sale: item.product_sale,
+          rating_level: 5,
+          total_rating: 0,
         }));
         setRelatedProductData(transformedData);
+        fetchRatingList(transformedData);
 
         const filteredData = response.data.filter(
           (item) =>
@@ -93,6 +96,50 @@ const ShopProduct = () => {
       });
     }
   };
+
+  const fetchRatingList = async (products) => {
+  
+      try {
+        const response = await axios.get(apiUrl + `productrating`);
+    
+        if (response.status === 200) {
+          const ratings = response.data;
+    
+          const updatedProducts = products.map((product) => {
+            const productRatings = ratings.filter(
+              (rating) =>
+                rating.product_id === product.id && rating.trash === false
+            );
+    
+            const averageRating =
+              productRatings.length > 0
+                ? (
+                    productRatings.reduce((sum, r) => sum + r.rating_level, 0) /
+                    productRatings.length
+                  ).toFixed(2)
+                : 5;
+    
+            return {
+              ...product,
+              averageRating,
+              total_rating: productRatings.length,
+            };
+          });
+          setRelatedProductData(updatedProducts);
+        }
+      } catch (error) {
+        toast.error("Error Fetching Rating", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    };
 
   const fetchCategory = async () => {
     try {
