@@ -43,7 +43,10 @@ const ProductItem = ({ item, index, wishlist, handleWishlist, handleAddToCart })
             
             <h2 className="mb-2">
                 <span className="opacity-100 group-hover:opacity-0 duration-300">{item.name}</span>
-                <button className="absolute left-0.5 top-[408px] transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded" onClick={()=>handleAddToCart(item.id, 1)}>
+                <button 
+                    className="absolute left-0.5 top-[408px] transform -translate-y-5 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 font-semibold text-red-600 rounded" 
+                    onClick={()=>handleAddToCart(item.id, 1)}
+                >
                     + Add to Cart
                 </button>
             </h2>

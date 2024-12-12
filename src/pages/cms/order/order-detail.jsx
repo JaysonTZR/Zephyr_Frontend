@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
-const CMSOrderList = () => {
+const CMSOrderDetail = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [showFilters, setShowFilters] = useState(false);
@@ -363,7 +363,7 @@ const CMSOrderList = () => {
                             )}
 
                             {/* Table Section */}
-                            <Table tableHeader={itemTableHeader} tableData={filteredDataDetail}/>
+                            <Table tableHeader={itemTableHeader} tableData={filteredDataDetail} editPath={"/cms/order/detail/edit"}/>
                         </div>
                     </main>
                     <Footer />
@@ -373,4 +373,4 @@ const CMSOrderList = () => {
     );
 };
 
-export default CMSOrderList;
+export default CMSOrderDetail;

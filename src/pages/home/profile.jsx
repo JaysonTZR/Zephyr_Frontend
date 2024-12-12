@@ -218,22 +218,9 @@ function Profile() {
   };
 
   const handleSubmitRating = async({ id, rating, review }) => {
-    console.log("Order Item ID: ",id,"Submitted Rating:", rating, "Review:", review);
-    // Add API call or logic here to save the rating and review
-
     try {
-      const response = await axios.post(
-        apiUrl + "productrating", 
-        {
-          order_item_id: id,
-          customer_id: customerId,
-          rating_level: rating,
-          review: review
-        }
-      );
-
-      if (response.status === 200) {
-        toast.success("Rated Successfully", {
+      if (review === "") {
+        toast.error("Please provide a review for the product", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,
@@ -242,6 +229,35 @@ function Profile() {
           draggable: true,
           progress: undefined,
           theme: "light",
+        });
+        return;
+      }
+
+      const response = await axios.post(
+        apiUrl + "productrating", 
+        {
+          order_item_id: id,
+          customer_id: customerId,
+          rating_level: rating ? rating : 5,
+          review: review
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Reviewed Successfully", {
+          position: "top-right",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          onClose: () => {
+            startTransition(() => {
+              navigate("/profile");
+            });
+          },
         });
       }
     } catch (error) {
@@ -921,13 +937,13 @@ function Profile() {
                             </div>
                             {(item.status === "completed" && item.rating == null) && (
                               <button className="text-sm text-blue-500 mt-2" onClick={() => openModal(item)}>
-                                Review Product {item.rating}
+                                Review Product
                               </button>
                             )}
 
                             {(item.status === "completed" && item.rating) && (
                               <div className="text-sm text-blue-500 mt-2">
-                                Rated
+                                Reviewed!
                               </div>
                             )}
                             

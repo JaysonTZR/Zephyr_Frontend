@@ -138,7 +138,7 @@ const Shop = () => {
 
       if (response.status === 200){
         
-        toast.success("Wishlist Removed Successfully", {
+        toast.success("Item Removed From Wishlist Successfully", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,
@@ -184,13 +184,10 @@ const Shop = () => {
   }
 
   const handleAddToCart = async (product_id) => {
-
     startTransition(() => {
       navigate("/product/" + product_id);
     });
   }
-
-  
 
   const handleSortChange = (e) => {
     const order = e.target.value;

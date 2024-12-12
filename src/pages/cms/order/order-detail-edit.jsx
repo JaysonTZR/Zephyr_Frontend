@@ -9,31 +9,28 @@ import { toast } from "react-toastify";
 import { apiUrl } from "../../../constant/constants";
 import axios from "axios";
 
-const CMSContactEdit = () => {
+const CMSOrderDetailEdit = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [formData, setFormData] = useState({
-    contact_name: "",
-    contact_email: "",
-    contact_message: "",
-    contact_status: "",
-    trash: false,
-  });
+  const [formData, setFormData] = useState([]);
+  const [productMap, setProductMap] = useState(false);
 
-  const fetchData = useCallback(async () => {
+  const fetchProductData = async () => {
     try {
       const response = await axios.get(
-        apiUrl + `contact/${id}`
+        apiUrl + "product", 
+        {}
       );
 
       if (response.status === 200) {
-        const responseData = response.data;
-        setFormData({
-            contact_name: responseData.contact_name,
-            contact_email: responseData.contact_email,
-            contact_message: responseData.contact_message,
-            contact_status: responseData.contact_status,
-        });
+        const productData = response.data.reduce((acc, product) => {
+        acc[product.product_id] = {
+          name: product.product_name,
+          image: product.product_photo,
+        };
+        return acc;
+        }, {});
+        setProductMap(productData);
       }
     } catch (error) {
       toast.error("Error Fetching Data", {
@@ -47,11 +44,55 @@ const CMSContactEdit = () => {
         theme: "light",
       });
     }
-  }, [id]);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        apiUrl + "salesorderitem", 
+        {}
+      );
+  
+      if (response.status === 200) {
+        const filteredData = response.data.filter((item) => item.order_item_id == id && item.trash === false);
+        const transformedData = filteredData.map((item) => ({
+          id: item.order_item_id,
+          product: productMap[item.product_id]?.name || item.product_id,
+          product_image: productMap[item.product_id]?.image || '',
+          quantity: item.order_item_quantity,
+          total_price: item.order_item_total_price,
+          description: item.order_item_description,
+          status: item.order_item_status,
+          trash: item.trash,
+          updated_at: item.updated_at,
+          created_at: item.created_at,
+        }));
+
+        setFormData(transformedData[0]);
+      }
+    } catch (error) {
+      toast.error("Error Fetching Data", {
+        position: "top-right",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    fetchProductData();
+  }, []);
+  
+  useEffect(() => {
+    if (Object.keys(productMap).length > 0) {
+      fetchData();
+    }
+  }, [productMap]);
 
   const handleInputChange = (name, value) => {
     setFormData((prevData) => {
@@ -67,13 +108,9 @@ const CMSContactEdit = () => {
   const handleSubmit = async () => {
     try {
       const response = await axios.put(
-        apiUrl + `contact/${id}`, 
+        apiUrl + `salesorderitem/status/${id}`, 
         {
-          'contact_id': id,
-          'contact_name': formData.contact_name,
-          'contact_email': formData.contact_email,
-          'contact_message': formData.contact_message,
-          'contact_status': formData.contact_status,
+          'order_item_status': formData.status,
         }, 
         {}
       );
@@ -90,7 +127,7 @@ const CMSContactEdit = () => {
           theme: "light",
           onClose: () => {
             startTransition(() => {
-              navigate("/cms/contact/list");
+              navigate("/cms/order/detail/" + id);
             });
           },
         });
@@ -117,7 +154,7 @@ const CMSContactEdit = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar page="category-list" />
+      <Sidebar page="order-list" />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
@@ -129,81 +166,96 @@ const CMSContactEdit = () => {
           <main className="flex-1 px-6 pt-0 pb-10">
             <div className="bg-white shadow-md rounded-lg">
               <div className="p-6 border-b">
-                <h2 className="text-2xl font-semibold">Edit Contact Details</h2>
+                <h2 className="text-2xl font-semibold">
+                  Edit Order Item
+                </h2>
               </div>
 
               <div className="p-6">
                 <div className="space-y-6">
-                  {/* Contact Name */}
+                  {formData && formData.product_image && (
+                    <div className="flex items-center mb-6">
+                      <div className="w-1/6 ml-[-17px]"/>
+                      <img
+                        src={formData.product_image}
+                        alt="Product"
+                        style={{ maxWidth: "300px", maxHeight: "300px" }}
+                      />
+                    </div>
+                  )}
+
                   <div className="flex flex-row">
-                    <label htmlFor="contact_name" className="mb-2 mt-2 w-72">
-                      Contact Name
+                    <label htmlFor="product" className="mb-2 mt-2 w-72">
+                      Product
                     </label>
                     <input
                       type="text"
-                      id="contact_name"
-                      name="contact_name"
+                      id="product"
+                      name="product"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="name"
-                      value={formData && formData.contact_name}
-                      onChange={(e) =>
-                        handleInputChange("contact_name", e.target.value)
-                      }
+                      placeholder="Product"
+                      value={formData && formData.product}
                       disabled={true}
                     />
                   </div>
 
-                  {/* Contact Email */}
                   <div className="flex flex-row">
-                    <label htmlFor="contact_email" className="mb-2 mt-2 w-72">
-                      Contact Email
+                    <label htmlFor="quantity" className="mb-2 mt-2 w-72">
+                      Quantity
                     </label>
                     <input
-                      type="email"
-                      id="contact_email"
-                      name="contact_email"
-                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="Contact Email"
-                      value={formData && formData.contact_email}
-                      onChange={(e) =>
-                        handleInputChange("contact_email", e.target.value)
-                      }
-                      disabled={true}
-                    />
-                  </div>
-
-                  {/* Contact Message */}
-                  <div className="flex flex-row">
-                    <label htmlFor="contact_message" className="mb-2 mt-2 w-72">
-                        Contact Message
-                    </label>
-                    <textarea
                       type="text"
-                      id="contact_message"
-                      name="contact_message"
-                      className="resize-none border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      placeholder="Discount Description"
-                      value={formData && formData.contact_message}
-                      onChange={(e) =>
-                        handleInputChange("contact_message", e.target.value)
-                      }
-                      rows="4"
+                      id="quantity"
+                      name="quantity"
+                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      placeholder="Quantity"
+                      value={formData && formData.quantity}
                       disabled={true}
                     />
                   </div>
 
-                  {/* Contact Status */}
                   <div className="flex flex-row">
-                    <label htmlFor="contact_status" className="mb-2 mt-2 w-72">
-                      Status<span className="text-red-500"> *</span>
+                    <label htmlFor="total_price" className="mb-2 mt-2 w-72">
+                      Total Price
+                    </label>
+                    <input
+                      type="text"
+                      id="total_price"
+                      name="total_price"
+                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      placeholder="Total Price"
+                      value={formData && formData.total_price}
+                      disabled={true}
+                    />
+                  </div>
+
+                  <div className="flex flex-row">
+                    <label htmlFor="description" className="mb-2 mt-2 w-72">
+                      Description
+                    </label>
+                    <input
+                      type="text"
+                      id="description"
+                      name="description"
+                      className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
+                      placeholder="Description"
+                      value={formData && formData.description}
+                      disabled={true}
+                    />
+                  </div>
+
+                  {/* Status */}
+                  <div className="flex flex-row">
+                    <label htmlFor="status" className="mb-2 mt-2 w-72">
+                      Status
                     </label>
                     <select
-                      id="contact_status"
-                      name="contact_status"
+                      id="status"
+                      name="status"
                       className="border py-2 px-3 rounded-md focus:outline-none focus:ring-1 focus:ring-black w-full"
-                      value={formData && formData.contact_status}
+                      value={formData && formData.status}
                       onChange={(e) =>
-                        handleInputChange("contact_status", e.target.value)
+                        handleInputChange("status", e.target.value)
                       }
                     >
                       <option value="" disabled hidden>Select a status</option>
@@ -237,4 +289,4 @@ const CMSContactEdit = () => {
   );
 };
 
-export default CMSContactEdit;
+export default CMSOrderDetailEdit;

@@ -134,7 +134,7 @@ const Dashboard = () => {
             </div>
 
             {/* Annual Sales Charts Section */}
-            <AnnualSalesChart data={salesData} />
+            {/* <AnnualSalesChart data={salesData} /> */}
           </main>
 
           <Footer />

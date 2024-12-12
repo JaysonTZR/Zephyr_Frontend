@@ -12,9 +12,9 @@ function RatingModal({ isOpen, onClose, product, onSubmit }) {
     // Pass rating and review to the parent component
     const id = product.order_item_id;
     onSubmit({ id, rating, review });
-    setRating(0); // Reset state
+    setRating(5);
     setReview("");
-    onClose(); // Close modal
+    onClose();
   };
 
   if (!isOpen) return null;

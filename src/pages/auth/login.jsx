@@ -69,7 +69,7 @@ function Login() {
         localStorage.setItem("authUserData", JSON.stringify(authUserData));
         localStorage.setItem('authCustomerData', JSON.stringify(authCustomerData));
 
-        toast.success("Login successfully", {
+        toast.success("Login Successfully", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,

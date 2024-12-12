@@ -79,7 +79,7 @@ const CMSLogin = () => {
         localStorage.setItem("authUserData", JSON.stringify(authUserData));
         localStorage.setItem('expirationTime', expirationTime);
 
-        toast.success("Login successfully", {
+        toast.success("Login Successfully", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,

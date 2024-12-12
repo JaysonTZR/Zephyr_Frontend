@@ -171,7 +171,7 @@ function HomePage() {
 
       if (response.status === 200){
         
-        toast.success("Wishlist Removed Successfully", {
+        toast.success("Item Removed From Wishlist Successfully", {
           position: "top-right",
           autoClose: 1500,
           hideProgressBar: false,

@@ -43,6 +43,7 @@ const CMSCustomerEdit = lazy(() => import("./pages/cms/customer/customer-edit"))
 
 const CMSOrderList = lazy(() => import("./pages/cms/order/order-list"));
 const CMSOrderDetail = lazy(() => import("./pages/cms/order/order-detail"));
+const CMSOrderDetailEdit = lazy(() => import("./pages/cms/order/order-detail-edit"));
 
 const CMSUserList = lazy(() => import("./pages/cms/user/user-list"));
 const CMSUserEdit = lazy(() => import("./pages/cms/user/user-edit"));
@@ -214,6 +215,14 @@ function App() {
           element={
             <AuthRoute>
               <CMSOrderDetail requiredAccess="Manage Order"/>
+            </AuthRoute>
+          }
+        />
+        <Route
+          path="/cms/order/detail/edit/:id"
+          element={
+            <AuthRoute>
+              <CMSOrderDetailEdit requiredAccess="Manage Order"/>
             </AuthRoute>
           }
         />
